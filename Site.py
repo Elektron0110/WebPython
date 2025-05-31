@@ -1,6 +1,5 @@
 import os
 import random
-
 from flask import Flask
 from flask import render_template, request, session, redirect
 from flask_sqlalchemy import SQLAlchemy
@@ -10,14 +9,13 @@ slicer = r'\|/'
 name = 'Программа'
 
 app = Flask(__name__)
-# app.config["DEBUG"] = True
+app.config["DEBUG"] = True
 
 if not os.path.isdir('mysite'):
 	os.mkdir('mysite')
 	open('mysite/log', 'w').write('Start.')
 if not os.path.isdir('mysite/applications'):
 	os.mkdir('mysite/applications')
-	open('mysite/news', 'w').write('')
 
 # -------------------------------------------------------------
 
@@ -26,17 +24,15 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
-# Таблица для аутентификации
 class AuthUser(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	email = db.Column(db.String(120), unique=True, nullable=False)
 	password = db.Column(db.String(80), nullable=False)
-
+	
 	def __repr__(self):
 		return f'<AuthUser {self.email}>'
 
 
-# Таблица с дополнительной информацией
 class UserInfo(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	email = db.Column(db.String(120), db.ForeignKey('auth_user.email'), unique=True, nullable=False)
@@ -45,9 +41,21 @@ class UserInfo(db.Model):
 	t = db.Column(db.String(50))  # Отчество
 	tel = db.Column(db.String(20))  # Телефон
 	b_day = db.Column(db.String(10))  # Дата рождения
-
+	
 	def __repr__(self):
 		return f'<UserInfo {self.email}>'
+
+
+class Applications(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	email = db.Column(db.String(120), db.ForeignKey('auth_user.email'), nullable=False)
+	lines = db.Column(db.Integer)
+	way = db.Column(db.String(120))
+	number = db.Column(db.Integer)
+	date = db.Column(db.Date)
+	
+	def __repr__(self):
+		return f'<Applications {self.email}>'
 
 
 # Создание таблиц в базе данных
@@ -67,8 +75,18 @@ def new_user(**k):
 			db.session.commit()
 
 
+def new_application(**k):
+	with app.app_context():
+		ap = Applications(email=k.get('email', ''), lines=k.get('line', ''), way=k.get('way', ''),
+		                  number=k.get('num', ''), date=k.get('date', ''))
+		db.session.add(ap)
+		db.session.commit()
+
+
 new_user(email='s762672@ya.ru', password='Alex', s='Шульган', f='Алексей', t='Владимирович',
          tel='+7 (904) 333-55-37', b_day='2011-10-01')
+new_user(email='test@test', password='Bug', s='Тестов', f='Тест', t='Тестович',
+         tel='+0 (123) 456-78-90', b_day='0000-00-00')
 
 # -------------------------------------------------------------
 
@@ -194,9 +212,9 @@ def new():
 			way = request.form['way']
 			text = request.form['text']
 			number = random.randint(1000, 9999)
-			date = datetime.today().strftime('%Y-%m-%d')
+			today = datetime.today().strftime('%Y-%m-%d')
 			open(f'mysite/applications/new={number}', 'w').write(text)
-			open('mysite/news', 'a').write(f'\n {session["email"]} {lines} {way} {number} {date}')
+			new_application(email=session['email'], line=lines, way=way, num=number, date=today)
 			return f'''Заявка отправлена.
 Ориентировочная стоимость выполнения задачи: {5 * int(lines) * int(question[way])}₽.'''
 
@@ -208,7 +226,7 @@ def sr():
 
 if __name__ == '__main__':
 	import webbrowser
-
+	
 	date = datetime.now().strftime("%H%M")
 	webbrowser.open_new_tab('http://127.0.0.1:{}/'.format(date))
 	app.run(port=int(date))
