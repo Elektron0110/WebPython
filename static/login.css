@@ -1,0 +1,26 @@
+.form {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+form {
+    outline: double;
+    border-radius: 5px;
+    outline-color: blueviolet;
+    outline-offset: 10px;
+}
+.in {
+    border-radius: 5px;
+    border: double;
+    border-color: aqua;
+    background-color: aliceblue;
+}
+.submit {
+    background-color: cornflowerblue;
+    font-size: larger;
+    color: aliceblue;
+}
+span.required {
+	color: red;
+}

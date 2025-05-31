@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8">
+		<title>Придумать</title>
+		<link href="{{ url_for('static', filename='login.css') }}" rel="stylesheet" type="text/css" />
+		<link rel="icon" sizes="256x256" type="image/ico" href="{{ url_for('static', filename='f.ico') }}">
+	</head>
+	<body>
+		<div class="form">
+			<form method="post" action="/new">
+				<div style="display: grid; justify-content: center;">
+					<label class="in">Проверьте правильность введённых данных. <a href="/update">Изменить</a></label>
+					<br>
+					<input readonly type="text" name="s" class="in" placeholder="Фамилия" value="{{session['user'].split(' ')[0]}}">
+					<br>
+					<input readonly type="text" name="f" class="in" placeholder="Имя" value="{{session['user'].split(' ')[1]}}">
+					<br>
+					<input readonly type="text" name="t" class="in" placeholder="Отчество" value="{{session['user'].split(' ')[2]}}">
+					<br>
+					{% if session['telephone'] != '' %}
+					<input readonly type="tel" name="tel" class="in" placeholder="+7 (___) ___-__-__" maxlength="18" id="tel" value="{{session['telephone']}}">
+					{% else %}
+					<input required type="tel" name="tel" class="in" placeholder="+7 (___) ___-__-__" maxlength="18" id="tel">
+					{% endif %}
+					<br>
+					<label>
+						Ваш день рождения.
+						{% if session['birthday'] != '' %}
+						<input readonly type="date" name="b_day" class="in" max="{{date}}" value="{{session['birthday']}}">
+						{% else %}
+						<input required type="date" name="b_day" class="in" max="{{date}}">
+						{% endif %}
+					</label>
+					<input hidden type="text" name="type" value="check">
+					<br>
+				</div>
+				<center>
+					<input type="submit" value="Всё верно." class="in submit">
+				</center>
+			</form>
+		</div>
+		<script src="{{ url_for('static', filename='reg.js') }}"></script>
+	</body>
+</html>
