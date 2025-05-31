@@ -1,3 +1,10 @@
+html {
+    font-size: 25px;
+}
+body {
+    margin: 0px;
+    background-color: gray;
+}
 .navbar {
 	background-color: rgb(140, 140, 140);
 	color: rgb(195, 195, 195);
