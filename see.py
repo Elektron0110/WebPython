@@ -8,6 +8,8 @@ class Admin:
 		self.users = users
 		self.data = data
 		self.applications = applications
+		self.admins = ['s762672@ya.ru', 'test@test']
+
 	def see(self):
 		return render_template('AdmSee.html',
 		                       u=self.users.query.all,
