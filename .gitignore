@@ -1,7 +1,9 @@
 # Default ignored files
 /app.spec
 /build/
-/mysite
-/instance
-/dist/mysite
-/dist/instance
+/mysite/
+/instance/
+/dist/mysite/
+/dist/instance/
+/.idea/
+/.visual/
