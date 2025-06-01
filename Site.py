@@ -4,6 +4,7 @@ from flask import Flask
 from flask import render_template, request, session, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
+from see import Admin
 
 slicer = r'\|/'
 name = 'Программа'
@@ -11,11 +12,11 @@ name = 'Программа'
 app = Flask(__name__)
 app.config["DEBUG"] = True
 
-if not os.path.isdir('mysite'):
-	os.mkdir('mysite')
-	open('mysite/log', 'w').write('Start.')
-if not os.path.isdir('mysite/applications'):
-	os.mkdir('mysite/applications')
+if not os.path.isdir('Site'):
+	os.mkdir('Site')
+	open('Site/log', 'w').write('Start.')
+if not os.path.isdir('Site/applications'):
+	os.mkdir('Site/applications')
 
 # -------------------------------------------------------------
 
@@ -88,10 +89,13 @@ new_user(email='s762672@ya.ru', password='Alex', s='Шульган', f='Алек
 new_user(email='test@test', password='Bug', s='Тестов', f='Тест', t='Тестович',
          tel='+0 (123) 456-78-90', b_day='0000-00-00')
 
+
+adm = Admin(app, AuthUser, UserInfo, Applications)
+
 # -------------------------------------------------------------
 
 app.secret_key = os.urandom(24)
-open('mysite/log', 'a').write(f'\nStart at {datetime.now().strftime("%d.%m.%Y %H:%M")}.')
+open('Site/log', 'a').write(f'\nStart at {datetime.now().strftime("%d.%m.%Y %H:%M")}.')
 
 
 # @app.errorhandler(404)
@@ -213,10 +217,23 @@ def new():
 			text = request.form['text']
 			number = random.randint(1000, 9999)
 			today = datetime.today().strftime('%Y-%m-%d')
-			open(f'mysite/applications/new={number}', 'w').write(text)
+			open(f'Site/applications/new={number}', 'w').write(text)
 			new_application(email=session['email'], line=lines, way=way, num=number, date=today)
 			return f'''Заявка отправлена.
 Ориентировочная стоимость выполнения задачи: {5 * int(lines) * int(question[way])}₽.'''
+
+
+@app.route('/adm/<comm>')
+def admin(comm):
+	if 'user' in session:
+		if session['email'] in adm.admins:
+			if comm == 'see':
+				adm.see()
+			else:
+				return redirect('/lk')
+		else:
+			return redirect('/lk')
+	return redirect('/lk')
 
 
 @app.route('/new')
