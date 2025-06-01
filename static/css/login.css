@@ -2,6 +2,7 @@ html {
     font-size: 25px;
 }
 .form {
+	background-color: lightsteelblue;
     display: flex;
     height: 100vh;
     justify-content: center;
