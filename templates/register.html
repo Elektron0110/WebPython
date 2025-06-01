@@ -1,44 +1,44 @@
 <!DOCTYPE html>
 <html lang="ru">
-	<head>
-		<meta charset="UTF-8">
-		<title>Регистрация</title>
-		<link href="{{ url_for('static', filename='login.css') }}" rel="stylesheet" type="text/css" />
-		<link rel="icon" sizes="256x256" type="image/ico" href="{{ url_for('static', filename='f.ico') }}">
-	</head>
-	<body>
-		<div class="form">
-			<form method="post" action="/lk">
-				<div style=" display: grid; justify-content: center;">
-					<span class="required" title="Обязательное заполнение.">*</span>
-					<input required type="text" name="s_name" class="in" placeholder="Фамилия">
-					<br>
-					<span class="required" title="Обязательное заполнение.">*</span>
-					<input required type="text" name="f_name" class="in" placeholder="Имя">
-					<br>
-					<span class="required" title="Обязательное заполнение.">*</span>
-					<input required type="text" name="t_name" class="in" placeholder="Отчество">
-					<br>
-					<span class="required" title="Обязательное заполнение.">*</span>
-					<input required type="email" name="email" class="in" value="{{email}}" placeholder="Электронная почта">
-					<br>
-					<span class="required" title="Обязательное заполнение.">*</span>
-					<input required type="password" name="password" class="in" value="{{password}}" placeholder="Пароль">
-					<br>
-					<input type="tel" name="tel" class="in" placeholder="+7 (___) ___-__-__" id="tel" maxlength="18">
-					<br>
-					<label>
-						Ваш день рождения.
-						<input type="date" name="b_day" class="in" max="{{date}}">
-					</label>
-					<input name="thing" value="register" style="display: none">
-					<br>
-				</div>
-				<center>
-					<input type="submit" value="Регистрация" class="in submit">
-				</center>
-			</form>
-		</div>
-		<script src="{{ url_for('static', filename='reg.js') }}"></script>
-	</body>
+<head>
+	<meta charset="UTF-8">
+	<title>Регистрация</title>
+	<link href="{{ url_for('static/css', filename='login.css') }}" rel="stylesheet" type="text/css" />
+	<link rel="icon" sizes="256x256" type="image/ico" href="{{ url_for('static/img', filename='f.ico') }}">
+</head>
+<body>
+	<div class="form">
+		<form method="post" action="/lk">
+			<div style=" display: grid; justify-content: center;">
+				<span class="required" title="Обязательное заполнение.">*</span>
+				<input required type="text" name="s_name" class="in" placeholder="Фамилия">
+				<br>
+				<span class="required" title="Обязательное заполнение.">*</span>
+				<input required type="text" name="f_name" class="in" placeholder="Имя">
+				<br>
+				<span class="required" title="Обязательное заполнение.">*</span>
+				<input required type="text" name="t_name" class="in" placeholder="Отчество">
+				<br>
+				<span class="required" title="Обязательное заполнение.">*</span>
+				<input required type="email" name="email" class="in" value="{{email}}" placeholder="Электронная почта">
+				<br>
+				<span class="required" title="Обязательное заполнение.">*</span>
+				<input required type="password" name="password" class="in" value="{{password}}" placeholder="Пароль">
+				<br>
+				<input type="tel" name="tel" class="in" placeholder="+7 (___) ___-__-__" id="tel" maxlength="18">
+				<br>
+				<label>
+					Ваш день рождения.
+					<input type="date" name="b_day" class="in" max="{{date}}">
+				</label>
+				<input name="thing" value="register" style="display: none">
+				<br>
+			</div>
+			<center>
+				<input type="submit" value="Регистрация" class="in submit">
+			</center>
+		</form>
+	</div>
+	<script src="{{ url_for('static/js', filename='reg.js') }}"></script>
+</body>
 </html>
