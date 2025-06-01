@@ -14,6 +14,7 @@ form {
     outline-offset: 10px;
 }
 .in {
+    font-size: smaller;
     border-radius: 5px;
     border: double;
     border-color: aqua;
