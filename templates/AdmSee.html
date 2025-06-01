@@ -1,0 +1,65 @@
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<title>Личный кабинет</title>
+	<script src="{{ url_for('static', filename='script.js') }}"></script>
+	<link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" type="text/css" />
+	<link rel="icon" sizes="256x256" type="image/ico" href="{{ url_for('static', filename='f.ico') }}">
+</head>
+<body>
+	<header>
+		<nav class="navbar">
+			<div class="navbar_div">
+				<a href="/" class="navbar name">
+					<img src="{{ url_for('static', filename='pr.png') }}">
+					{{name}}
+				</a>
+				<div>
+					<button type="button" class="navbar-button " id="menu_button" onclick="func()">
+						{{session['user'].split(' ')[0]}}
+						{{session['user'].split(' ')[1]}}
+						{{session['user'].split(' ')[2]}}
+					</button>
+				</div>
+			</div>
+		</nav>
+		<div id="menu" style="display: none; background-color: lightsteelblue;">
+			<ul>
+				<li><a href="/new">Оставить заявку</a></li>
+				<li><a href="/update">Обновление данных</a></li>
+				<li><a href="/logout">Выход</a></li>
+			</ul>
+		</div>
+	</header>
+	<div class="adm_main" style="margin: 50px; display:flex; justify-content: space-evenly;">
+		<div class="adm_main">
+			<ul>
+				{% for el in u %}
+				<li>{{el}}</li>
+				{% endfor %}
+			</ul>
+		</div>
+		<div class="adm_main">
+			<ul>
+				{% for el in d %}
+				<li>{{el}}</li>
+				{% endfor %}
+			</ul>
+		</div>
+		<div class="adm_main">
+			<ul>
+				{% for el in a %}
+				<li>{{el}}</li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+	<script>
+		function func () {
+			var menu = document.getElementById("menu");
+			var menu_button = document.getElementById("menu_button");
+			see_user(menu_button, menu);
+		}
+	</script>
+</body>
+</html>
