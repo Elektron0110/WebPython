@@ -4,7 +4,6 @@ from flask import Flask
 from flask import render_template, request, session, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
-from see import Admin
 
 slicer = r'\|/'
 name = 'Программа'
@@ -31,7 +30,7 @@ class AuthUser(db.Model):
 	password = db.Column(db.String(80), nullable=False)
 	
 	def __repr__(self):
-		return f'<AuthUser {self.email}>'
+		return f'{self.email} | {self.password}'
 
 
 class UserInfo(db.Model):
@@ -44,7 +43,7 @@ class UserInfo(db.Model):
 	b_day = db.Column(db.String(10))  # Дата рождения
 	
 	def __repr__(self):
-		return f'<UserInfo {self.email}>'
+		return f'{self.email} | {self.s} | {self.f} | {self.t} | {self.tel} | {self.b_day}'
 
 
 class Applications(db.Model):
@@ -88,9 +87,6 @@ new_user(email='s762672@ya.ru', password='Alex', s='Шульган', f='Алек
          tel='+7 (904) 333-55-37', b_day='2011-10-01')
 new_user(email='test@test', password='Bug', s='Тестов', f='Тест', t='Тестович',
          tel='+0 (123) 456-78-90', b_day='0000-00-00')
-
-
-adm = Admin(app, AuthUser, UserInfo, Applications)
 
 # -------------------------------------------------------------
 
@@ -225,15 +221,20 @@ def new():
 
 @app.route('/adm/<comm>')
 def admin(comm):
+	admins = ['s762672@ya.ru', 'test@test']
 	if 'user' in session:
-		if session['email'] in adm.admins:
+		if session['email'] in admins:
 			if comm == 'see':
-				adm.see()
+				return render_template('AdmSee.html',
+				                       u=AuthUser.query.all(),
+				                       d=UserInfo.query.all(),
+				                       a=Applications.query.all())
 			else:
 				return redirect('/lk')
 		else:
 			return redirect('/lk')
-	return redirect('/lk')
+	else:
+		return redirect('/lk')
 
 
 @app.route('/new')
