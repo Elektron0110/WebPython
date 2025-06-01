@@ -1,0 +1,1 @@
+.visual\visual.exe -1280x1024 -f --highlight-all-users --multi-sampling
