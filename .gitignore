@@ -1,10 +1,10 @@
 # Default ignored files
-/app.spec
 /Site/__pycache__/
 /build/
 /Site/Site/
 /Site/instance/
 /dist/mysite/
+/dist/Site/
 /dist/instance/
 /.idea/
 /.visual/
