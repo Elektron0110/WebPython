@@ -8,6 +8,12 @@ html {
     justify-content: center;
     align-items: center;
 }
+.spec_form {
+	background-color: lightsteelblue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 form {
     outline: double;
     border-radius: 5px;

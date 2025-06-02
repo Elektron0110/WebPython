@@ -1,9 +1,10 @@
-<html lang="ru">
+<html lang="ru" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <head>
 	<meta charset="UTF-8">
 	<title>Личный кабинет</title>
 	<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 	<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" type="text/css" />
+	<link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet" type="text/css" />
 	<link rel="icon" sizes="256x256" type="image/ico" href="{{ url_for('static', filename='img/f.ico') }}">
 </head>
 <body>
@@ -52,6 +53,38 @@
 				<li>{{el}}</li>
 				{% endfor %}
 			</ul>
+		</div>
+	</div>
+	<div class="spec_form" style="margin: 30px;">
+		<br>
+		<div style="margin: 10px">
+			<form method="post" style="margin: 20px" action="/adm/del">
+				<select required name="way" class="in">
+					<option value=""> --- Кого удалить --- </option>
+					{% for user in u %}
+					{% for data in d %}
+					{% if data.email == user.email %}
+    				<option value="{{user.email}}">{{data.s}} {{data.f}} {{data.t}}</option>
+					{% endif %}
+					{% endfor %}
+					{% endfor %}
+				</select>
+				<input type="submit" value="Отправить" class="in submit">
+			</form>
+			<br>
+			<form method="post" style="margin: 20px" action="/adm/update">
+				<select required name="way" class="in">
+					<option value=""> --- Кого обновить --- </option>
+					{% for user in u %}
+					{% for data in d %}
+					{% if data.email == user.email %}
+       				<option value="{{user.email}}">{{data.s}} {{data.f}} {{data.t}}</option>
+					{% endif %}
+					{% endfor %}
+					{% endfor %}
+				</select>
+				<input type="submit" value="Отправить" class="in submit">
+			</form>
 		</div>
 	</div>
 	<script>
