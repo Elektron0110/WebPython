@@ -4,6 +4,7 @@ from flask import Flask
 from flask import render_template, request, session, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
+from Broker import data
 
 slicer = r'\|/'
 name = 'Программа'
@@ -248,6 +249,11 @@ def admin(comm):
 @app.route('/new')
 def sr():
 	return 'Раздел на стадии разработки.'
+
+
+@app.route('/test/Ums')
+def printer():
+	return str(data).replace('{', '').replace('}', '').replace(', ', '\n').replace(':', '').replace("'", '')
 
 
 if __name__ == '__main__':
