@@ -250,10 +250,10 @@ def sr():
 	return 'Раздел на стадии разработки.'
 
 
-@app.route('/test/Ums')
+@app.route('/Ums')
 def printer():
-	weather = open('data', 'r').read().replace('{', '').replace('}', '')
-	weather = weather.replace(', ', '\n').replace("'", '')
+	weather = open('data', 'r').read().replace("}, '", '<br>').replace('{', '')
+	weather = weather.replace('}', '').replace("'", '')
 	return weather
 
 
