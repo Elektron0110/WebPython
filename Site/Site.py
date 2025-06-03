@@ -5,8 +5,6 @@ from flask import render_template, request, session, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 
-weather = open('data', 'r').read()
-
 slicer = r'\|/'
 name = 'Программа'
 
@@ -254,7 +252,9 @@ def sr():
 
 @app.route('/test/Ums')
 def printer():
-	return weather.replace('{', '').replace('}', '').replace(', ', '\n').replace(':', '').replace("'", '')
+	weather = open('data', 'r').read().replace('{', '').replace('}', '')
+	weather = weather.replace(', ', '\n').replace("'", '')
+	return weather
 
 
 if __name__ == '__main__':
