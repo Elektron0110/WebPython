@@ -2,10 +2,10 @@
 
 
 a = Analysis(
-    ['Site/Site.py'],
+    ['Site/main.py'],
     pathex=[],
     binaries=[],
-    datas=[('templates', 'Site/templates'), ('static', 'Site/static')],
+    datas=[('Site\\templates', 'templates'), ('Site\\static', 'static')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -22,7 +22,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='Site v.3',
+    name='Site v.WinEd.4',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
