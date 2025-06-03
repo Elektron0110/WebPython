@@ -12,7 +12,6 @@ def launcher(*file):
 		                    args=(('python', file),),
 		                    kwargs={'check': False})
 		program.start()
-		program.join()
 	except Exception as e:
 		print(e)
 
