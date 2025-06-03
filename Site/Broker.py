@@ -27,7 +27,8 @@ def on_connect(client, userdata, flags, rc):
 
 # Callback при получении сообщения
 def on_message(client, userdata, msg):
-	open('data', 'w').write(msg.playload.decode())
+	data[msg.topic] = msg.payload.decode()
+	open('data', 'w').write(str(data))
 
 
 # Создаем клиента
