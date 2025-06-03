@@ -1,4 +1,3 @@
-import os.path
 import paho.mqtt.client as mqtt
 
 # Параметры подключения
@@ -7,7 +6,7 @@ BROKER_PORT = 19310
 USERNAME = "Qwerty"
 PASSWORD = "1234567890"
 SUBS = ['Temperature', 'Humidity']
-TOPICS = {'Um1': {'Temperature', 'Humidity'}}
+TOPICS = {'Um1': ['Temperature', 'Humidity']}
 data = {}
 
 
@@ -16,6 +15,7 @@ def on_connect(client, userdata, flags, rc):
 	if rc == 0:
 		for topic in SUBS:
 			client.subscribe(topic)
+			print(f'Подписались на {topic}.')
 	else:
 		print(f"Ошибка подключения (код: {rc})")
 
