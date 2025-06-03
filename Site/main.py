@@ -1,7 +1,14 @@
 import subprocess as sp
+import threading as th
 
-try:
-	sp.run(['python', 'Broker.py'])
-	sp.run(['python', 'Site.py'])
-except Exception as e:
-	print(e)
+files = ['Broker', 'Site']
+
+
+def launcher(file):
+	program = th.Thread(target=sp.run, args=('python', file, {'check': False}))
+	program.start()
+
+
+for name in files:
+	thread = th.Thread(target=launcher, args=(name+'.py'))
+	thread.run()
