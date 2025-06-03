@@ -1,6 +1,4 @@
 import os.path
-import random
-
 import paho.mqtt.client as mqtt
 
 ex = """Temperature
@@ -21,18 +19,15 @@ data = {}
 # Callback при подключении к брокеру
 def on_connect(client, userdata, flags, rc):
 	if rc == 0:
-		print("Успешное подключение к брокеру")
-		# Подписываемся на все темы из списка
 		for topic in TOPICS:
 			client.subscribe(topic)
-		client.subscribe('Sistem')
 	else:
 		print(f"Ошибка подключения (код: {rc})")
 
 
 # Callback при получении сообщения
 def on_message(client, userdata, msg):
-	data[msg.topic] = msg.payload.decode()
+	open('data', 'w').write(msg.playload.decode())
 
 
 # Создаем клиента
