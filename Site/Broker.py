@@ -22,8 +22,11 @@ def on_connect(client, userdata, flags, rc):
 
 # Callback при получении сообщения
 def on_message(client, userdata, msg):
-	for um, topics in TOPICS:
-		if msg.topic in topics:
+	for um in TOPICS:
+		if msg.topic in TOPICS[um]:
+			if um not in data.keys():
+				data[um] = {}
+			print(data)
 			data[um][msg.topic] = msg.payload.decode()
 	open('data', 'w').write(str(data))
 
@@ -34,10 +37,5 @@ client.username_pw_set(USERNAME, PASSWORD)
 client.on_connect = on_connect
 client.on_message = on_message
 
-try:
-	# Подключаемся и запускаем цикл обработки сообщений
-	client.connect(BROKER_HOST, BROKER_PORT, 60)
-	client.loop_forever()
-except Exception as e:
-	print(f"Ошибка подключения: {e}")
-	client.disconnect()
+client.connect(BROKER_HOST, BROKER_PORT, 60)
+client.loop_forever()
