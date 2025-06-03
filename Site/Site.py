@@ -245,16 +245,9 @@ def admin(comm):
 		return redirect('/lk')
 
 
-@app.route('/new')
+@app.route('/Ums')
 def sr():
-	return 'Раздел на стадии разработки.'
-
-
-@app.route('/test/Ums')
-def printer():
-	weather = open('data', 'r').read().replace('{', '').replace('}', '')
-	weather = weather.replace(', ', '\n').replace("'", '')
-	return weather
+	return f'Раздел на стадии разработки.'
 
 
 if __name__ == '__main__':
