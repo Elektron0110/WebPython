@@ -4,24 +4,20 @@ import threading as th
 files = ['Broker', 'Site']
 
 
-def launcher(file):
+def launcher(*file):
+	file = str(file).replace('(', '').replace(')', '').replace(',', '')
+	file = file.replace(' ', '').replace("'", '')
 	try:
 		program = th.Thread(target=sp.run,
-		                    args=('python', file),
+		                    args=(('python', file),),
 		                    kwargs={'check': False})
 		program.start()
+		program.join()
 	except Exception as e:
-		print(f"Ошибка при запуске {file}: {e}")
+		print(e)
 
 
-# Основной код
-threads = []
 for name in files:
 	file_name = name + '.py'
-	thread = th.Thread(target=launcher, args=(file_name,))
+	thread = th.Thread(target=launcher, args=file_name)
 	thread.start()
-	threads.append(thread)
-
-# Ждем завершения всех потоков
-for t in threads:
-	t.join()
