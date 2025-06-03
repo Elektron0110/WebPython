@@ -219,7 +219,7 @@ def new():
 Ориентировочная стоимость выполнения задачи: {5 * int(lines) * int(question[way])}₽.'''
 
 
-@app.route('/adm/<comm>')
+@app.route('/adm/<comm>', methods=['GET', 'POST'])
 def admin(comm):
 	admins = ['s762672@ya.ru', 'test@test']
 	if 'user' in session:
@@ -229,6 +229,14 @@ def admin(comm):
 				                       u=AuthUser.query.all(),
 				                       d=UserInfo.query.all(),
 				                       a=Applications.query.all())
+			elif comm == 'del':
+				with app.app_context():
+					email = request.form['way']
+					user = AuthUser.query.filter_by(email=email).first()
+					data = UserInfo.query.filter_by(email=email).first()
+					db.session.delete(user)
+					db.session.delete(data)
+				return redirect('/lk')
 			else:
 				return redirect('/lk')
 		else:
