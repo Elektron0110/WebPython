@@ -1,25 +1,20 @@
 import os.path
 import paho.mqtt.client as mqtt
 
-ex = """Temperature
-Humidity"""
-
-if not os.path.isfile(f"topics"):
-	open(f"topics", 'w').write(ex)
-
 # Параметры подключения
 BROKER_HOST = "m6.wqtt.ru"
 BROKER_PORT = 19310
 USERNAME = "Qwerty"
 PASSWORD = "1234567890"
-TOPICS = open('topics', 'r').read().split("\n")
+SUBS = ['Temperature', 'Humidity']
+TOPICS = {'Um1': {'Temperature', 'Humidity'}}
 data = {}
 
 
 # Callback при подключении к брокеру
 def on_connect(client, userdata, flags, rc):
 	if rc == 0:
-		for topic in TOPICS:
+		for topic in SUBS:
 			client.subscribe(topic)
 	else:
 		print(f"Ошибка подключения (код: {rc})")
@@ -27,7 +22,9 @@ def on_connect(client, userdata, flags, rc):
 
 # Callback при получении сообщения
 def on_message(client, userdata, msg):
-	data[msg.topic] = msg.payload.decode()
+	for um, topics in TOPICS:
+		if msg.topic in topics:
+			data[um][msg.topic] = msg.payload.decode()
 	open('data', 'w').write(str(data))
 
 
