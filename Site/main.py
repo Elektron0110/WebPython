@@ -1,7 +1,7 @@
 import subprocess as sp
 import threading as th
 
-launch = False
+launch = True
 python = ['Broker.py', 'Site.py']
 exe = ['Broker.exe', 'Site.exe']
 
