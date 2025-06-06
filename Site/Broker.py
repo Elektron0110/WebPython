@@ -38,5 +38,8 @@ client.username_pw_set(USERNAME, PASSWORD)
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.connect(BROKER_HOST, BROKER_PORT, 60)
-client.loop_forever()
+try:
+	client.connect(BROKER_HOST, BROKER_PORT, 60)
+	client.loop_forever()
+except Exception as e:
+	print(e)

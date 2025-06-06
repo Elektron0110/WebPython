@@ -1,7 +1,7 @@
 # Default ignored files
 /build/
 /Site/__pycache__/
-/Site/data
+/Site/data/
 /Site/Site/
 /Site/instance/
 /dist/mysite/
