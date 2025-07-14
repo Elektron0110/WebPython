@@ -1,3 +1,4 @@
+"""Модуль, отвечающий за работу сервера."""
 import os
 import random
 from flask import Flask
@@ -250,7 +251,8 @@ def sr():
 	return f'Раздел на стадии разработки.'
 
 
-if __name__ == '__main__':
+if os.path.isdir('C:'):
+	"""Функция, запускающая работу сервера."""
 	import webbrowser
 	
 	date = datetime.now().strftime("%H%M")
