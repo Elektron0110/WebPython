@@ -1,38 +1,23 @@
-import subprocess as sp
-import threading as th
+from multiprocessing import Process
+import Broker, Site
 
-launch = True
-python = ['Broker.py', 'Site.py']
-exe = ['Broker.exe', 'Site.exe']
+# def launcher(num):
+# 	print(num)
+# 	if num == 0:
+# 		try:
+# 			print(num)
+# 			Process(target=Broker.broker).run()
+# 		except Exception as e:
+# 			print(e)
+# 	else:
+# 		try:
+# 			print(num)
+# 			Process(target=Site.site).run()
+# 		except Exception as e:
+# 			print(e)
 
-if launch:
-	def launcher(*file):
-		file = str(file).replace('(', '').replace(')', '').replace(',', '')
-		file = file.replace(' ', '').replace("'", '')
-		try:
-			program = th.Thread(target=sp.run,
-			                    args=(('python', file),),
-			                    kwargs={'check': False})
-			program.start()
-		except Exception as e:
-			print(e)
-
-	for name in python:
-		thread = th.Thread(target=launcher, args=name)
-		thread.start()
-
-else:
-	def launcher(*file):
-		file = str(file).replace('(', '').replace(')', '').replace(',', '')
-		file = file.replace(' ', '').replace("'", '')
-		try:
-			program = th.Thread(target=sp.run,
-			                    args=(file,),
-			                    kwargs={'check': False})
-			program.start()
-		except Exception as e:
-			print(e)
-
-	for name in exe:
-		thread = th.Thread(target=launcher, args=name)
-		thread.start()
+if __name__ == '__main__':
+	for i in range(2):
+		# Process(target=launcher, args=(i,)).run()
+		Process(target=Broker.broker).run()
+		Process(target=Site.site).run()
