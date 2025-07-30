@@ -282,23 +282,20 @@ def admin(comm):
 def sr():
 	return f'Раздел на стадии разработки.'
 
-name = 'Почта'
+mname = 'Почта'
 
 def get_messages():
-	from Site import session, MMess, MUsers, app
 	with app.app_context():
 		mu = MUsers.query.filter_by(email=session['email']).first()
 		mms = MMess.query.filter_by(recipient=mu.id).all()
 		mm = [[m.id, m.recipient, m.sender, m.topic, m.text, m.date] for m in mms]
 		return mm
 
-work = Blueprint('work', __name__, template_folder='templates')
-@work.route('/mail', methods=['GET', 'POST'])
-def login():
-	from Site import session, MMess, MUsers, UserInfo, AuthUser, new_user
+@app.route('/mail', methods=['GET', 'POST'])
+def mmain():
 	if request.method == 'GET':
 		if 'user' in session:
-			return render_template('MLK.html', name=name, session=session, messes=get_messages())
+			return render_template('MLK.html', name=mname, session=session, messes=get_messages())
 		else:
 			return render_template('Mlogin.html')
 	if request.method == 'POST':
@@ -320,7 +317,7 @@ def login():
 				session['telephone'] = ui.tel
 				session['birthday'] = ui.b_day
 				session['email'] = ui.email
-				return render_template('MLK.html', name=name, session=session)
+				return render_template('MLK.html', name=mname, session=session, messes=get_messages())
 			else:
 				print(password, u.password)
 				return 'Password in invalid.'
