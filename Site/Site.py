@@ -294,7 +294,7 @@ def get_messages():
 			mus = MUsers.query.filter_by(id=m.sender).first()
 			mu = str(mus).split(' | ')[1] if mus else 'System'
 			for w in m.topic.split(' '):
-				if m.topic.split(' ').index(w) < 5:
+				if m.text.split(' ').index(w) < 5:
 					text += w+' ' 
 			mm.append((m.id, mu, m.topic, text, m.date.strftime('%d.%m.%Y %H:%M')))
 		print(mm)
@@ -336,6 +336,23 @@ def mmain():
 			                       password=password,
 			                       date=(datetime.today() - timedelta(days=365) * 18).strftime('%Y-%m-%d'))
 
+
+@app.route('/mail/mess/<id>')
+def see(id):
+	if 'user' in session:
+		mms = get_messages()
+		ids = [mm[0] for mm in mms]
+		if int(id) in ids:
+			mm = mms[ids.index(int(id))]
+			mess = f"""От: {mm[1]}.
+Тема: {mm[2]}.
+Текст письма: {mm[3]}.
+Время: {mm[4]}."""
+			return str(mess)
+		else:
+			return redirect('/mail')
+	else:
+		return redirect('/mail')
 
 
 if os.path.isdir('C:'):
