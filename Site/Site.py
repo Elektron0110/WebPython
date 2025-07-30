@@ -288,7 +288,16 @@ def get_messages():
 	with app.app_context():
 		mu = MUsers.query.filter_by(email=session['email']).first()
 		mms = MMess.query.filter_by(recipient=mu.id).all()
-		mm = [[m.id, m.recipient, m.sender, m.topic, m.text, m.date] for m in mms]
+		mm = []
+		for m in mms:
+			text = ''
+			mus = MUsers.query.filter_by(id=m.sender).first()
+			mu = str(mus).split(' | ')[1] if mus else 'System'
+			for w in m.topic.split(' '):
+				if m.topic.split(' ').index(w) < 5:
+					text += w+' ' 
+			mm.append((m.id, mu, m.topic, text, m.date.strftime('%d.%m.%Y %H:%M')))
+		print(mm)
 		return mm
 
 @app.route('/mail', methods=['GET', 'POST'])
