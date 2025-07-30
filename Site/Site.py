@@ -5,6 +5,7 @@ from flask import Flask
 from flask import render_template, request, session, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
+from mail import work
 
 slicer = r'\|/'
 name = 'Программа'
@@ -21,7 +22,11 @@ if not os.path.isdir('Site/applications'):
 # -------------------------------------------------------------
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Site.db'
+app.config['SQLALCHEMY_BINDS'] = {
+	'mail':        'sqlite:///Mail.db'
+}
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.register_blueprint(work)
 db = SQLAlchemy(app)
 
 
@@ -32,7 +37,6 @@ class AuthUser(db.Model):
 	
 	def __repr__(self):
 		return f'{self.email} | {self.password}'
-
 
 class UserInfo(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -46,7 +50,6 @@ class UserInfo(db.Model):
 	def __repr__(self):
 		return f'{self.email} | {self.s} | {self.f} | {self.t} | {self.tel} | {self.b_day}'
 
-
 class Applications(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	email = db.Column(db.String(120), db.ForeignKey('auth_user.email'), nullable=False)
@@ -57,6 +60,28 @@ class Applications(db.Model):
 	
 	def __repr__(self):
 		return f'<Applications {self.email}>'
+
+
+class MUsers(db.Model):
+	__bind_key__ = 'mail'
+	id = db.Column(db.Integer, unique=True, primary_key=True)
+	email = db.Column(db.String(120), unique=True, nullable=False)
+	date = db.Column(db.Date, nullable=False)
+	
+	def __repr__(self):
+		return f'<User of mail {self.email}>'
+
+class MMess(db.Model):
+	__bind_key__ = 'mail'
+	id = db.Column(db.Integer, primary_key=True)
+	recipient = db.Column(db.Integer, nullable=False)
+	sender = db.Column(db.Integer)
+	topic = db.Column(db.String(50), nullable=False)
+	text = db.Column(db.String(500), nullable=False)
+	date = db.Column(db.DateTime, nullable=False)
+	
+	def __repr__(self):
+		return f'<Message {self.text}>'
 
 
 # Создание таблиц в базе данных
@@ -73,6 +98,15 @@ def new_user(**k):
 			             b_day=k.get('b_day', ''))
 			db.session.add(a)
 			db.session.add(i)
+			db.session.commit()
+		if MUsers.query.filter_by(email=k.get('email', '')).first() is None:
+			mu = MUsers(email=k.get('email', ''), date=datetime.today())
+			db.session.add(mu)
+			db.session.commit()
+			rec = MUsers.query.filter_by(email=k.get('email', '')).first()
+			mm = MMess(recipient=rec.id, topic='Добро пожаловать в Почту.',
+			  text='Добро пожаловать в Почту. Почта - мой новый проект.', date=datetime.today())
+			db.session.add(mm)
 			db.session.commit()
 
 
