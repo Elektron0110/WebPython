@@ -344,9 +344,10 @@ def see(id):
 		ids = [mm[0] for mm in mms]
 		if int(id) in ids:
 			mm = mms[ids.index(int(id))]
-			mess = f"""От: {mm[1]}.
-Тема: {mm[2]}.
-Текст письма: {mm[3]}.
+			mess = f"""
+От: {mm[1]}.<br>
+Тема: {mm[2]}.<br>
+Текст письма: {mm[3]}.<br>
 Время: {mm[4]}."""
 			return str(mess)
 		else:
