@@ -39,7 +39,11 @@
 			{% for mm in messes %}
 			<tr class="message">
 					<td class="sender">{{mm[1]}}</td>
-					<td class="topic">{{mm[2]}}</td>
+					<td class="topic">
+						<a href="/mail/answer/{{mm[0]}}" class="ml">
+							{{mm[2]}}
+						</a>
+					</td>
 					<td class="text">
 						<a href="/mail/mess/{{mm[0]}}" class="ml">
 							{{mm[3]}}

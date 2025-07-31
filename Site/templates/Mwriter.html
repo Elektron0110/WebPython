@@ -11,10 +11,10 @@
 		<form method="post" action="/mail/new">
 			<div style=" display: grid; justify-content: center;">
 				<span class="required" title="Обязательное заполнение.">*</span>
-				<input required type="email" name="recipient" class="in" placeholder="Электронная почта получателя.">
+				<input value="{{rec}}" required type="email" name="recipient" class="in" placeholder="Электронная почта получателя.">
 				<br>
 				<span class="required" title="Обязательное заполнение.">*</span>
-				<input required type="text" name="topic" class="in" placeholder="Тема сообщения.">
+				<input value="{{top}}" required type="text" name="topic" class="in" placeholder="Тема сообщения.">
 				<br>
 				<span class="required" title="Обязательное заполнение.">*</span>
 				<input required type="text" name="text" class="in" placeholder="Текст сообщения.">

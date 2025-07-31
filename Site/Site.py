@@ -9,8 +9,9 @@ from datetime import datetime, timedelta
 slicer = r'\|/'
 name = 'Программа'
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates')
 app.config["DEBUG"] = True
+app.config["EXPLAIN_TEMPLATE_LOADING"] = True
 
 if not os.path.isdir('Site'):
 	os.mkdir('Site')
@@ -32,7 +33,7 @@ class AuthUser(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	email = db.Column(db.String(120), unique=True, nullable=False)
 	password = db.Column(db.String(80), nullable=False)
-	
+
 	def __repr__(self):
 		return f'{self.email} | {self.password}'
 
@@ -44,7 +45,7 @@ class UserInfo(db.Model):
 	t = db.Column(db.String(50))  # Отчество
 	tel = db.Column(db.String(20))  # Телефон
 	b_day = db.Column(db.String(10))  # Дата рождения
-	
+
 	def __repr__(self):
 		return f'{self.email} | {self.s} | {self.f} | {self.t} | {self.tel} | {self.b_day}'
 
@@ -55,7 +56,7 @@ class Applications(db.Model):
 	way = db.Column(db.String(120))
 	number = db.Column(db.Integer)
 	date = db.Column(db.Date)
-	
+
 	def __repr__(self):
 		return f'<Applications {self.email}>'
 
@@ -65,7 +66,7 @@ class MUsers(db.Model):
 	id = db.Column(db.Integer, unique=True, primary_key=True)
 	email = db.Column(db.String(120), unique=True, nullable=False)
 	date = db.Column(db.Date, nullable=False)
-	
+
 	def __repr__(self):
 		return f'{self.id} | {self.email} | {self.date.strftime("%d.%m.%Y %H:%M")}'
 
@@ -77,7 +78,7 @@ class MMess(db.Model):
 	topic = db.Column(db.String(50), nullable=False)
 	text = db.Column(db.String(500), nullable=False)
 	date = db.Column(db.DateTime, nullable=False)
-	
+
 	def __repr__(self):
 		return f'{self.sender}'
 
@@ -303,7 +304,6 @@ def get_messages(t = True):
 			else:
 				text = m.text
 			mm.append((m.id, mu, m.topic, text, m.date.strftime('%d.%m.%Y %H:%M')))
-		print(mm)
 		return mm
 
 def get_out_messages(t = True):
@@ -325,7 +325,6 @@ def get_out_messages(t = True):
 			else:
 				text = m.text
 			mm.append((m.id, mu, m.topic, text, m.date.strftime('%d.%m.%Y %H:%M')))
-		print(mm)
 		return mm
 
 @app.route('/mail', methods=['GET', 'POST'])
@@ -414,10 +413,28 @@ def moutmess():
 	else:
 		return render_template('Mlogin.html')
 
+@app.route('/mail/answer/<id>')
+def answer(id):
+	id = int(id)
+	if 'user' in session:
+		mms = get_messages(False)+get_out_messages(False)
+		ids = [mm[0] for mm in mms]
+		if int(id) in ids:
+			mess = MMess.query.filter_by(id=id).first()
+			rid = mess.sender
+			topic = mess.topic
+			mus = MUsers.query.filter_by(id=int(rid)).first()
+			email = mus.email #str(mus).split(' | ')[1]
+			return render_template('Mwriter.html', rec=email, top=topic)
+		else:
+			return redirect('/mail')
+	else:
+		return redirect('/mail')
+
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
 	import webbrowser
-	
+
 	date = datetime.now().strftime("%H%M")
 	webbrowser.open_new_tab('http://127.0.0.1:{}/'.format(date))
 	app.run(port=int(date))
