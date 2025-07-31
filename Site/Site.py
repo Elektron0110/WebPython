@@ -293,7 +293,7 @@ def get_messages():
 			text = ''
 			mus = MUsers.query.filter_by(id=m.sender).first()
 			mu = str(mus).split(' | ')[1] if mus else 'System'
-			for w in m.topic.split(' '):
+			for w in m.text.split(' '):
 				if m.text.split(' ').index(w) < 5:
 					text += w+' ' 
 			mm.append((m.id, mu, m.topic, text, m.date.strftime('%d.%m.%Y %H:%M')))
@@ -309,33 +309,38 @@ def mmain():
 			return render_template('Mlogin.html')
 	if request.method == 'POST':
 		thing = request.form['thing']
-		email = request.form['email']
-		password = request.form['password']
-		if thing == 'register':
-			fn = request.form['f_name']
-			sn = request.form['s_name']
-			tn = request.form['t_name']
-			tel = request.form['tel']
-			b_day = request.form['b_day']
-			new_user(email=email, password=password, s=sn, f=fn, t=tn, tel=tel, b_day=b_day)
-		ui = UserInfo.query.filter_by(email=email).first()
-		u = AuthUser.query.filter_by(email=email).first()
-		if u:
-			if password == u.password:
-				session['user'] = f'{ui.s} {ui.f} {ui.t}'
-				session['telephone'] = ui.tel
-				session['birthday'] = ui.b_day
-				session['email'] = ui.email
+		if thing in ['login', 'register']:
+			email = request.form['email']
+			password = request.form['password']
+			if thing == 'register':
+				fn = request.form['f_name']
+				sn = request.form['s_name']
+				tn = request.form['t_name']
+				tel = request.form['tel']
+				b_day = request.form['b_day']
+				new_user(email=email, password=password, s=sn, f=fn, t=tn, tel=tel, b_day=b_day)
+			ui = UserInfo.query.filter_by(email=email).first()
+			u = AuthUser.query.filter_by(email=email).first()
+			if u:
+				if password == u.password:
+					session['user'] = f'{ui.s} {ui.f} {ui.t}'
+					session['telephone'] = ui.tel
+					session['birthday'] = ui.b_day
+					session['email'] = ui.email
+					return render_template('MLK.html', name=mname, session=session, messes=get_messages())
+				else:
+					print(password, u.password)
+					return 'Password in invalid.'
+			else:
+				return render_template('Mregister.html',
+									email=email,
+									password=password,
+									date=(datetime.today() - timedelta(days=365) * 18).strftime('%Y-%m-%d'))
+		else:
+			if 'user' in session:
 				return render_template('MLK.html', name=mname, session=session, messes=get_messages())
 			else:
-				print(password, u.password)
-				return 'Password in invalid.'
-		else:
-			return render_template('Mregister.html',
-			                       email=email,
-			                       password=password,
-			                       date=(datetime.today() - timedelta(days=365) * 18).strftime('%Y-%m-%d'))
-
+				return render_template('Mlogin.html')
 
 @app.route('/mail/mess/<id>')
 def see(id):
@@ -353,6 +358,25 @@ def see(id):
 		else:
 			return redirect('/mail')
 	else:
+		return redirect('/mail')
+
+@app.route('/mail/new/', methods=['GET', 'POST'])
+def mnewmess():
+	if request.method == 'GET':
+		if 'user' in session:
+			return render_template('Mwriter.html')
+		else:
+			return render_template('Mlogin.html')
+	if request.method == 'POST':
+		recipient = request.form['recipient'] if request.form['recipient'] else 's762672@ya.ru'
+		topic = request.form['topic'] if request.form['topic'] else 'Без темы'
+		text = request.form['text']
+		with app.app_context():
+			rec = MUsers.query.filter_by(email=recipient).first()
+			sen = MUsers.query.filter_by(email=session['email']).first()
+			mm = MMess(recipient=rec.id, topic=topic, text=text, date=datetime.today(), sender=sen.id)
+			db.session.add(mm)
+			db.session.commit()
 		return redirect('/mail')
 
 
