@@ -293,9 +293,10 @@ def get_messages():
 			text = ''
 			mus = MUsers.query.filter_by(id=m.sender).first()
 			mu = str(mus).split(' | ')[1] if mus else 'System'
-			for w in m.text.split(' '):
-				if m.text.split(' ').index(w) < 5:
-					text += w+' ' 
+			for i in range(len(m.text)):
+				if i < 20:
+					text += m.text[i]
+			text += '...'
 			mm.append((m.id, mu, m.topic, text, m.date.strftime('%d.%m.%Y %H:%M')))
 		print(mm)
 		return mm
