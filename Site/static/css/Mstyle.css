@@ -41,10 +41,9 @@ img {
 	height: 90px;
 }
 .sender {
-	color: black;
+	color: silver;
 }
 .topic {
-	color: black;
 	font-weight: bold;
 }
 .text {
@@ -59,9 +58,10 @@ img {
     outline: double;
     border-radius: 5px;
     outline-color: blueviolet;
-    outline-offset: 10px;
-    margin: 15;
+    outline-offset: 7.5px;
+    margin: 25;
 }
 a.ml {
 	text-decoration: none;
+	color: black;
 }
