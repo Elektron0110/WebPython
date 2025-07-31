@@ -284,7 +284,7 @@ def sr():
 
 mname = 'Почта'
 
-def get_messages():
+def get_messages(t = True):
 	with app.app_context():
 		mu = MUsers.query.filter_by(email=session['email']).first()
 		mms = MMess.query.filter_by(recipient=mu.id).all()
@@ -293,10 +293,13 @@ def get_messages():
 			text = ''
 			mus = MUsers.query.filter_by(id=m.sender).first()
 			mu = str(mus).split(' | ')[1] if mus else 'System'
-			for i in range(len(m.text)):
-				if i < 20:
-					text += m.text[i]
-			text += '...'
+			if t:
+				for i in range(len(m.text)):
+					if i < 20:
+						text += m.text[i]
+				text += '...'
+			else:
+				text = m.text
 			mm.append((m.id, mu, m.topic, text, m.date.strftime('%d.%m.%Y %H:%M')))
 		print(mm)
 		return mm
@@ -346,15 +349,15 @@ def mmain():
 @app.route('/mail/mess/<id>')
 def see(id):
 	if 'user' in session:
-		mms = get_messages()
+		mms = get_messages(False)
 		ids = [mm[0] for mm in mms]
 		if int(id) in ids:
 			mm = mms[ids.index(int(id))]
 			mess = f"""
-От: {mm[1]}.<br>
-Тема: {mm[2]}.<br>
-Текст письма: {mm[3]}.<br>
-Время: {mm[4]}."""
+От: {mm[1]}<br>
+Тема: {mm[2]}<br>
+Текст письма: {mm[3]}<br>
+Время: {mm[4]}"""
 			return str(mess)
 		else:
 			return redirect('/mail')
