@@ -304,6 +304,26 @@ def get_messages(t = True):
 		print(mm)
 		return mm
 
+def get_out_messages(t = True):
+	with app.app_context():
+		mu = MUsers.query.filter_by(email=session['email']).first()
+		mms = MMess.query.filter_by(sender=mu.id).all()
+		mm = []
+		for m in mms:
+			text = ''
+			mus = MUsers.query.filter_by(id=m.recipient).first()
+			mu = str(mus).split(' | ')[1] if mus else 'Неизвестный пользователь'
+			if t:
+				for i in range(len(m.text)):
+					if i < 20:
+						text += m.text[i]
+				text += '...'
+			else:
+				text = m.text
+			mm.append((m.id, mu, m.topic, text, m.date.strftime('%d.%m.%Y %H:%M')))
+		print(mm)
+		return mm
+
 @app.route('/mail', methods=['GET', 'POST'])
 def mmain():
 	if request.method == 'GET':
@@ -349,7 +369,7 @@ def mmain():
 @app.route('/mail/mess/<id>')
 def see(id):
 	if 'user' in session:
-		mms = get_messages(False)
+		mms = get_messages(False)+get_out_messages(False)
 		ids = [mm[0] for mm in mms]
 		if int(id) in ids:
 			mm = mms[ids.index(int(id))]
@@ -383,6 +403,12 @@ def mnewmess():
 			db.session.commit()
 		return redirect('/mail')
 
+@app.route('/mail/out')
+def moutmess():
+	if 'user' in session:
+		return render_template('MLK.html', name=mname, session=session, messes=get_out_messages())
+	else:
+		return render_template('Mlogin.html')
 
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
