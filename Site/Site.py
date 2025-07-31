@@ -292,7 +292,9 @@ def get_messages(t = True):
 		for m in mms:
 			text = ''
 			mus = MUsers.query.filter_by(id=m.sender).first()
-			mu = str(mus).split(' | ')[1] if mus else 'System'
+			mue = str(mus).split(' | ')[1] if mus else 'System'
+			mu = UserInfo.query.filter_by(email=mue).first() if mus else 'System'
+			mu = mu.f if mus else 'System'
 			if t:
 				for i in range(len(m.text)):
 					if i < 20:
@@ -312,7 +314,9 @@ def get_out_messages(t = True):
 		for m in mms:
 			text = ''
 			mus = MUsers.query.filter_by(id=m.recipient).first()
-			mu = str(mus).split(' | ')[1] if mus else 'Неизвестный пользователь'
+			mue = str(mus).split(' | ')[1] if mus else 'Неизвестный пользователь'
+			mu = UserInfo.query.filter_by(email=mue).first() if mus else 'Неизвестный пользователь'
+			mu = mu.f if mus else 'Неизвестный пользователь'
 			if t:
 				for i in range(len(m.text)):
 					if i < 20:
@@ -373,7 +377,7 @@ def see(id):
 		ids = [mm[0] for mm in mms]
 		if int(id) in ids:
 			mm = mms[ids.index(int(id))]
-			mess = f"""
+			mess = f"""<title>{mm[2]}</title>
 От: {mm[1]}<br>
 Тема: {mm[2]}<br>
 Текст письма: {mm[3]}<br>
@@ -398,7 +402,7 @@ def mnewmess():
 		with app.app_context():
 			rec = MUsers.query.filter_by(email=recipient).first()
 			sen = MUsers.query.filter_by(email=session['email']).first()
-			mm = MMess(recipient=rec.id, topic=topic, text=text, date=datetime.today(), sender=sen.id)
+			mm = MMess(recipient=rec.id if rec else 0, topic=topic, text=text, date=datetime.today(), sender=sen.id)
 			db.session.add(mm)
 			db.session.commit()
 		return redirect('/mail')
