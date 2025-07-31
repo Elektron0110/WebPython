@@ -32,19 +32,22 @@
 			</ul>
 		</div>
 	</header>
-	<div style="margin: 5;">
-		{% for mm in messes %}
-		<a href="/mail/mess/{{mm[0]}}" class="ml">
-			<div class="message">
-				<div class="sender" flex="1"><center>{{mm[1]}}</center></div>
-				<div class="topic" flex="1"><center>{{mm[2]}}</center></div>
-				<div class="text" flex="1"><center>{{mm[3]}}</center></div>
-				<div class="date" flex="1"><center>{{mm[4]}}</center></div>
-			</div>
-		</a>
-		<p></p>
-		{% endfor %}
-	</div>
+	<table style="display: block;">
+		<tbody style="display: block;">
+			{% for mm in messes %}
+			<tr class="message">
+					<td class="sender">{{mm[1]}}</td>
+					<td class="topic">{{mm[2]}}</td>
+					<td class="text">
+						<a href="/mail/mess/{{mm[0]}}" class="ml">
+							{{mm[3]}}
+						</a>
+					</td>
+					<td class="date">{{mm[4]}}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
 	<script>
 		function func () {
 			var menu = document.getElementById("menu");
