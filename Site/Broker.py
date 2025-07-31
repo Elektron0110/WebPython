@@ -29,7 +29,7 @@ def on_message(client, userdata, msg):
 			if um not in data.keys():
 				data[um] = {}
 			data[um][topic] = msg.payload.decode()
-	open('data', 'w').write(str(data))
+	open('data', 'w').write(str(data).replace("'", '"'))
 
 
 # Создаем клиента

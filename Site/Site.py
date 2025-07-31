@@ -281,7 +281,15 @@ def admin(comm):
 
 @app.route('/Ums')
 def sr():
-	return f'Раздел на стадии разработки.'
+	import json
+	text = ''
+	data: dict[str, dict[str, str]] = json.loads(open('data', 'r').read())
+	for um in data:
+		text += um+': '
+		for k in data[um]:
+			text += f'{k}: {data[um][k]}, '
+		text = text[:-2]+'.\n'
+	return text.replace('\n', '<br>')
 
 mname = 'Почта'
 
