@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 slicer = r'\|/'
 name = 'Программа'
 
-app = Flask(__name__, template_folder='templates')
+app = Flask(__name__)
 app.config["DEBUG"] = True
 app.config["EXPLAIN_TEMPLATE_LOADING"] = True
 
