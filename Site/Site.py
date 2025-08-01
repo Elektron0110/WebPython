@@ -388,11 +388,12 @@ def see(id):
 		ids = [mm[0] for mm in mms]
 		if int(id) in ids:
 			mm = mms[ids.index(int(id))]
-			mess = f"""<title>{mm[2]}</title>
+			mess = f'''<title>{mm[2]}</title>
 От: {mm[1]}<br>
 Тема: {mm[2]}<br>
 Текст письма: {mm[3]}<br>
-Время: {mm[4]}"""
+Время: {mm[4]}<br>
+<a href="../del/{id}" title="Сообщение удалится у всех связанных с ним пользователей.">Удалить сообщение</a>'''
 			return str(mess)
 		else:
 			return redirect('/mail')
@@ -438,6 +439,27 @@ def answer(id):
 			mus = MUsers.query.filter_by(id=int(rid)).first()
 			email = mus.email #str(mus).split(' | ')[1]
 			return render_template('Mwriter.html', rec=email, top=topic)
+		else:
+			return redirect('/mail')
+	else:
+		return redirect('/mail')
+
+@app.route('/mail/del/<id>')
+def dmail(id):
+	print(id)
+	id = int(id)
+	if 'user' in session:
+		print(True)
+		mms = get_messages(False)+get_out_messages(False)
+		ids = [mm[0] for mm in mms]
+		if int(id) in ids:
+			print(True)
+			with app.app_context():
+				letter = MMess.query.filter_by(id=int(id)).first()
+				print(letter, type(letter))
+				db.session.delete(letter)
+				db.session.commit()
+			return redirect('/mail')
 		else:
 			return redirect('/mail')
 	else:
