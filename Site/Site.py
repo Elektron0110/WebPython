@@ -1,5 +1,4 @@
 """Модуль, отвечающий за работу сервера."""
-from crypt import methods
 import os
 import random
 from flask import Flask
