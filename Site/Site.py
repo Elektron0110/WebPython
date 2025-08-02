@@ -1,4 +1,5 @@
 """Модуль, отвечающий за работу сервера."""
+from crypt import methods
 import os
 import random
 from flask import Flask
@@ -466,9 +467,13 @@ def dmail(id):
 	else:
 		return redirect('/mail')
 
-@app.route('/api/flight/<flight>')
-def Flight (flight):
-	return fly(flight)
+@app.route('/api/flight', methods=['GET', 'POST'])
+def Flight ():
+	if request.method == 'POST':
+		print('Fl',request.form['flight'])
+		return fly(request.form['flight'])
+	else:
+		return render_template('Fly.html')
 
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
