@@ -7,16 +7,20 @@ flight_tracker = fr_api.get_flight_tracker_config()
 flight_tracker.vehicles = "0"
 fr_api.set_flight_tracker_config(flight_tracker)
 Пулково = fr_api.get_airport('LED')
-информация: dict[int, dict[str, Any]] = {}
+Иркутск = fr_api.get_airport('IKT')
+Толмачёво = fr_api.get_airport('OVB')
+Домодедово = fr_api.get_airport('DME')
+Храброво = fr_api.get_airport('KGD')
+Сочи = fr_api.get_airport('AER')
+Елизово = fr_api.get_airport('PKC')
+самолёт: dict[str, Any] = {}
 интерес = {'number': 'Рейс', 'airline_iata': 'Авиакомпания', 'latitude': 'Широта', 'longitude': 'Долгота',
 		   'heading': 'Курс', 'altitude': 'Высота', 'ground_speed': 'Скорость', 'aircraft_code': 'Тип',
 		   'registration': 'Регистрационный номер', 'origin_airport_iata': 'Аэропорт отправления',
-		   'destination_airport_iata': 'Аэропорт прибытия', 'get_distance_from(Пулково)': 'Расстояние до Пулково'}
-превод = {'Рейс': 'Flight', 'Авиакомпания': 'Airline', 'Широта': 'Latitude', 'Долгота': 'Longitude',
-		   'Курс': 'Well', 'Высота': 'Height', 'Скорость': 'Speed', 'Тип': 'Type',
-		   'Регистрационный номер': 'Registration number', 'Аэропорт отправления': 'Departure airport',
-		   'Аэропорт прибытия': 'Arrival airport', 'Расстояние до Пулково': 'Distance to Pulkovo'}
-
+		   'destination_airport_iata': 'Аэропорт прибытия', 'get_distance_from(Пулково)': 'Расстояние до Пулково',
+		   'get_distance_from(Иркутск)': 'Расстояние до Иркутска', 'get_distance_from(Толмачёво)': 'Расстояние до Толмачёво',
+		   'get_distance_from(Домодедово)': 'Расстояние до Домодедово', 'get_distance_from(Храброво)': 'Расстояние до Храброво',
+		   'get_distance_from(Сочи)': 'Расстояние до Сочи', 'get_distance_from(Елизово)': 'Расстояние до Елизово'}
 def fly(рейс):
 	компания = str()
 	for знак in рейс:
@@ -25,7 +29,6 @@ def fly(рейс):
 	Авиакомпания = fr_api.get_flights(компания)
 	for ac in Авиакомпания:
 		if рейс == ac.callsign:
-			самолёт: dict[str, Any] = {}
 			for предмет in интерес:
 				самолёт[интерес[предмет]] = eval(f'ac.{предмет}')
 			if самолёт['Аэропорт прибытия']:
@@ -36,10 +39,4 @@ def fly(рейс):
 				отправления = fr_api.get_airport(самолёт['Аэропорт отправления'])
 				отправления = f'{отправления.name} - {отправления.city}'
 				самолёт['Аэропорт отправления'] = отправления
-			информация[list(информация.keys())[-1]+1 if list(информация.keys()) else 0] = самолёт
-	json = {}
-	for k, v in информация.items():
-		json[k] = {}
-		for sk, sv in v.items():
-			json[k][превод[sk]] = sv
-	return dumps(json)
+	return str(самолёт).replace("{", "").replace("}", "").replace(", ", "<br>").replace(": ", " ― ").replace("'", "")
