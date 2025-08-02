@@ -5,6 +5,7 @@ from flask import Flask
 from flask import render_template, request, session, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
+from searcher import fly
 
 slicer = r'\|/'
 name = 'Программа'
@@ -464,6 +465,10 @@ def dmail(id):
 			return redirect('/mail')
 	else:
 		return redirect('/mail')
+
+@app.route('/api/flight/<flight>')
+def Flight (flight):
+	return fly(flight)
 
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
