@@ -119,7 +119,7 @@ def new_application(**k):
 
 
 new_user(email='example@mail.ru', password='', s='', f='System', t='',
-         tel='+0 (000) 00-00-00', b_day='00-00-00')
+         tel='+0 (000) 00-00-00', b_day='00-00-00', id=-1)
 new_user(email='s762672@ya.ru', password='Alex', s='Шульган', f='Алексей', t='Владимирович',
          tel='+7 (904) 333-55-37', b_day='2011-10-01')
 new_user(email='test@test', password='Bug', s='Тестов', f='Тест', t='Тестович',
