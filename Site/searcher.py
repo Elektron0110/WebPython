@@ -15,18 +15,29 @@ fr_api.set_flight_tracker_config(flight_tracker)
 Елизово = fr_api.get_airport('PKC')
 самолёт: dict[str, Any] = {}
 интерес = {'number': 'Рейс', 'airline_iata': 'Авиакомпания', 'latitude': 'Широта', 'longitude': 'Долгота',
-		   'heading': 'Курс', 'altitude': 'Высота', 'ground_speed': 'Скорость', 'aircraft_code': 'Тип',
+		   'heading': 'Курс', 'altitude': 'Высота (в м)', 'ground_speed': 'Скорость (в км/ч.)', 'aircraft_code': 'Тип',
 		   'registration': 'Регистрационный номер', 'origin_airport_iata': 'Аэропорт отправления',
-		   'destination_airport_iata': 'Аэропорт прибытия', 'get_distance_from(Пулково)': 'Расстояние до Пулково',
-		   'get_distance_from(Братск)': 'Расстояние до Братска', 'get_distance_from(Толмачёво)': 'Расстояние до Толмачёво',
-		   'get_distance_from(Домодедово)': 'Расстояние до Домодедово', 'get_distance_from(Храброво)': 'Расстояние до Храброво',
-		   'get_distance_from(Платов)': 'Расстояние до Платова', 'get_distance_from(Елизово)': 'Расстояние до Елизово'}
-def fly(рейс):
-	компания = str()
-	for знак in рейс:
-		if not знак.isdigit():
-			компания += знак
+		   'destination_airport_iata': 'Аэропорт прибытия', 'get_distance_from(Пулково)': 'Расстояние до Пулково (в км)',
+		   'get_distance_from(Братск)': 'Расстояние до Братска (в км)', 'get_distance_from(Толмачёво)': 'Расстояние до Толмачёво (в км)',
+		   'get_distance_from(Домодедово)': 'Расстояние до Домодедово (в км)', 'get_distance_from(Храброво)': 'Расстояние до Храброво (в км)',
+		   'get_distance_from(Платов)': 'Расстояние до Платова (в км)', 'get_distance_from(Елизово)': 'Расстояние до Елизово (в км)'}
+def fly(рейс: str | list[str]):
+	print(True)
+	if isinstance(рейс, str):
+		рейс = рейс.split(' ')
+	компания = рейс[0]
+	компания = компания.replace('SU', 'AFL')
+	компания = компания.replace('S7', 'SBI')
+	компания = компания.replace('DP', 'PBD')
+	компания = компания.replace('U6', 'SVR')
+	компания = компания.replace('UT', 'UTA')
+	компания = компания.replace('N4', 'NWS')
+	компания = компания.replace('RW', 'RWD')
+	компания = компания.replace('5N', 'AUL')
+	рейс = компания+рейс[1]
 	Авиакомпания = fr_api.get_flights(компания)
+	print(Авиакомпания)
+	print(компания, рейс)
 	for ac in Авиакомпания:
 		if рейс == ac.callsign:
 			for предмет in интерес:
