@@ -6,6 +6,7 @@ from flask import render_template, request, session, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 from searcher import fly
+from alice import bp
 
 slicer = r'\|/'
 name = 'Программа'
@@ -13,6 +14,7 @@ name = 'Программа'
 app = Flask(__name__)
 app.config["DEBUG"] = True
 app.config["EXPLAIN_TEMPLATE_LOADING"] = True
+app.register_blueprint(bp)
 
 if not os.path.isdir('Site'):
 	os.mkdir('Site')
