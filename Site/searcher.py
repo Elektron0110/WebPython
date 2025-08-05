@@ -22,11 +22,10 @@ fr_api.set_flight_tracker_config(flight_tracker)
 		   'get_distance_from(Домодедово)': 'Расстояние до Домодедово (в км)', 'get_distance_from(Храброво)': 'Расстояние до Храброво (в км)',
 		   'get_distance_from(Платов)': 'Расстояние до Платова (в км)', 'get_distance_from(Елизово)': 'Расстояние до Елизово (в км)'}
 def fly(рейс: str | list[str]):
-	print(True)
 	if isinstance(рейс, str):
 		рейс = рейс.split(' ')
 	компания = рейс[0]
-	компания = компания.replace('SU', 'AFL')
+	компания = компания.replace('SU', 'AFL' if not 6000 < int(рейс[1]) < 7000 else 'SDM')
 	компания = компания.replace('S7', 'SBI')
 	компания = компания.replace('DP', 'PBD')
 	компания = компания.replace('U6', 'SVR')
@@ -36,12 +35,13 @@ def fly(рейс: str | list[str]):
 	компания = компания.replace('5N', 'AUL')
 	рейс = компания+рейс[1]
 	Авиакомпания = fr_api.get_flights(компания)
-	print(Авиакомпания)
-	print(компания, рейс)
+	print(рейс)
 	for ac in Авиакомпания:
 		if рейс == ac.callsign:
 			for предмет in интерес:
 				самолёт[интерес[предмет]] = eval(f'ac.{предмет}')
+				if str(eval(f'ac.{предмет}'))[0].isdigit():
+					самолёт[интерес[предмет]] = round(eval(f'ac.{предмет}'), 2)
 			if самолёт['Аэропорт прибытия']:
 				прибытия = fr_api.get_airport(самолёт['Аэропорт прибытия'])
 				прибытия = f'{прибытия.name} - {прибытия.city}'
