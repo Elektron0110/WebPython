@@ -2,7 +2,7 @@
 import os
 import random
 from flask import Flask
-from flask import render_template, request, session, redirect
+from flask import render_template, request, session, redirect, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 from searcher import fly
@@ -475,6 +475,14 @@ def Flight ():
 		return fly(request.form['flight'])
 	else:
 		return render_template('Fly.html')
+
+@app.route('/down', methods=['GET', 'POST'])
+def Down ():
+	return render_template('down.html')
+
+@app.route('/down/<file>', methods=['GET', 'POST'])
+def Download (file):
+	return send_from_directory('down', file+'.exe')
 
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
