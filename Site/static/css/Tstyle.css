@@ -40,17 +40,8 @@ body {
 img {
 	height: 90px;
 }
-.sender {
-	color: silver;
-}
-.topic {
-	font-weight: bold;
-}
 .text {
 	color: black;
-}
-.date {
-	color: darkgray;
 }
 .message {
     display: flex;
