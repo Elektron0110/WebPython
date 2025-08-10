@@ -12,9 +12,16 @@
 		<tbody style="display: block;">
 			{% for train in trains %}
 			<tr class="message">
-				<td>
-					{{train["trainNumberRus"]}}
+				<td style="font-size: xx-large;">
+					{{ train["trainNumberRus"] }}
 				</td>
+				{% for st in ['departureStation', 'arrivalStation'] %}
+				<td>
+					{{ train[st]["name"] }}
+					<br>
+					{{ train[st]["localDateTime"] }}
+				</td>
+				{% endfor %}
 			</tr>
 			{% endfor %}
 		</tbody>
