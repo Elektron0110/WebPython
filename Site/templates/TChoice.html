@@ -11,20 +11,10 @@
 		<form method="post" action="/train">
 			<div style=" display: grid; justify-content: center;">
 				<span class="required" title="Обязательное заполнение.">*</span>
-				<select required name="stationDepartureId" class="in" id="select">
-					<option value="">Станция отправления</option>
-					{% for in, st in stations.items() %}
-	   				<option value={{in}}>{{st}}</option>
-					{% endfor %}
-   				</select>
+				<input required name="stationDepartureId" class="in" placeholder="Станция отправления" list="stations">
 				<br>
 				<span class="required" title="Обязательное заполнение.">*</span>
-				<select required name="stationArrivalId" class="in" id="select">
-					<option value="">Станция прибытия</option>
-					{% for in, st in stations.items() %}
-					<option value={{in}}>{{st}}</option>
-					{% endfor %}
-				</select>
+				<input required name="stationArrivalId" class="in" placeholder="Станция прибытия" list="stations">
 				<br>
 			</div>
 			<center>
@@ -32,5 +22,10 @@
 			</center>
 		</form>
 	</div>
+	<datalist id="stations">
+		{% for st in stations %}
+		<option value="{{st}}">
+		{% endfor %}
+	</datalist>
 </body>
 </html>

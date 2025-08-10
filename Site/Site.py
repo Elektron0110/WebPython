@@ -488,15 +488,15 @@ def Download (file):
 @app.route('/train', methods=['GET', 'POST'])
 def trains():
 	stations = {
-		2000002: 'Москва (Ярославский)',
-		2004001: 'Санкт-Петербург (Московский)',
-		2004004: 'Санкт-Петербург (Финляндский)',
-		2004005: 'Санкт-Петербург (Балтийский)',
-		2004181: 'Ж/д. стан. (Павловск)',
-		2004400: 'Великий Новгород',
-		2004500: 'Псков (Пассажирский)',
-		2006004: 'Москва (Ленинградский)',
-		2054771: 'Братск (Падунские Пороги)'
+		'Москва (Ярославский)': 2000002,
+		'Санкт-Петербург (Московский)': 2004001,
+		'Санкт-Петербург (Финляндский)': 2004004,
+		'Санкт-Петербург (Балтийский)': 2004005,
+		'Ж/д. стан. (Павловск)': 2004181,
+		'Великий Новгород': 2004400,
+		'Псков (Пассажирский)': 2004500,
+		'Москва (Ленинградский)': 2006004,
+		'Братск (Падунские Пороги)': 2054771
 	}
 	headers = {"Accept": "application/json, text/javascript, */*; q=0.01",
 			   "Accept-Encoding": "gzip, deflate, br",
@@ -520,8 +520,8 @@ def trains():
 	if request.method != 'POST':
 		return render_template('TChoice.html', stations=stations)
 	else:
-		data = {'stationDepartureId'	: int(request.form['stationDepartureId']),
-				'stationArrivalId'		: int(request.form['stationArrivalId']),
+		data = {'stationDepartureId'	: stations[request.form['stationDepartureId']],
+				'stationArrivalId'		: stations[request.form['stationArrivalId']],
 				'departure'				: request.form.get('departure', True),
 				'date'					: datetime.today().strftime("%d.%m.%Y")}
 		response = post('https://www.rzd.ru/tt/train/schedule', json=data, headers=headers)
