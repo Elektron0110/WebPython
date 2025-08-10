@@ -1,0 +1,67 @@
+html {
+    font-size: 25px;
+}
+body {
+    margin: 0px;
+    background-color: gray;
+}
+.navbar {
+	background-color: rgb(140, 140, 140);
+	color: rgb(195, 195, 195);
+	height: 100px;
+}
+.navbar-button {
+	color: rgb(140, 140, 140);
+	height: 100px;
+	width: 100px;
+	border-radius: 5px;
+	border: double;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+.pressed {
+	background-color: rgb(215, 215, 215);
+	color: rgb(240, 240, 240);
+}
+.name {
+	font: caption;
+	font-size: xxx-large;
+	font-style: italic;
+	font-weight: bold;
+   	height: 100px;
+   	display: flex;
+   	align-items: center;
+}
+.navbar_div {
+   	display: flex;
+   	justify-content: space-between;
+}
+img {
+	height: 90px;
+}
+.sender {
+	color: silver;
+}
+.topic {
+	font-weight: bold;
+}
+.text {
+	color: black;
+}
+.date {
+	color: darkgray;
+}
+.message {
+    display: flex;
+    justify-content: space-between;
+    outline: double;
+    border-radius: 5px;
+    outline-color: blueviolet;
+    outline-offset: 7.5px;
+    margin: 25;
+}
+a.ml {
+	text-decoration: none;
+	color: black;
+}
