@@ -6,7 +6,8 @@ from flask import render_template, request, session, redirect, send_from_directo
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 from searcher import fly
-from alice import bp
+from alice import bp, json
+from requests import post
 
 slicer = r'\|/'
 name = 'Программа'
@@ -131,6 +132,7 @@ new_user(email='test@test', password='Bug', s='Тестов', f='Тест', t='�
 
 app.secret_key = os.urandom(24)
 open('Site/log', 'a').write(f'\nStart at {datetime.now().strftime("%d.%m.%Y %H:%M")}.')
+admins = ['s762672@ya.ru', 'test@test']
 
 
 # @app.errorhandler(404)
@@ -260,7 +262,6 @@ def new():
 
 @app.route('/adm/<comm>', methods=['GET', 'POST'])
 def admin(comm):
-	admins = ['s762672@ya.ru', 'test@test']
 	if 'user' in session:
 		if session['email'] in admins:
 			if comm == 'see':
@@ -483,6 +484,42 @@ def Down ():
 @app.route('/down/<file>', methods=['GET', 'POST'])
 def Download (file):
 	return send_from_directory('down', file+'.exe')
+
+@app.route('/train', methods=['GET', 'POST'])
+def trains():
+	stations = [
+		[2004001, 'СПб (Московский)'],
+		[2006004, 'Мск (Ленинградский)']
+	]
+	headers = {"Accept": "application/json, text/javascript, */*; q=0.01",
+			   "Accept-Encoding": "gzip, deflate, br",
+			   "Accept-Language": "ru",
+			   "Connection": "keep-alive",
+			   "Content-Length": "94",
+			   "Content-Type": "application/json; charset=UTF-8",
+			   "Host": "www.rzd.ru",
+			   "Origin": "https://www.rzd.ru",
+			   "Referer": "https://www.rzd.ru/ru/9278",
+			   "sec-ch-ua": "'Not_A Brand';v='99', 'Microsoft Edge';v='109', 'Chromium';v='109'",
+			   "sec-ch-ua-mobile": "?0",
+			   "sec-ch-ua-platform": "'Windows'",
+			   "Sec-Fetch-Dest": "empty",
+			   "Sec-Fetch-Mode": "cors",
+			   "Sec-Fetch-Site": "same-origin",
+			   "User-Agent": "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.140",
+			   "X-KL-saas-Ajax-Request": "Ajax_Request",
+			   "X-KL-safekids-Ajax-Request": "Ajax_Request",
+			   "X-Requested-With": "XMLHttpRequest"}
+	if request.method != 'POST':
+		return render_template('TChoice.html', stations=stations)
+	else:
+		data = {'stationDepartureId'	: int(request.form['stationDepartureId']),
+				'stationArrivalId'		: int(request.form['stationArrivalId']),
+				'departure'				: request.form.get('departure', True),
+				'date'					: datetime.today().strftime("%d.%m.%Y")}
+		response = post('https://www.rzd.ru/tt/train/schedule', json=data, headers=headers)
+		with open('output.json', 'w') as f: json.dump(response.json(), f)
+		return response.json()
 
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
