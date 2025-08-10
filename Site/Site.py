@@ -487,17 +487,11 @@ def Download (file):
 
 @app.route('/train', methods=['GET', 'POST'])
 def trains():
-	stations = {
-		'Москва (Ярославский)': 2000002,
-		'Санкт-Петербург (Московский)': 2004001,
-		'Санкт-Петербург (Финляндский)': 2004004,
-		'Санкт-Петербург (Балтийский)': 2004005,
-		'Ж/д. стан. (Павловск)': 2004181,
-		'Великий Новгород': 2004400,
-		'Псков (Пассажирский)': 2004500,
-		'Москва (Ленинградский)': 2006004,
-		'Братск (Падунские Пороги)': 2054771
-	}
+	stations = {}
+	file = open('static/stations', 'r', encoding='utf-8').read()
+	for i in range(2, 5+1): file.replace('\t'*i, '\t')
+	for line in file.split('\n'):
+		if line: stations[line.split('\t')[0]] = line.split('\t')[1]
 	headers = {"Accept": "application/json, text/javascript, */*; q=0.01",
 			   "Accept-Encoding": "gzip, deflate, br",
 			   "Accept-Language": "ru",
