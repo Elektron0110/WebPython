@@ -1,6 +1,9 @@
 html {
     font-size: 25px;
 }
+body {
+    margin: 0;
+}
 .form {
 	background-color: lightsteelblue;
     display: flex;
