@@ -468,7 +468,7 @@ def dmail(id):
 	else:
 		return redirect('/mail')
 
-@app.route('/api/flight', methods=['GET', 'POST'])
+@app.route('/flight', methods=['GET', 'POST'])
 def Flight ():
 	if request.method == 'POST':
 		print('Fl',request.form['flight'])
@@ -489,5 +489,5 @@ if os.path.isdir('C:'):
 	import webbrowser
 
 	date = '9999' #datetime.now().strftime("%H%M")
-	webbrowser.open_new_tab('http://127.0.0.1:{}/'.format(date))
+	#webbrowser.open_new_tab('http://127.0.0.1:{}/'.format(date))
 	app.run(port=int(date))
