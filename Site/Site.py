@@ -487,10 +487,10 @@ def Download (file):
 
 @app.route('/train', methods=['GET', 'POST'])
 def trains():
-	stations = [
-		[2004001, 'СПб (Московский)'],
-		[2006004, 'Мск (Ленинградский)']
-	]
+	stations = {
+		2004001: 'СПб (Московский)',
+		2006004: 'Мск (Ленинградский)'
+	}
 	headers = {"Accept": "application/json, text/javascript, */*; q=0.01",
 			   "Accept-Encoding": "gzip, deflate, br",
 			   "Accept-Language": "ru",

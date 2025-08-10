@@ -13,16 +13,16 @@
 				<span class="required" title="Обязательное заполнение.">*</span>
 				<select required name="stationDepartureId" class="in" id="select">
 					<option value="">Станция отправления</option>
-					{% for st in stations %}
-	   				<option value={{st[0]}}>{{st[1]}}</option>
+					{% for in, st in stations.items() %}
+	   				<option value={{in}}>{{st}}</option>
 					{% endfor %}
    				</select>
 				<br>
 				<span class="required" title="Обязательное заполнение.">*</span>
 				<select required name="stationArrivalId" class="in" id="select">
 					<option value="">Станция прибытия</option>
-					{% for st in stations %}
-					<option value={{st[0]}}>{{st[1]}}</option>
+					{% for in, st in stations.items() %}
+					<option value={{in}}>{{st}}</option>
 					{% endfor %}
 				</select>
 				<br>
