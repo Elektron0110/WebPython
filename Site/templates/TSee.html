@@ -10,10 +10,10 @@
 <body>
 	<table style="display: block;">
 		<tbody style="display: block;">
-			{% for mm in messes %}
+			{% for train in trains %}
 			<tr class="message">
-					<td class="text">
-							{{mm[3]}}
+					<td>
+						{{train["trainNumberRus"]}}
 					</td>
 			</tr>
 			{% endfor %}
