@@ -26,9 +26,6 @@
 		</nav>
 		<div id="menu" style="display: none; background-color: lightsteelblue;">
 			<ul>
-				<li><a href="/mail/new">Написать сообщение</a></li>
-				<li><a href="/mail">Входящие сообщения</a></li>
-				<li><a href="/mail/out">Исходящие сообщения</a></li>
 				<li><a href="/lk">Личный кабинет</a></li>
 				<li><a href="/logout">Выход</a></li>
 			</ul>
@@ -38,22 +35,9 @@
 		<tbody style="display: block;">
 			{% for mm in messes %}
 			<tr class="message">
-					<td class="sender">{{mm[1]}}</td>
-					<td class="topic">
-						{% if mm[1] != "System" %}
-						<a href="/mail/answer/{{mm[0]}}" class="ml">
-							{{mm[2]}}
-						</a>
-						{% else %}
-						{{mm[2]}}
-						{% endif %}
-					</td>
 					<td class="text">
-						<a href="/mail/mess/{{mm[0]}}" class="ml">
 							{{mm[3]}}
-						</a>
 					</td>
-					<td class="date">{{mm[4]}}</td>
 			</tr>
 			{% endfor %}
 		</tbody>
