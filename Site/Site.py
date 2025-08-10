@@ -295,7 +295,7 @@ def sr():
 			for k in data[um]:
 				text += f'{k}: {data[um][k]}, '
 			text = text[:-2]+'.\n'
-		return text.replace('\n', '<br>')
+		return '<meta http-equiv="refresh" content="60">'+text.replace('\n', '<br>')
 	else: return 'Запустите "Брокер" для работы данной вкладки.'
 
 mname = 'Почта'
