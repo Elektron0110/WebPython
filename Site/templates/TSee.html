@@ -1,0 +1,69 @@
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<title>Сообщения</title>
+	<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+	<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" type="text/css" />
+	<link href="{{ url_for('static', filename='css/Mstyle.css') }}" rel="stylesheet" type="text/css" />
+	<link rel="icon" sizes="256x256" type="image/ico" href="{{ url_for('static', filename='img/f.ico') }}">
+</head>
+<body>
+	<header>
+		<nav class="navbar">
+			<div class="navbar_div">
+				<a href="/" class="navbar name">
+					<img src="{{ url_for('static', filename='img/pr.png') }}">
+					{{name}}
+				</a>
+				<div>
+					<button type="button" class="navbar-button " id="menu_button" onclick="func()">
+						{{session['user'].split(' ')[0]}}
+						{{session['user'].split(' ')[1]}}
+						{{session['user'].split(' ')[2]}}
+					</button>
+				</div>
+			</div>
+		</nav>
+		<div id="menu" style="display: none; background-color: lightsteelblue;">
+			<ul>
+				<li><a href="/mail/new">Написать сообщение</a></li>
+				<li><a href="/mail">Входящие сообщения</a></li>
+				<li><a href="/mail/out">Исходящие сообщения</a></li>
+				<li><a href="/lk">Личный кабинет</a></li>
+				<li><a href="/logout">Выход</a></li>
+			</ul>
+		</div>
+	</header>
+	<table style="display: block;">
+		<tbody style="display: block;">
+			{% for mm in messes %}
+			<tr class="message">
+					<td class="sender">{{mm[1]}}</td>
+					<td class="topic">
+						{% if mm[1] != "System" %}
+						<a href="/mail/answer/{{mm[0]}}" class="ml">
+							{{mm[2]}}
+						</a>
+						{% else %}
+						{{mm[2]}}
+						{% endif %}
+					</td>
+					<td class="text">
+						<a href="/mail/mess/{{mm[0]}}" class="ml">
+							{{mm[3]}}
+						</a>
+					</td>
+					<td class="date">{{mm[4]}}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<script>
+		function func () {
+			var menu = document.getElementById("menu");
+			var menu_button = document.getElementById("menu_button");
+			see_user(menu_button, menu);
+		}
+	</script>
+</body>
+</html>
