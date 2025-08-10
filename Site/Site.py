@@ -519,7 +519,7 @@ def trains():
 				'date'					: datetime.today().strftime("%d.%m.%Y")}
 		response = post('https://www.rzd.ru/tt/train/schedule', json=data, headers=headers)
 		with open('output.json', 'w') as f: json.dump(response.json(), f)
-		return response.json()
+		return render_template('TSee.html')
 
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
