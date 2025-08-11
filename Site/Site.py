@@ -522,7 +522,7 @@ def trains():
 		with open('output.json', 'w') as f: json.dump(response.json(), f)
 		return render_template('TSee.html', trains=response.json()['trains'])
 
-blocked_ips = open('blocked_ips', 'r').read().split('\n')
+blocked_ips = open('static/blocked_ips', 'r').read().split('\n')
 
 @app.before_request
 def limit_remote_addr():
