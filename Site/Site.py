@@ -2,7 +2,7 @@
 import os
 import random
 from flask import Flask
-from flask import render_template, request, session, redirect, send_from_directory
+from flask import render_template, request, session, redirect, send_from_directory, abort
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 from searcher import fly
@@ -521,6 +521,13 @@ def trains():
 		response = post('https://www.rzd.ru/tt/train/schedule', json=data, headers=headers)
 		with open('output.json', 'w') as f: json.dump(response.json(), f)
 		return render_template('TSee.html', trains=response.json()['trains'])
+
+blocked_ips = open('blocked_ips', 'r').read().split('\n')
+
+@app.before_request
+def limit_remote_addr():
+	if request.remote_addr in blocked_ips:
+		abort(403)  # Forbiden
 
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
