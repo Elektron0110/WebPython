@@ -7,7 +7,8 @@ USERNAME = "Qwerty"
 PASSWORD = "1234567890"
 SUBS = ['Temperature', 'Humidity', 'Led', 'Um2T', 'Um2H']
 TOPICS = {'Um1': ['Temperature', 'Humidity', 'Led'],
-          'Um2': ['Um2T', 'Um2H']}
+          'Um2': ['Um2T', 'Um2H'],
+          'Um3': ['Um3T', 'Um3H']}
 data = {}
 
 
