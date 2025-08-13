@@ -483,7 +483,7 @@ def Down ():
 
 @app.route('/down/<file>', methods=['GET', 'POST'])
 def Download (file):
-	return send_from_directory('down', file+'.exe')
+	return send_from_directory('down', file+'.exe') if os.path.isfile(f'down/{file}.exe') else 'Файл не найден.'
 
 @app.route('/train', methods=['GET', 'POST'])
 def trains():
@@ -522,7 +522,7 @@ def trains():
 		with open('output.json', 'w') as f: json.dump(response.json(), f)
 		return render_template('TSee.html', trains=response.json()['trains'])
 
-if not os.path.isdir('static/blocked_ips'): open('static/blocked_ips', 'w').write()
+if not os.path.isdir('static/blocked_ips'): open('static/blocked_ips', 'w').write('')
 blocked_ips = open('static/blocked_ips', 'r').read().split('\n')
 
 @app.before_request
