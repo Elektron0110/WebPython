@@ -522,7 +522,7 @@ def trains():
 		with open('output.json', 'w') as f: json.dump(response.json(), f)
 		return render_template('TSee.html', trains=response.json()['trains'])
 
-if not os.path.isdir('static/blocked_ips'): open('static/blocked_ips', 'w').write()
+if not os.path.isdir('static/blocked_ips'): open('static/blocked_ips', 'w').write('')
 blocked_ips = open('static/blocked_ips', 'r').read().split('\n')
 
 @app.before_request
