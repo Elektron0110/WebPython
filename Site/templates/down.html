@@ -1,1 +1,54 @@
-<a href="down/Alex">Alex</a><br>
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<link href="{{ url_for('static', filename='css/down.css') }}" rel="stylesheet" type="text/css" />
+	<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" type="text/css" />
+	<meta charset="utf-8">
+	<title>Скачивание</title>
+</head>
+
+<body>
+	<center>
+		<p>
+			<button type="button" class="dnld_u" id="Alex">
+				Alex
+			</button>
+		</p>
+	</center>
+	<div>
+		<div class="div" id="win_a" style="display: none">
+			<div class="name">
+				<h1>Alex</h1>
+			</div>
+			<div class="down">
+				<div>
+					<h2>Скачать Alex.</h2>
+					<br>
+					<img title="Значёк программы." src="{{ url_for('static', filename='img/d/M.ico') }}">
+					<br>
+					<a target="_blank" href="/down/Alex">Ссылка на скачивание Alex.</a>
+				</div>
+			</div>
+		</div>
+		<br>
+		</div>
+</body>
+<script>
+	let Alex = document.getElementById("Alex")
+	let wa = document.getElementById("win_a")
+
+	Alex.addEventListener('click', () => {
+	if (Alex.className == "dnld_u") {
+		Alex.className = "dnld_d";
+	}
+	else {
+		Alex.className = "dnld_u";
+	}
+	wa.style.display === 'none' ? wa.style.display = 'block' : wa.style.display = 'none';
+	});
+</script>
+
+</html>

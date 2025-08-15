@@ -1,0 +1,38 @@
+html {
+  color: white;
+}
+
+a {
+  color: #102c5d;
+}
+
+.div {
+  border-style: double;
+  border-color: cornflowerblue;
+}
+
+.dnld_u {
+  background: #FFAF00;
+  color: #FFF200;
+  height: 100px;
+  width: 100px;
+  border-color: aqua;
+  font-size: 25px;
+}
+
+.dnld_d {
+  background: #FFAFCC;
+  color: #FFF2CC;
+  height: 100px;
+  width: 100px;
+  border-color: coral;
+  font-size: 25px;
+}
+
+.name {
+  width: 15%;
+}
+
+.down{
+	display: flex;
+}
