@@ -23,7 +23,7 @@ if not os.path.isdir('Site'):
 if not os.path.isdir('Site/applications'):
 	os.mkdir('Site/applications')
 
-# -------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------------------
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Site.db'
 app.config['SQLALCHEMY_BINDS'] = {
@@ -128,7 +128,7 @@ new_user(email='s762672@ya.ru', password='Alex', s='Шульган', f='Алек
 new_user(email='test@test', password='Bug', s='Тестов', f='Тест', t='Тестович',
          tel='+0 (123) 456-78-90', b_day='0000-00-00')
 
-# -------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------------------
 
 app.secret_key = os.urandom(24)
 open('Site/log', 'a').write(f'\nStart at {datetime.now().strftime("%d.%m.%Y %H:%M")}.')
