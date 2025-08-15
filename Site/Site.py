@@ -522,11 +522,10 @@ def trains():
 		with open('output.json', 'w') as f: json.dump(response.json(), f)
 		return render_template('TSee.html', trains=response.json()['trains'])
 
-if not os.path.isdir('static/blocked_ips'): open('static/blocked_ips', 'w').write('')
-blocked_ips = open('static/blocked_ips', 'r').read().split('\n')
-
 @app.before_request
 def limit_remote_addr():
+	if not os.path.isfile('static/blocked_ips'): open('static/blocked_ips', 'w').write('')
+	blocked_ips = open('static/blocked_ips', 'r').read().split('\n')
 	if request.remote_addr in blocked_ips:
 		abort(403)  # Forbiden
 
