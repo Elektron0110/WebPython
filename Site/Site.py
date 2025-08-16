@@ -489,9 +489,8 @@ def Download (file):
 def trains():
 	stations = {}
 	file = open('static/stations', 'r', encoding='utf-8').read()
-	for i in range(2, 5+1): file.replace('\t'*i, '\t')
 	for line in file.split('\n'):
-		if line: stations[line.split('\t')[0]] = line.split('\t')[1]
+		if line: stations[line.split('\t')[0]] = line.split('\t')[-1]
 	headers = {"Accept": "application/json, text/javascript, */*; q=0.01",
 			   "Accept-Encoding": "gzip, deflate, br",
 			   "Accept-Language": "ru",
