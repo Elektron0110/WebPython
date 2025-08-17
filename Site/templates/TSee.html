@@ -3,23 +3,35 @@
 	<meta charset="UTF-8">
 	<title>Сообщения</title>
 	<script src="{{ url_for('static', filename='js/script.js') }}"></script>
-	<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" type="text/css" />
 	<link href="{{ url_for('static', filename='css/Mstyle.css') }}" rel="stylesheet" type="text/css" />
 	<link rel="icon" sizes="256x256" type="image/ico" href="{{ url_for('static', filename='img/f.ico') }}">
+	<style>
+		.carriage {
+			width: 210px;
+			height: 45px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+	</style>
 </head>
 <body>
 	<table style="display: block;">
 		<tbody style="display: block;">
 			{% for train in trains %}
 			<tr class="message">
-				<td style="font-size: xx-large;">
-					{{ train["trainNumberRus"] }}
+				<td style="font-size: xx-large;" st="background-image: url(https://www.rzd.ru/api/media/resources/2385015);background-repeat: no-repeat;background-size: cover;">
+					<div class="carriage">
+						{{ train["trainNumberRus"] }}
+					</div>
 				</td>
 				{% for st in ['departureStation', 'arrivalStation'] %}
-				<td>
-					{{ train[st]["name"] }}
-					<br>
-					{{ train[st]["localDateTime"] }}
+				<td st="background-image: url(https://www.rzd.ru/api/media/resources/2385017);background-repeat: no-repeat;background-size: cover;">
+					<div class="carriage">
+						{{ train[st]["name"] }}
+						<br>
+						{{ train[st]["localDateTime"] }}
+					</div>
 				</td>
 				{% endfor %}
 			</tr>
