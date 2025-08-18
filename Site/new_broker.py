@@ -24,7 +24,7 @@ def sr():
 
 @app.route('/Ums/secret')
 def show_graph():
-	if os.path.isfile('Site/graph'):
+	if os.path.isfile('graph'):
 		datae: dict[str, dict[str, str]] = json.loads(open('graph', 'r').read())
 		# Create a plot
 		plt.figure()
