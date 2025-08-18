@@ -25,7 +25,7 @@ def sr():
 @app.route('/Ums/secret')
 def show_graph():
 	if os.path.isfile('Site/graph'):
-		datae: dict[str, dict[str, str]] = json.loads(open('Site/graph', 'r').read())
+		datae: dict[str, dict[str, str]] = json.loads(open('graph', 'r').read())
 		# Create a plot
 		plt.figure()
 		plt.plot([dt.strptime(t, '%Y.%m.%d %H:%M') for t in datae], # type: ignore
@@ -46,7 +46,7 @@ def show_graph():
 @app.route('/Ums')
 def indexes():
 	# Пример данных
-	datae: dict[str, dict[str, str]] = json.loads(open('Site/graph', 'r').read())
+	datae: dict[str, dict[str, str]] = json.loads(open('graph', 'r').read())
 	weather: dict[str, list[str | dt | float]] = dict(topic=[], time=[], value=[])
 	for time in datae:
 		for data in datae[time]:
