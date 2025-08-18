@@ -1,4 +1,6 @@
+import json, os
 import paho.mqtt.client as mqtt
+from datetime import datetime
 
 # Параметры подключения
 BROKER_HOST = "m6.wqtt.ru"
@@ -10,10 +12,14 @@ TOPICS = {'Um1': ['Temperature', 'Humidity', 'Led'],
           'Um2': ['Um2T', 'Um2H'],
           'Um3': ['Um3T', 'Um3H']}
 data = {}
+datae = {}
 
 
 # Callback при подключении к брокеру
 def on_connect(client, userdata, flags, rc):
+	if os.path.isfile('graph'):
+		global datae
+		datae = json.loads(open('graph').read())
 	if rc == 0:
 		for topic in SUBS:
 			client.subscribe(topic)
@@ -29,8 +35,12 @@ def on_message(client, userdata, msg):
 			topic = 'Temperature' if topic[-1:] == 'T' else ('Humidity' if topic[-1:] == 'H' else topic)
 			if um not in data.keys():
 				data[um] = {}
+			if datetime.now().strftime('%Y.%m.%d %H:%M') not in datae.keys():
+				datae[datetime.now().strftime('%Y.%m.%d %H:%M')] = {}
 			data[um][topic] = msg.payload.decode()
+			datae[datetime.now().strftime('%Y.%m.%d %H:%M')][msg.topic] = msg.payload.decode()
 	open('data', 'w').write(str(data).replace("'", '"'))
+	open('graph', 'w').write(str(datae).replace("'", '"'))
 
 
 # Создаем клиента
