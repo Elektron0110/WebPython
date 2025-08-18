@@ -2,6 +2,6 @@
 /Site/Site
 /Site/build
 /Site/instance/
-/.idea/
-/.visual/
-/main.png
+Site/data
+Site/graph
+visual.mp4
