@@ -1,6 +1,7 @@
 """Модуль, отвечающий за работу сервера."""
 import os
 import random
+import new_broker
 from flask import Flask
 from flask import render_template, request, session, redirect, send_from_directory, abort
 from flask_sqlalchemy import SQLAlchemy
@@ -16,6 +17,7 @@ app = Flask(__name__)
 app.config["DEBUG"] = True
 app.config["EXPLAIN_TEMPLATE_LOADING"] = True
 app.register_blueprint(bp)
+app.register_blueprint(new_broker.app)
 
 if not os.path.isdir('Site'):
 	os.mkdir('Site')
@@ -283,21 +285,6 @@ def admin(comm):
 			return redirect('/lk')
 	else:
 		return redirect('/lk')
-
-
-@app.route('/Ums')
-def sr():
-	if os.path.isfile('data'):
-		import json
-		text = ''
-		data: dict[str, dict[str, str]] = json.loads(open('data', 'r').read())
-		for um in data:
-			text += um+': '
-			for k in data[um]:
-				text += f'{k}: {data[um][k]}, '
-			text = text[:-2]+'.\n'
-		return '<meta http-equiv="refresh" content="60">'+text.replace('\n', '<br>')
-	else: return 'Запустите "Брокер" для работы данной вкладки.'
 
 mname = 'Почта'
 
