@@ -17,9 +17,10 @@ datae = {}
 
 # Callback при подключении к брокеру
 def on_connect(client, userdata, flags, rc):
-	if os.path.isfile('graph'):
+	if not os.path.isdir('graph'): os.mkdir('graph')
+	if os.path.isfile(f'graph/{datetime.today().strftime('%Y.%m.%d')}'):
 		global datae
-		datae = json.loads(open('graph').read())
+		datae = json.loads(open(f'graph/{datetime.today().strftime('%Y.%m.%d')}').read())
 	if rc == 0:
 		for topic in SUBS:
 			client.subscribe(topic)
@@ -40,7 +41,7 @@ def on_message(client, userdata, msg):
 			data[um][topic] = msg.payload.decode()
 			datae[datetime.now().strftime('%Y.%m.%d %H:%M')][msg.topic] = msg.payload.decode()
 	open('data', 'w').write(str(data).replace("'", '"'))
-	open('graph', 'w').write(str(datae).replace("'", '"'))
+	open(f'graph/{datetime.today().strftime('%Y.%m.%d')}', 'w').write(str(datae).replace("'", '"'))
 
 
 # Создаем клиента

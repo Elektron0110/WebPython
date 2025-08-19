@@ -1,4 +1,4 @@
-from flask import send_file, render_template
+from flask import send_file, render_template, request
 from flask import Blueprint as Flask
 import matplotlib.pyplot as plt
 import io, os, json
@@ -24,8 +24,8 @@ def sr():
 
 @app.route('/Ums/secret')
 def show_graph():
-	if os.path.isfile('graph'):
-		datae: dict[str, dict[str, str]] = json.loads(open('graph', 'r').read())
+	if os.path.isfile(f'graph/{dt.today().strftime('%Y.%m.%d')}'):
+		datae: dict[str, dict[str, str]] = json.loads(open(f'graph/{dt.today().strftime('%Y.%m.%d')}', 'r').read())
 		# Create a plot
 		plt.figure()
 		plt.plot([dt.strptime(t, '%Y.%m.%d %H:%M') for t in datae], # type: ignore
@@ -44,17 +44,21 @@ def show_graph():
 	return 'Запустите "Брокер" для работы данной вкладки.'
 
 @app.route('/Ums')
-def indexes():
+def index():
+	date = request.args.get('date')
+	if not date: date = dt.today().strftime("%Y.%m.%d")
 	# Пример данных
-	datae: dict[str, dict[str, str]] = json.loads(open('graph', 'r').read())
-	weather: dict[str, list[str | dt | float]] = dict(topic=[], time=[], value=[])
-	for time in datae:
-		for data in datae[time]:
-			weather['topic'].append(data)
-			weather['time'].append(dt.strptime(time, '%Y.%m.%d %H:%M'))
-			weather['value'].append(float(datae[time][data]))
-	df = pd.DataFrame(weather)
-	fig = px.line(df, 'time', 'value', color="topic")
-	graph_html = fig.to_html(full_html=False)
+	if date in os.listdir('graph'):
+		datae: dict[str, dict[str, str]] = json.loads(open(f'graph/{date}', 'r').read())
+		weather: dict[str, list[str | dt | float]] = dict(topic=[], time=[], value=[])
+		for time in datae:
+			for data in datae[time]:
+				weather['topic'].append(data)
+				weather['time'].append(dt.strptime(time, '%Y.%m.%d %H:%M'))
+				weather['value'].append(float(datae[time][data]))
+		df = pd.DataFrame(weather)
+		fig = px.line(df, 'time', 'value', color="topic")
+		graph_html = fig.to_html(full_html=False)
 
-	return render_template('graph.html', graph=graph_html)
+		return render_template(f'graph.html', graph=graph_html)
+	else: return 'Неправильный формат даты.'
