@@ -3,6 +3,7 @@ from flask import Blueprint as Flask
 import matplotlib.pyplot as plt
 import io, os, json
 from datetime import datetime as dt
+from datetime import timedelta as td
 import plotly.express as px
 import pandas as pd
 
@@ -60,5 +61,7 @@ def index():
 		fig = px.line(df, 'time', 'value', color="topic", markers=True)
 		graph_html = fig.to_html(full_html=False)
 
-		return render_template(f'graph.html', graph=graph_html)
+		return render_template(f'graph.html', graph=graph_html,
+						 dt_0=(dt.strptime(date, '%Y.%m.%d')-td(1)).strftime('%Y.%m.%d'),
+						 dt_1=(dt.strptime(date, '%Y.%m.%d')+td(1)).strftime('%Y.%m.%d'))
 	else: return 'Неправильный формат даты.'

@@ -7,7 +7,12 @@
     <title>Погода</title>
 </head>
 <body>
-    <h1>Интерактивная визуализация данных</h1>
+    <center><h1>Интерактивная визуализация данных</h1></center>
     <div>{{ graph | safe }}</div>
+    <div style="display: flex;justify-content: space-around;font-size: 25px;font-weight: bold;">
+        <a style="color: chocolate; text-decoration: none;" href="/Ums?date={{dt_0}}" title="{{dt_0}}">-1 день</a>
+        <a style="color: chocolate; text-decoration: none;" href="/Ums?date={{dt_1}}" title="{{dt_1}}">+1 день</a>
+        <a style="color: chocolate; text-decoration: none;" href="/Ums">Сегодня</a>
+    </div>
 </body>
 </html>
