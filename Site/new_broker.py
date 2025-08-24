@@ -57,7 +57,7 @@ def index():
 				weather['time'].append(dt.strptime(time, '%Y.%m.%d %H:%M'))
 				weather['value'].append(float(datae[time][data]))
 		df = pd.DataFrame(weather)
-		fig = px.line(df, 'time', 'value', color="topic")
+		fig = px.line(df, 'time', 'value', color="topic", markers=True)
 		graph_html = fig.to_html(full_html=False)
 
 		return render_template(f'graph.html', graph=graph_html)
