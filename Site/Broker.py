@@ -34,6 +34,8 @@ def on_message(client, userdata, msg):
 	for um in TOPICS:
 		if topic in TOPICS[um]:
 			topic = 'Temperature' if topic[-1:] == 'T' else ('Humidity' if topic[-1:] == 'H' else topic)
+			if int(list(datae.keys())[-1][-5:].replace(':', '')) > int(datetime.now().strftime('%H%M')):
+				datae.clear()
 			if um not in data.keys():
 				data[um] = {}
 			if datetime.now().strftime('%Y.%m.%d %H:%M') not in datae.keys():
