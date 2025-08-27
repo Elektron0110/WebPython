@@ -1,3 +1,4 @@
 User-Agent *
 Disallow /mail
+Disallow /down/*
 Sitemap https://s762672.cloudpup.ru/sitemap.xml
