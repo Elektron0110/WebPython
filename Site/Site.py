@@ -515,6 +515,11 @@ def limit_remote_addr():
 	if request.remote_addr in blocked_ips:
 		abort(403)  # Forbiden
 
+@app.route('/robots.txt')
+@app.route('/sitemap.xml')
+def static_from_root():
+	return send_from_directory(app.static_folder, request.path[1:])
+
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
 	import webbrowser
