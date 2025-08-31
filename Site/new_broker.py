@@ -64,4 +64,9 @@ def index():
 		return render_template(f'graph.html', graph=graph_html,
 						 dt_0=(dt.strptime(date, '%Y.%m.%d')-td(1)).strftime('%Y.%m.%d'),
 						 dt_1=(dt.strptime(date, '%Y.%m.%d')+td(1)).strftime('%Y.%m.%d'))
-	else: return 'Неправильный формат даты.'
+	else: return f'''
+Неправильный формат даты.
+<br>
+<a style="color: chocolate; text-decoration: none;" href="/Ums?date={(dt.strptime(date, '%Y.%m.%d')-td(1)).strftime('%Y.%m.%d')}" title="{(dt.strptime(date, '%Y.%m.%d')-td(1)).strftime('%Y.%m.%d')}">-1 день</a>
+<a style="color: chocolate; text-decoration: none;" href="/Ums?date={(dt.strptime(date, '%Y.%m.%d')+td(1)).strftime('%Y.%m.%d')}" title="{(dt.strptime(date, '%Y.%m.%d')+td(1)).strftime('%Y.%m.%d')}">+1 день</a>
+'''
