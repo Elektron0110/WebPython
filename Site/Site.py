@@ -29,7 +29,8 @@ if not os.path.isdir('Site/applications'):
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Site.db'
 app.config['SQLALCHEMY_BINDS'] = {
-	'mail':        'sqlite:///Mail.db'
+	'mail':			'sqlite:///Mail.db',
+	'AM':			'sqlite:///AlexMess.db'
 }
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -87,6 +88,12 @@ class MMess(db.Model):
 
 	def __repr__(self):
 		return f'{self.sender}'
+
+class AUsers(db.Model):
+	__bind_key__ = 'AM'
+	id = db.Column(db.Integer, primary_key=True)
+	Username = db.Column(db.String(50), nullable=False, unique=True)
+	Password = db.Column(db.String(50), nullable=False)
 
 
 # Создание таблиц в базе данных
@@ -470,7 +477,17 @@ def Down ():
 
 @app.route('/down/<file>', methods=['GET', 'POST'])
 def Download (file):
-	return send_from_directory('down', file+'.exe') if os.path.isfile(f'down/{file}.exe') else 'Файл не найден.'
+	if file == 'Alex':
+		if request.method == 'POST':
+			with app.app_context():
+				if AUsers.query.filter_by(Username=request.form['name']).first() is None:
+					au = AUsers(username=request.form['name'], password=request.form['pass'])
+					db.session.add(au)
+					db.session.commit()
+			send_from_directory('down', 'Alex.exe')
+		else: return render_template('ADown.html')
+	else: 
+		return send_from_directory('down', file+'.exe') if os.path.isfile(f'down/{file}.exe') else 'Файл не найден.'
 
 @app.route('/train', methods=['GET', 'POST'])
 def trains():
@@ -517,8 +534,18 @@ def limit_remote_addr():
 
 @app.route('/robots.txt')
 @app.route('/sitemap.xml')
+@app.route('/Инструкция.docx')
+@app.route('/Git.exe')
+@app.route('/video.mp4')
 def static_from_root():
 	return send_from_directory(app.static_folder, request.path[1:])
+
+@app.route('/mess/check', methods=['POST'])
+def am_checker():
+	with app.app_context():
+		return '{'+f'"check": "{
+			(AUsers.query.filter_by(Username=request.form["name"]).first().Password == request.form["pass"])
+			if AUsers.query.filter_by(Username=request.form["name"]).first() else False}"'+'}'
 
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
