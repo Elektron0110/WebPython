@@ -95,6 +95,15 @@ class AUsers(db.Model):
 	Username = db.Column(db.String(50), nullable=False, unique=True)
 	Password = db.Column(db.String(50), nullable=False)
 
+class AMesses(db.Model):
+	__bind_key__ = 'AM'
+	id = db.Column(db.Integer, primary_key=True)
+	Sender = db.Column(db.String(50), nullable=False)
+	Recipient = db.Column(db.String(50), nullable=False)
+	Text = db.Column(db.String(250), nullable=False)
+
+	def __repr__(self):
+		return f'{self.id}%$%{self.Sender}%$%{self.Text}'
 
 # Создание таблиц в базе данных
 with app.app_context():
@@ -336,7 +345,6 @@ def get_out_messages(t = True):
 				text = m.text
 			mm.append((m.id, mu, m.topic, text, m.date.strftime('%d.%m.%Y %H:%M')))
 		return mm
-
 @app.route('/mail', methods=['GET', 'POST'])
 def mmain():
 	if request.method == 'GET':
@@ -481,10 +489,10 @@ def Download (file):
 		if request.method == 'POST':
 			with app.app_context():
 				if AUsers.query.filter_by(Username=request.form['name']).first() is None:
-					au = AUsers(username=request.form['name'], password=request.form['pass'])
+					au = AUsers(Username=request.form['name'], Password=request.form['pass'])
 					db.session.add(au)
 					db.session.commit()
-			send_from_directory('down', 'Alex.exe')
+			return send_from_directory('down', 'Alex.exe')
 		else: return render_template('ADown.html')
 	else: 
 		return send_from_directory('down', file+'.exe') if os.path.isfile(f'down/{file}.exe') else 'Файл не найден.'
@@ -540,12 +548,34 @@ def limit_remote_addr():
 def static_from_root():
 	return send_from_directory(app.static_folder, request.path[1:])
 
-@app.route('/mess/check', methods=['POST'])
-def am_checker():
-	with app.app_context():
-		return '{'+f'"check": "{
-			(AUsers.query.filter_by(Username=request.form["name"]).first().Password == request.form["pass"])
-			if AUsers.query.filter_by(Username=request.form["name"]).first() else False}"'+'}'
+@app.route('/mess/<q>', methods=['GET', 'POST'])
+def am_checker(q):
+	if q == 'check':
+		with app.app_context():
+			return '{'+f'"check": "{
+				(AUsers.query.filter_by(Username=request.form["name"]).first().Password == request.form["pass"])
+				if AUsers.query.filter_by(Username=request.form["name"]).first() else False}"'+'}'
+	elif q == 'get':
+		if request.method == 'POST':
+			with app.app_context():
+				if AUsers.query.filter_by(Username=request.form["name"]).first().Password == request.form["pass"]:
+					mm = []
+					for m in AMesses.query.filter_by(Recipient=request.form['name']).all():
+						mm.append((m.id, m.Sender, m.Text))
+					return json.dumps(mm)
+				else: return json.dumps('???')
+		else: return json.dumps('???')
+	elif q == 'send':
+		if request.method == 'GET': return json.dumps('???')
+		else:
+			with app.app_context():
+				if AUsers.query.filter_by(Username=request.form["name"]).first().Password == request.form["pass"]:
+					am = AMesses(Sender=request.form['name'], Recipient=request.form['reci'], Text=request.form['text'])
+					db.session.add(am)
+					db.session.commit()
+					return 'OK'
+				else: return json.dumps('???')
+	else: return json.dumps('???')
 
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
