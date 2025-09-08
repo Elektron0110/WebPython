@@ -101,6 +101,8 @@ class AMesses(db.Model):
 	Sender = db.Column(db.String(50), nullable=False)
 	Recipient = db.Column(db.String(50), nullable=False)
 	Text = db.Column(db.String(250), nullable=False)
+	Type = db.Column(db.String(10), nullable=False)
+	Context = db.Column(db.String(10000))
 
 	def __repr__(self):
 		return f'{self.id}%$%{self.Sender}%$%{self.Text}'
@@ -561,7 +563,7 @@ def am_checker(q):
 				if AUsers.query.filter_by(Username=request.form["name"]).first().Password == request.form["pass"]:
 					mm = []
 					for m in AMesses.query.filter_by(Recipient=request.form['name']).all():
-						mm.append((m.id, m.Sender, m.Text))
+						mm.append((m.id, m.Sender, m.Text, m.Type, m.Context))
 					return json.dumps(mm)
 				else: return json.dumps('???')
 		else: return json.dumps('???')
@@ -570,7 +572,8 @@ def am_checker(q):
 		else:
 			with app.app_context():
 				if AUsers.query.filter_by(Username=request.form["name"]).first().Password == request.form["pass"]:
-					am = AMesses(Sender=request.form['name'], Recipient=request.form['reci'], Text=request.form['text'])
+					am = AMesses(Sender=request.form['name'], Recipient=request.form['reci'], Text=request.form['text'],
+				  		Type=request.form['type'], Context=request.form['cont'])
 					db.session.add(am)
 					db.session.commit()
 					return 'OK'
