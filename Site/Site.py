@@ -94,6 +94,7 @@ class AUsers(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	Username = db.Column(db.String(50), nullable=False, unique=True)
 	Password = db.Column(db.String(50), nullable=False)
+	Rating = db.Column(db.Integer, nullable=False)
 
 class AMesses(db.Model):
 	__bind_key__ = 'AM'
@@ -491,7 +492,7 @@ def Download (file):
 		if request.method == 'POST':
 			with app.app_context():
 				if AUsers.query.filter_by(Username=request.form['name']).first() is None:
-					au = AUsers(Username=request.form['name'], Password=request.form['pass'])
+					au = AUsers(Username=request.form['name'], Password=request.form['pass'], Rating=0)
 					db.session.add(au)
 					db.session.commit()
 			return send_from_directory('down', 'Alex.exe')
@@ -563,7 +564,8 @@ def am_checker(q):
 				if AUsers.query.filter_by(Username=request.form["name"]).first().Password == request.form["pass"]:
 					mm = []
 					for m in AMesses.query.filter_by(Recipient=request.form['name']).all():
-						mm.append((m.id, m.Sender, m.Text, m.Type, m.Context))
+						sender = AUsers.query.filter_by(Username=request.form["name"]).first()
+						mm.append((m.id, m.Sender, m.Text, m.Type, m.Context, sender.Rating))
 					return json.dumps(mm)
 				else: return json.dumps('???')
 		else: return json.dumps('???')
@@ -578,6 +580,14 @@ def am_checker(q):
 					db.session.commit()
 					return 'OK'
 				else: return json.dumps('???')
+	elif q == 'bad':
+		if request.method == 'GET': return json.dumps('???')
+		else:
+			with app.app_context():
+				AUsers.query.filter_by(Username=request.form["name"]).first().Rating -= int(request.form["count"])
+				# db.session.add(am)
+				db.session.commit()
+				return 'OK'
 	else: return json.dumps('???')
 
 if os.path.isdir('C:'):
