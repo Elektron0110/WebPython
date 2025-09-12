@@ -11,7 +11,7 @@ from alice import bp, json
 from requests import post
 
 slicer = r'\|/'
-name = 'Программа'
+name = 'Alexis'
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
