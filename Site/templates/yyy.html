@@ -8,7 +8,7 @@
 </head>
 <body>
 	<div class="form">
-		<form method="post" action="/new">
+		<form method="post" action="/new" enctype="multipart/form-data">
 			<div style=" display: grid; justify-content: center;">
 				<input readonly type="text" name="s" class="in" placeholder="Фамилия" value="{{session['user'].split(' ')[0]}}">
 				<br>
@@ -23,16 +23,10 @@
 					<input readonly type="date" name="b_day" class="in" max="{{date}}" value="{{session['birthday']}}">
 				</label>
 				<br>
-				<select required name="way" class="in" id="select">
-					<option value=""> --- Тип поиска --- </option>
-       				<option value="Имя">Имя Город === 15₽/компания.</option>
-       				<option value="Инн">Инн	======== 10₽/компания.</option>
-       				<option value="Нквд">ОКВЭД-2 ==== 0,1₽/компания.</option>
-   				</select>
+				<input required type="text" name="way" class="in" placeholder="Сайт для поиска">
 				<br>
- 				<input required type="file" class="in" id="fileInput" accept=".txt">
+ 				<input required type="file" class="in" id="fileInput" name="fileInput" accept=".txt">
  				<input required hidden name="lines" id="span">
- 				<input required hidden name="text" id="text">
 				<input hidden type="text" name="type" value="input">
 				<br>
 			</div>

@@ -269,16 +269,17 @@ def new():
 			u.s, u.f, u.t, u.tel, u.b_day = sn, fn, tn, tel, b_day
 			return render_template('yyy.html', session=session)
 		elif request.form['type'] == 'input':
-			question = {'Имя': 3, 'Инн': 2, 'Нквд': 2}
 			lines = request.form['lines']
 			way = request.form['way']
 			text = request.form['text']
+			print(request.files['fileInput'])
 			number = random.randint(1000, 9999)
-			today = datetime.today().strftime('%Y-%m-%d')
-			open(f'Site/applications/new={number}', 'w').write(text)
+			today = datetime.today()
+			# open(f'Site/applications/new={number}', 'w').write(text)
+			request.files['fileInput'].save(f'Site/applications/new={number}')
 			new_application(email=session['email'], line=lines, way=way, num=number, date=today)
 			return f'''Заявка отправлена.
-Ориентировочная стоимость выполнения задачи: {5 * int(lines) * int(question[way])}₽.'''
+Ориентировочная стоимость выполнения задачи: {50 * int(lines) * 2.25}₽.'''
 
 
 @app.route('/adm/<comm>', methods=['GET', 'POST'])

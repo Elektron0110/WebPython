@@ -1,6 +1,5 @@
 const fileInput = document.getElementById('fileInput');
 const span = document.getElementById('span');
-const text_in = document.getElementById('text');
 
 fileInput.addEventListener('change', async (event) => {
     const file = event.target.files[0];
@@ -14,7 +13,6 @@ fileInput.addEventListener('change', async (event) => {
     try {
         const text = await readFile(file);
         const lineCount = countLines(text);
-        text_in.value = text
         span.value = lineCount;
         // Вывод в консоль
 //        console.log('------ File Analysis ------');
