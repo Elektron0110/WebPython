@@ -176,7 +176,7 @@ def login():
 		if 'user' in session:
 			return render_template('LK.html', name=name, session=session)
 		else:
-			return render_template('login.html')
+			return render_template(name=name, template_name_or_list='login.html')
 	if request.method == 'POST':
 		thing = request.form['thing']
 		email = request.form['email']
@@ -201,7 +201,7 @@ def login():
 				print(password, u.password)
 				return 'Password in invalid.'
 		else:
-			return render_template('register.html',
+			return render_template(name=name, template_name_or_list='register.html',
 			                       email=email,
 			                       password=password,
 			                       date=(datetime.today() - timedelta(days=365) * 18).strftime('%Y-%m-%d'))
@@ -254,7 +254,7 @@ def update():
 @app.route('/new', methods=['GET', 'POST'])
 def new():
 	if request.method == 'GET':
-		return render_template('xxx.html',
+		return render_template(name=name, template_name_or_list='xxx.html',
 		                       session=session,
 		                       date=(datetime.today() - timedelta(days=365) * 18).strftime('%Y-%m-%d'))
 	elif request.method == 'POST':
@@ -267,7 +267,7 @@ def new():
 				request.form['t'], request.form['tel'], request.form['b_day']
 			u = UserInfo.query.filter_by(email=session['email']).first()
 			u.s, u.f, u.t, u.tel, u.b_day = sn, fn, tn, tel, b_day
-			return render_template('yyy.html', session=session)
+			return render_template(name=name, template_name_or_list='yyy.html', session=session)
 		elif request.form['type'] == 'input':
 			lines = request.form['lines']
 			way = request.form['way']
@@ -287,7 +287,7 @@ def admin(comm):
 	if 'user' in session:
 		if session['email'] in admins:
 			if comm == 'see':
-				return render_template('AdmSee.html',
+				return render_template(name=name, template_name_or_list='AdmSee.html',
 				                       u=AuthUser.query.all(),
 				                       d=UserInfo.query.all(),
 				                       a=Applications.query.all())
@@ -355,7 +355,7 @@ def mmain():
 		if 'user' in session:
 			return render_template('MLK.html', name=mname, session=session, messes=get_messages())
 		else:
-			return render_template('Mlogin.html')
+			return render_template(name=mname, template_name_or_list='Mlogin.html')
 	if request.method == 'POST':
 		thing = request.form['thing']
 		if thing in ['login', 'register']:
@@ -381,7 +381,7 @@ def mmain():
 					print(password, u.password)
 					return 'Password in invalid.'
 			else:
-				return render_template('Mregister.html',
+				return render_template(name=mname, template_name_or_list='Mregister.html',
 									email=email,
 									password=password,
 									date=(datetime.today() - timedelta(days=365) * 18).strftime('%Y-%m-%d'))
@@ -389,7 +389,7 @@ def mmain():
 			if 'user' in session:
 				return render_template('MLK.html', name=mname, session=session, messes=get_messages())
 			else:
-				return render_template('Mlogin.html')
+				return render_template(name=mname, template_name_or_list='Mlogin.html')
 
 @app.route('/mail/mess/<id>')
 def see(id):
@@ -414,9 +414,9 @@ def see(id):
 def mnewmess():
 	if request.method == 'GET':
 		if 'user' in session:
-			return render_template('Mwriter.html')
+			return render_template(name=mname, template_name_or_list='Mwriter.html')
 		else:
-			return render_template('Mlogin.html')
+			return render_template(name=mname, template_name_or_list='Mlogin.html')
 	if request.method == 'POST':
 		recipient = request.form['recipient'] if request.form['recipient'] else 's762672@ya.ru'
 		topic = request.form['topic'] if request.form['topic'] else 'Без темы'
@@ -434,7 +434,7 @@ def moutmess():
 	if 'user' in session:
 		return render_template('MLK.html', name=mname, session=session, messes=get_out_messages())
 	else:
-		return render_template('Mlogin.html')
+		return render_template(name=mname, template_name_or_list='Mlogin.html')
 
 @app.route('/mail/answer/<id>')
 def answer(id):
@@ -448,7 +448,7 @@ def answer(id):
 			topic = mess.topic
 			mus = MUsers.query.filter_by(id=int(rid)).first()
 			email = mus.email #str(mus).split(' | ')[1]
-			return render_template('Mwriter.html', rec=email, top=topic)
+			return render_template(name=mname, template_name_or_list='Mwriter.html', rec=email, top=topic)
 		else:
 			return redirect('/mail')
 	else:
@@ -481,11 +481,11 @@ def Flight ():
 		print('Fl',request.form['flight'])
 		return fly(request.form['flight'])
 	else:
-		return render_template('Fly.html')
+		return render_template(name=name, template_name_or_list='Fly.html')
 
 @app.route('/down', methods=['GET', 'POST'])
 def Down ():
-	return render_template('down.html')
+	return render_template(name=name, template_name_or_list='down.html')
 
 @app.route('/down/<file>', methods=['GET', 'POST'])
 def Download (file):
@@ -497,7 +497,7 @@ def Download (file):
 					db.session.add(au)
 					db.session.commit()
 			return send_from_directory('down', 'Alex.exe')
-		else: return render_template('ADown.html')
+		else: return render_template(name=name, template_name_or_list='ADown.html')
 	else: 
 		return send_from_directory('down', file+'.exe') if os.path.isfile(f'down/{file}.exe') else 'Файл не найден.'
 
@@ -527,7 +527,7 @@ def trains():
 			   "X-KL-safekids-Ajax-Request": "Ajax_Request",
 			   "X-Requested-With": "XMLHttpRequest"}
 	if request.method != 'POST':
-		return render_template('TChoice.html', stations=stations)
+		return render_template(name=name, template_name_or_list='TChoice.html', stations=stations)
 	else:
 		data = {'stationDepartureId'	: stations[request.form['stationDepartureId']],
 				'stationArrivalId'		: stations[request.form['stationArrivalId']],
@@ -535,7 +535,7 @@ def trains():
 				'date'					: datetime.today().strftime("%d.%m.%Y")}
 		response = post('https://www.rzd.ru/tt/train/schedule', json=data, headers=headers)
 		with open('output.json', 'w') as f: json.dump(response.json(), f)
-		return render_template('TSee.html', trains=response.json()['trains'])
+		return render_template(name=name, template_name_or_list='TSee.html', trains=response.json()['trains'])
 
 @app.before_request
 def limit_remote_addr():

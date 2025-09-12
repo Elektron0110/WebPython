@@ -6,10 +6,10 @@ body {
 }
 .form {
 	background-color: lightsteelblue;
-    display: flex;
-    height: 100vh;
-    justify-content: center;
-    align-items: center;
+	display: flex;
+	height: calc(100vh - 100px);
+	justify-content: center;
+	align-items: center;
 }
 .spec_form {
 	background-color: lightsteelblue;
@@ -37,4 +37,25 @@ form {
 }
 span.required {
 	color: red;
+}
+.navbar {
+    background-color: rgb(140, 140, 255);
+    color: rgb(195, 195, 195);
+    height: 100px;
+}
+.navbar_div {
+    display: flex;
+    justify-content: space-between;
+}
+img {
+	height: 90px;
+}
+.name {
+    font: caption;
+    font-size: xxx-large;
+    font-style: italic;
+    font-weight: bold;
+    height: 100px;
+    display: flex;
+    align-items: center;
 }

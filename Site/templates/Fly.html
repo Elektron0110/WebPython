@@ -7,6 +7,21 @@
 	<link rel="icon" sizes="256x256" type="image/ico" href="{{ url_for('static', filename='img/f.ico') }}">
 </head>
 <body>
+	<header>
+		<nav class="navbar">
+			<div class="navbar_div">
+				<a href="/" class="navbar name">
+					<img src="{{ url_for('static', filename='img/pr.png') }}">
+					{{name}}
+				</a>
+				<div>
+					<button type="button" class="navbar-button " id="menu_button" onclick="func()">
+						<img id="img" title="Меню" src="{{ url_for('static', filename='img/menu.png') }}">
+					</button>
+				</div>
+			</div>
+		</nav>
+	</header>
 	<div class="form">
 		<form method="post" action="#">
 			<div style=" display: grid; justify-content: center;">
