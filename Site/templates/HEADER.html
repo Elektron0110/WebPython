@@ -1,0 +1,17 @@
+<header>
+
+	<nav class="navbar">
+		<div class="navbar_div">
+			<a href="/" class="navbar name">
+				<img src="{{ url_for('static', filename='img/pr.png') }}">
+				{{name}}
+			</a>
+			<div>
+				<button type="button" class="navbar-button " id="menu_button" onclick="func()">
+					<img id="img" title="Меню" src="{{ url_for('static', filename='img/menu.png') }}">
+				</button>
+			</div>
+		</div>
+	</nav>
+	{ block head }{ endblock }
+</header>
