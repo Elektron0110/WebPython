@@ -1,19 +1,15 @@
-{% extends "BASE.html" %}
-{ block body }
-	{% extends "HEADER.html" %}
-	{ block head }
-		{{ super() }}
-		<div id="menu" style="display: none ;background-color: lightsteelblue;">
-			<ul>
-				<li><a href="/lk">{{prompt}}</a></li>
-				<li><a href="/flight">Сервис для отслеживания самолётов.</a></li>
-				<li><a href="/train">Сервис для отслеживания поездов.</a></li>
-				<li><a href="/Ums">Сервис для наблюдения за погодой.</a></li>
-				<hr>
-				<li><a href="/down">Сервис для скачивания последних версий приложений наших парнёров.</a></li>
-			</ul>
-		</div>
-	{ endblock head }
+{% extends "Bases/FormBase.html" %}
+{% block menu %}
+	<ul>
+		<li><a href="/lk">{{prompt}}</a></li>
+		<li><a href="/flight">Сервис для отслеживания самолётов.</a></li>
+		<li><a href="/train">Сервис для отслеживания поездов.</a></li>
+		<li><a href="/Ums">Сервис для наблюдения за погодой.</a></li>
+		<hr>
+		<li><a href="/down">Сервис для скачивания последних версий приложений наших парнёров.</a></li>
+	</ul>
+{% endblock menu %}
+{% block body %}
 	<script>
 		function func () {
 			var menu = document.getElementById("menu");
@@ -22,4 +18,4 @@
 			see_menu(menu_button, menu, img);
 		}
 	</script>
-{ endblock body }
+{% endblock body %}
