@@ -48,6 +48,8 @@ def show_graph():
 def index():
 	date = request.args.get('date')
 	if not date: date = dt.today().strftime("%Y.%m.%d")
+	dt_0 = (dt.strptime(date, '%Y.%m.%d')-td(1)).strftime('%Y.%m.%d') if dt.strptime(date, '%Y.%m.%d') >= dt(2025, 8, 18) else None
+	dt_1 = (dt.strptime(date, '%Y.%m.%d')+td(1)).strftime('%Y.%m.%d') if dt.strptime(date, '%Y.%m.%d') < dt.today()-td(1) else None
 	# Пример данных
 	if date in os.listdir('graph'):
 		datae: dict[str, dict[str, str]] = json.loads(open(f'graph/{date}', 'r').read())
@@ -62,11 +64,11 @@ def index():
 		graph_html = fig.to_html(full_html=False)
 
 		return render_template(f'graph.html', graph=graph_html,
-						 dt_0=(dt.strptime(date, '%Y.%m.%d')-td(1)).strftime('%Y.%m.%d'),
-						 dt_1=(dt.strptime(date, '%Y.%m.%d')+td(1)).strftime('%Y.%m.%d'))
+						 dt_0=dt_0,
+						 dt_1=dt_1)
 	else: return f'''
 Неправильный формат даты.
 <br>
-<a style="color: chocolate; text-decoration: none;" href="/Ums?date={(dt.strptime(date, '%Y.%m.%d')-td(1)).strftime('%Y.%m.%d')}" title="{(dt.strptime(date, '%Y.%m.%d')-td(1)).strftime('%Y.%m.%d')}">-1 день</a>
-<a style="color: chocolate; text-decoration: none;" href="/Ums?date={(dt.strptime(date, '%Y.%m.%d')+td(1)).strftime('%Y.%m.%d')}" title="{(dt.strptime(date, '%Y.%m.%d')+td(1)).strftime('%Y.%m.%d')}">+1 день</a>
+<a style="color: chocolate; text-decoration: none;" href="{("/Ums?date="+dt_0) if dt_0 else ""}" title="{dt_0 if dt_0 else "Дальше данных нет!"}">-1 день</a>
+<a style="color: chocolate; text-decoration: none;" href="{("/Ums?date="+dt_1) if dt_1 else ""}" title="{dt_1 if dt_1 else "Дальше данных нет!"}">+1 день</a>
 '''
