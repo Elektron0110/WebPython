@@ -1,4 +1,4 @@
-User-Agent *
-Disallow /mail
-Disallow /down/*
-Sitemap https://s762672.cloudpub.ru/sitemap.xml
+User-Agent: *
+Disallow: /mail
+Disallow: /down/*
+Sitemap: https://s762672.cloudpub.ru/sitemap.xml
