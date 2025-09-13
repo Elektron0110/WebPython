@@ -40,7 +40,7 @@ span.required {
 }
 .navbar {
     background-color: rgb(140, 140, 255);
-    color: rgb(195, 195, 195);
+    color: rgb(100 100 255);
     height: 100px;
 }
 .navbar_div {
@@ -57,5 +57,15 @@ img {
     font-weight: bold;
     height: 100px;
     display: flex;
+    align-items: center;
+}
+.navbar-button {
+    color: rgb(140, 140, 140);
+    height: 100px;
+    width: 100px;
+    border-radius: 5px;
+    border: double;
+    display: grid;
+    justify-content: center;
     align-items: center;
 }
