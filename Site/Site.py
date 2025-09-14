@@ -591,6 +591,10 @@ def am_checker(q):
 				return 'OK'
 	else: return json.dumps('???')
 
+@app.route('/about')
+def about():
+	return render_template('about.html')
+
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
 	import webbrowser

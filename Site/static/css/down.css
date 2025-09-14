@@ -14,8 +14,8 @@ a {
 .dnld_u {
   background: #FFAF00;
   color: #FFF200;
-  height: 100px;
-  width: 100px;
+  height: 180px;
+  width: 180px;
   border-color: aqua;
   font-size: 25px;
 }
@@ -23,16 +23,21 @@ a {
 .dnld_d {
   background: #FFAFCC;
   color: #FFF2CC;
-  height: 100px;
-  width: 100px;
+  height: 180px;
+  width: 180px;
   border-color: coral;
   font-size: 25px;
 }
 
 .name {
   width: 15%;
+  height: auto;
 }
 
 .down{
 	display: flex;
+}
+
+button {
+  vertical-align: middle;
 }
