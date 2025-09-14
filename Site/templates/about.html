@@ -10,6 +10,28 @@
 	</ul>
 {% endblock menu %}
 {% block body %}
+	<center>
+		<p>
+			<button type="button" class="dnld_u" id="Flight">
+				Flight
+			</button>
+		</p>
+	</center>
+	<div>
+		<div class="div" id="win_f" style="display: none">
+			<div class="name">
+				<h1>Flight</h1>
+			</div>
+			<div class="down">
+				<div>
+					<h2>Flight.</h2>
+					<br>
+					
+				</div>
+			</div>
+		</div>
+		<br>
+	</div>
 	<script>
 		function func () {
 			var menu = document.getElementById("menu");
@@ -17,5 +39,19 @@
 			var img = document.getElementById("img");
 			see_menu(menu_button, menu, img);
 		}
+	</script>
+	<script>
+		let Flight = document.getElementById("Flight")
+		let wf = document.getElementById("win_f")
+
+		Flight.addEventListener('click', () => {
+		if (Flight.className == "dnld_u") {
+			Flight.className = "dnld_d";
+		}
+		else {
+			Flight.className = "dnld_u";
+		}
+		wf.style.display === 'none' ? wf.style.display = 'block' : wf.style.display = 'none';
+		});
 	</script>
 {% endblock body %}
