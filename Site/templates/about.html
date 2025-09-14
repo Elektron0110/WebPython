@@ -1,0 +1,21 @@
+{% extends "Bases/FormBase.html" %}
+{% block menu %}
+	<ul>
+		<li><a href="/lk">{{prompt}}</a></li>
+		<li><a href="/flight">Сервис для отслеживания самолётов.</a></li>
+		<li><a href="/train">Сервис для отслеживания поездов.</a></li>
+		<li><a href="/Ums">Сервис для наблюдения за погодой.</a></li>
+		<hr>
+		<li><a href="/down">Сервис для скачивания последних версий приложений наших парнёров.</a></li>
+	</ul>
+{% endblock menu %}
+{% block body %}
+	<script>
+		function func () {
+			var menu = document.getElementById("menu");
+			var menu_button = document.getElementById("menu_button");
+			var img = document.getElementById("img");
+			see_menu(menu_button, menu, img);
+		}
+	</script>
+{% endblock body %}
