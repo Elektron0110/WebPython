@@ -15,6 +15,9 @@
 			<button type="button" class="dnld_u" id="Flight">
 				Flight
 			</button>
+			<button type="button" class="dnld_u" id="Train">
+				Train
+			</button>
 		</p>
 	</center>
 	<div>
@@ -31,6 +34,18 @@
 			</div>
 		</div>
 		<br>
+		<div class="div" id="win_t" style="display: none">
+			<div class="name">
+				<h1>Train</h1>
+			</div>
+			<div class="down">
+				<div>
+					<h2>Train.</h2>
+					<br>
+					
+				</div>
+			</div>
+		</div>
 	</div>
 	<script>
 		function func () {
@@ -43,6 +58,8 @@
 	<script>
 		let Flight = document.getElementById("Flight")
 		let wf = document.getElementById("win_f")
+		let Train = document.getElementById("Train")
+		let wt = document.getElementById("win_t")
 
 		Flight.addEventListener('click', () => {
 			if (Flight.className == "dnld_u") {
@@ -52,6 +69,16 @@
 				Flight.className = "dnld_u";
 			}
 			wf.style.display === 'none' ? wf.style.display = 'block' : wf.style.display = 'none';
+		});
+
+		Train.addEventListener('click', () => {
+			if (Train.className == "dnld_u") {
+				Train.className = "dnld_d";
+			}
+			else {
+				Train.className = "dnld_u";
+			}
+			wt.style.display === 'none' ? wt.style.display = 'block' : wt.style.display = 'none';
 		});
 	</script>
 {% endblock body %}
