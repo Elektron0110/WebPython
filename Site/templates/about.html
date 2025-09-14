@@ -45,13 +45,13 @@
 		let wf = document.getElementById("win_f")
 
 		Flight.addEventListener('click', () => {
-		if (Flight.className == "dnld_u") {
-			Flight.className = "dnld_d";
-		}
-		else {
-			Flight.className = "dnld_u";
-		}
-		wf.style.display === 'none' ? wf.style.display = 'block' : wf.style.display = 'none';
+			if (Flight.className == "dnld_u") {
+				Flight.className = "dnld_d";
+			}
+			else {
+				Flight.className = "dnld_u";
+			}
+			wf.style.display === 'none' ? wf.style.display = 'block' : wf.style.display = 'none';
 		});
 	</script>
 {% endblock body %}
