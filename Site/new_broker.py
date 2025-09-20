@@ -94,11 +94,6 @@ def sun():
                   title='Солнечная активность',
                   xaxis_title="Время (UTC+3)",
                   yaxis_title="Вт/м²")
-	# fig.update_yaxes(range=[-0.0000082, 0.0000149], tickvals=[-0.0000082, -0.0000036, 0.000001, 0.0000056, 0.0000102, 0.0000149], ticktext=['A', 'B', 'C', 'M', 'X', 'X10'])
-	# fig.update_yaxes(range=[-0.0000082, 0.0000149], tickvals=[10**-8,  10**-7, 10**-6, 10**-5, 10**-4, 10**-3], ticktext=['A', 'B', 'C', 'M', 'X', 'X10'])
-	# fig.update_yaxes(range=[-0.0000082, 0.0000149])
-	# fig.update_yaxes(tickvals=[10**-6, 10**-5, 10**-4], ticktext=['C', 'M', 'X'])
-	# fig.update_yaxes(tickvals=[10**(-a) for a in range(2, 10)], ticktext=[f'10**{(-a)}' for a in range(2, 10)])
 	fig.update_yaxes(tickvals=[-8, -7, -6, -5, -4], ticktext=['A', 'B', 'C', 'M', 'X'])
 	graph_html = fig.to_html(full_html=False)
 
