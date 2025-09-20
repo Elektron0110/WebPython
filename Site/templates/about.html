@@ -6,6 +6,7 @@
 		<li><a href="/flight">Сервис для отслеживания самолётов.</a></li>
 		<li><a href="/train">Сервис для отслеживания поездов.</a></li>
 		<li><a href="/Ums">Сервис для наблюдения за погодой.</a></li>
+		<li><a href="/sun">Сервис для наблюдения за уровнем солнечной активности.</a></li>
 		<hr>
 		<li><a href="/down">Сервис для скачивания последних версий приложений наших парнёров.</a></li>
 	</ul>
@@ -19,6 +20,9 @@
 			</button>
 			<button type="button" class="dnld_u" id="Train">
 				Сервис для отслеживания поездов
+			</button>
+			<button type="button" class="dnld_u" id="Sun">
+				Сервис для наблюдения за уровнем солнечной активности.
 			</button>
 		</p>
 	</center>
@@ -51,6 +55,18 @@
 				</p>
 			</div>
 		</div>
+		<br>
+		<div class="div" id="win_s" style="display: none">
+			<div class="name">
+				<h1>Сервис для наблюдения за уровнем солнечной активности</h1>
+			</div>
+			<div class="down">
+				<p>
+					Данные об активности солнца для "Сервиса для наблюдения за уровнем солнечной активности" взяты из открытого источника, сайта
+					<a href="xras.ru">Лаборатории солнечной астрономии ИКИ РАН и ИСЗФ СО РАН</a>, раздел КОСМИЧЕСКАЯ ПОГОДА -> Вспышки на Солнце.
+				</p>
+			</div>
+		</div>
 	</div>
 	<script>
 		function func () {
@@ -65,6 +81,8 @@
 		let wf = document.getElementById("win_f")
 		let Train = document.getElementById("Train")
 		let wt = document.getElementById("win_t")
+		let Sun = document.getElementById("Sun")
+		let ws = document.getElementById("win_s")
 
 		Flight.addEventListener('click', () => {
 			if (Flight.className == "dnld_u") {
@@ -84,6 +102,16 @@
 				Train.className = "dnld_u";
 			}
 			wt.style.display === 'none' ? wt.style.display = 'block' : wt.style.display = 'none';
+		});
+
+		Sun.addEventListener('click', () => {
+			if (Sun.className == "dnld_u") {
+				Sun.className = "dnld_d";
+			}
+			else {
+				Sun.className = "dnld_u";
+			}
+			ws.style.display === 'none' ? ws.style.display = 'block' : ws.style.display = 'none';
 		});
 	</script>
 {% endblock body %}
