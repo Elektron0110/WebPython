@@ -86,10 +86,10 @@ def sun():
 	weather: dict[str, list[dt | float]] = dict(time=[], value=[])
 	for tv in datae:
 		weather['time'].append(dt.strptime(tv['time'], '%Y-%m-%dT%H:%M:%S'))
-		weather['value'].append(math.log(float(tv['long']), 10))
+		weather['value'].append(math.log(float(tv['long']), 10)*0.000001)
 	df = pd.DataFrame(weather)
 	fig = px.line(df, 'time', 'value', markers=True)
-	fig.update_layout(legend_orientation="h",
+	fig.update_layout(
                   legend=dict(x=.5, xanchor="center"),
                   title='Вспышки на Солнце (GOES-18)',
                   xaxis_title="Время (UTC+3)",
@@ -100,4 +100,37 @@ def sun():
 	fig.update_xaxes(range=[dt.strptime(date, '%Y.%m.%d')-td(1), dt.strptime(date+' 23:59', '%Y.%m.%d %H:%M')])
 	graph_html = fig.to_html(full_html=False)
 
+	return render_template(f'sun.html', graph=graph_html, dt_0=dt_0, dt_1=dt_1)
+
+@app.route('/sun/average')
+def sunaver():
+	date = request.args.get('date')
+	if not date: date = dt.today().strftime("%Y.%m.%d")
+	dt_0 = (dt.strptime(date, '%Y.%m.%d')-td(1)).strftime('%Y.%m.%d') if dt.strptime(date, '%Y.%m.%d') >= dt(2025, 8, 18) else None
+	dt_1 = (dt.strptime(date, '%Y.%m.%d')+td(1)).strftime('%Y.%m.%d') if dt.strptime(date, '%Y.%m.%d') < dt.today()-td(1) else None
+	# Пример данных
+	open(f'sun/{date}', 'w').write(get(f'https://xras.ru/txt/xray_S0KJ_{date.replace('.','')}.json').text)
+	datae: list[dict[str, str]] = json.loads(open(f'sun/{date}', 'r').read())['data']
+	weather: dict[str, list[dt | float | str]] = dict(time=[], value=[], type=[])
+	sun: list[int] = []
+	for tv in datae:
+		sun.append(math.log(float(tv['long']), 10)*0.000001)
+		weather['time'].append(dt.strptime(tv['time'], '%Y-%m-%dT%H:%M:%S'))
+		weather['value'].append(math.log(float(tv['long']), 10)*0.000001)
+		weather['type'].append('SA')
+		weather['time'].append(dt.strptime(tv['time'], '%Y-%m-%dT%H:%M:%S'))
+		weather['value'].append(sum(sun)/len(sun))
+		weather['type'].append('Среднее')
+	df = pd.DataFrame(weather)
+	fig = px.line(df, 'time', 'value', color='type', markers=True)
+	fig.update_layout(
+                  legend=dict(x=.5, xanchor="center"),
+                  title='Вспышки на Солнце (GOES-18)',
+                  xaxis_title="Время (UTC+3)",
+                  yaxis_title="Вт/м²")
+	fig.update_yaxes(range=[-9*0.000001, -2*0.000001],
+				  	 tickvals=[-9*0.000001, -8*0.000001, -7*0.000001, -6*0.000001, -5*0.000001, -4*0.000001, -3*0.000001, -2*0.000001],
+					 ticktext=['10⁻⁹', '10⁻⁸(A)', '10⁻⁷(B)', '10⁻⁶(C)', '10⁻⁵(M)', '10⁻⁴(X)', '10⁻³(X10)', '10⁻²'])
+	fig.update_xaxes(range=[dt.strptime(date, '%Y.%m.%d')-td(1), dt.strptime(date+' 23:59', '%Y.%m.%d %H:%M')])
+	graph_html = fig.to_html(full_html=False)
 	return render_template(f'sun.html', graph=graph_html, dt_0=dt_0, dt_1=dt_1)
