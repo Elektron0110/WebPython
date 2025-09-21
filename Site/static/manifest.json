@@ -1,0 +1,15 @@
+{
+	"name": "Alexis",
+	"short_name": "Alexis",
+	"theme_color": "gray",
+	"background_color": "gray",
+	"display": "standalone",
+	"start_URL": ".",
+	"icons": [
+		{
+			"type": "image/ico",
+			"sizes": "256x256",
+			"static": "static/img/f.ico"
+		}
+	]
+}
