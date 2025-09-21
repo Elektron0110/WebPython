@@ -546,9 +546,6 @@ def limit_remote_addr():
 
 @app.route('/robots.txt')
 @app.route('/sitemap.xml')
-@app.route('/Инструкция.docx')
-@app.route('/Git.exe')
-@app.route('/video.mp4')
 def static_from_root():
 	return send_from_directory(app.static_folder, request.path[1:])
 
