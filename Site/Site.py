@@ -549,6 +549,14 @@ def limit_remote_addr():
 def static_from_root():
 	return send_from_directory(app.static_folder, request.path[1:])
 
+@app.route('/no')
+def no(): return render_template('lets.html')
+
+@app.route('/no1.JPG')
+@app.route('/no2.jpg')
+def poem_from_root():
+	return send_from_directory(app.static_folder, 'img/st/1'+request.path)
+
 @app.route('/mess/<q>', methods=['GET', 'POST'])
 def am_checker(q):
 	if q == 'check':
