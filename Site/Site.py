@@ -577,7 +577,12 @@ def let(name):
 		let = [p.split('&') for p in open('lets/'+name, encoding='utf-8').read().replace('\n', '').split('%')]
 		return render_template('lets.html', name=names[name], let=let, prompt=prompt)
 	except:
-		return ('<strong><strong><h1>It is not.</h1></strong></strong>', 404)
+		if 'user' in session:
+			prompt = session.get('user')
+			let = [p.split('&') for p in open('lets/'+name, encoding='utf-8').read().replace('\n', '').split('%')]
+			return render_template('lets.html', name=name, let=let, prompt=prompt)
+		else:
+			return ('<strong><strong><h1>It is not.</h1></strong></strong>', 404)
 
 @app.route('/no1.JPG')
 @app.route('/no2.jpg')
