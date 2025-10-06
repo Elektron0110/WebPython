@@ -549,6 +549,13 @@ def limit_remote_addr():
 def static_from_root():
 	return send_from_directory(app.static_folder, request.path[1:])
 
+@app.route('/Жизнь.mp4')
+@app.route('/ДНК.mp4')
+@app.route('/ЧД.mp4')
+@app.route('/ФМ.mp4')
+def e_code_from_root():
+	return send_from_directory(app.static_folder, 'E-Code'+request.path)
+
 @app.route('/lets')
 def lets():
 	names = {'no': 'Нет'}
