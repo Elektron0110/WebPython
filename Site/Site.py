@@ -563,7 +563,7 @@ def lets():
 		prompt = session.get('user')
 	else:
 		prompt = 'Вход/Регистрация'
-	let = {names[file]: file for file in os.listdir('lets')}
+	let = {names[file] if file in names.keys() else file: file for file in os.listdir('lets')}
 	return render_template('all_lets.html', let=let, prompt=prompt)
 
 @app.route('/lets/<name>')
