@@ -1,0 +1,19 @@
+{% extends "Bases/FormBase.html" %}
+{% block title %}{{name}}{% endblock title %}
+{% block menu %}
+	<ul>
+		<li><a href="/lk">{{prompt}}</a></li>
+		<li><a href="/no">Нет.</a></li>
+	</ul>
+{% endblock menu %}
+{% block body %}
+    <center style="color:gainsboro">
+        <h1>Стихи.</h1>
+        <p>
+            {% for name in let %}
+            <a href="/lets/{{let[name]}}">{{name}}</a>
+            {% endfor %}
+        </p>
+    </center>
+    <p></p>
+{% endblock body %}

@@ -549,8 +549,18 @@ def limit_remote_addr():
 def static_from_root():
 	return send_from_directory(app.static_folder, request.path[1:])
 
+@app.route('/lets')
+def lets():
+	names = {'no': 'Нет'}
+	if 'user' in session:
+		prompt = session.get('user')
+	else:
+		prompt = 'Вход/Регистрация'
+	let = {names[file]: file for file in os.listdir('lets')}
+	return render_template('all_lets.html', let=let, prompt=prompt)
+
 @app.route('/lets/<name>')
-def no(name):
+def let(name):
 	if 'user' in session:
 		prompt = session.get('user')
 	else:
