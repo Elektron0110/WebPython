@@ -3,13 +3,13 @@ function see_menu (menu_button, menu, img) {
 		menu.style.display = 'block';
 		var button_class = menu_button.className;
 		menu_button.className = button_class.replace(' ', ' pressed');
-		img.setAttribute('src', 'static/img/menu_pressed.png');
+		img.setAttribute('src', '/static/img/menu_pressed.png');
 	}
 	else {
 		menu.style.display = 'none';
 		var button_class = menu_button.className;
 		menu_button.className = button_class.replace('pressed', '');
-		img.setAttribute('src', 'static/img/menu.png');
+		img.setAttribute('src', '/static/img/menu.png');
 	}
 }
 function see_user (menu_button, menu) {
