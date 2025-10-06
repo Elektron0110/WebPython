@@ -625,7 +625,11 @@ def am_checker(q):
 
 @app.route('/about')
 def about():
-	return render_template('about.html')
+	if 'user' in session:
+		prompt = session.get('user')
+	else:
+		prompt = 'Вход/Регистрация'
+	return render_template('about.html', prompt=prompt)
 
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
