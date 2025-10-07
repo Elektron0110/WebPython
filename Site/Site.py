@@ -582,7 +582,7 @@ def let(name):
 			let = [p.split('&') for p in open('lets/'+name, encoding='utf-8').read().replace('\n', '').split('%')]
 			return render_template('lets.html', name=name, let=let, prompt=prompt)
 		else:
-			return ('<h1>It is not.</h1>', 404)
+			return abort(403)
 
 @app.route('/mess/<q>', methods=['GET', 'POST'])
 def am_checker(q):
@@ -630,6 +630,14 @@ def about():
 	else:
 		prompt = 'Вход/Регистрация'
 	return render_template('about.html', prompt=prompt)
+
+@app.route('/SOVR')
+def sovt():
+	sovrers = open('sovr.txt', encoding='utf-8').read().split('\n')
+	if 'user' in session:
+		if session['email'] in sovrers:
+			return render_template('sovt.html', prompt=session.get('user'))
+	return abort(403)
 
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
