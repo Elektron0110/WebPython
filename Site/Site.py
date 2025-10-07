@@ -129,7 +129,8 @@ def new_user(**k):
 			db.session.commit()
 			rec = MUsers.query.filter_by(email=k.get('email', '')).first()
 			mm = MMess(recipient=rec.id, topic='Добро пожаловать в Почту.',
-			  text='Добро пожаловать в Почту. Почта - мой новый проект.', date=datetime.today())
+			  text=f'Добро пожаловать в Почту, {k.get('f', '')}. Почта - мой новый проект.',
+			  date=datetime.today())
 			db.session.add(mm)
 			db.session.commit()
 
