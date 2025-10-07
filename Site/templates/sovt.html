@@ -16,6 +16,69 @@
 </ul>
 {% endblock menu %}
 {% block body %}
+<link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet" type="text/css" />
 <p>
+    <center>
+        <strong>Дорогие члены собрания общества взаимных рукопожатий (СОВР)</strong>,
+        {{session['user'].split(' ')[1]}} {{session['user'].split(' ')[2]}},
+        здесь вы сможете посмотреть различные пункты касающиеся <b>СОВР</b>:
+        <dir>
+            <ul>
+                <li>Участников <b>СОВР</b></li>
+                <li>Участников <b>Списка</b></li>
+                <li>Темы обсуждения и результаты прошлых "заседаний"</li>
+            </ul>
+        </dir>
+    </center>
+</p>
+<p>
+<div class="adm_main" style="margin: 50px;">
+    <div class="adm_main">
+        <center><strong>Участники <b>СОВР</b>:</strong></center>
+        <ul>
+            {% for a in sovr %}
+            <li>
+                {{a}}
+                {% if 'Шульган' in a %}
+                - организатор <b>СОВР</b>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="adm_main">
+        <center><strong>Участники <b>Списка</b>:</strong></center>
+        <ul>
+            {% for a in list %}
+            <li>
+                {{a}}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <center>
+        <table style="font-size: 30;">
+            <caption><strong>Собрания <b>СОВР</b>:</strong></caption>
+            <thead>
+                <tr>
+                    <th scope="col">№</th>
+                    <th scope="col">Тема</th>
+                    <th scope="col">Кол-во за исход</th>
+                    <th scope="col">Исход</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for meeting in meetings %}
+                <tr>
+                    <th scope="row">{{ meeting.split('&')[0] }}</th>
+                    {% for meet in meeting.split('&')[1:] %}
+                    <td><center>{{ meet }}</center></td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </center>
+</div>
 </p>
 {% endblock body %}

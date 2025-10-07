@@ -634,9 +634,20 @@ def about():
 @app.route('/SOVR')
 def sovt():
 	sovrers = open('sovr.txt', encoding='utf-8').read().split('\n')
+	if not sovrers[-1]: sovrers = sovrers[:-1]
+	List = open('List.txt', encoding='utf-8').read().split('\n')
+	if not List[-1]: List = List[:-1]
+	meetings = open('meetings.txt', encoding='utf-8').read().split('\n')
+	if not meetings[-1]: meetings = meetings[:-1]
 	if 'user' in session:
 		if session['email'] in sovrers:
-			return render_template('sovt.html', prompt=session.get('user'))
+			nsovrers = []
+			with app.app_context():
+				for sovrer in sovrers:
+					ui = UserInfo.query.filter_by(email=sovrer).first()
+					nsovrers.append(f'{ui.s} {ui.f} {ui.t}')
+			nsovrers.sort()
+			return render_template('sovt.html', prompt=session.get('user'), sovr=nsovrers, list=List, meetings=meetings)
 	return abort(403)
 
 if os.path.isdir('C:'):
