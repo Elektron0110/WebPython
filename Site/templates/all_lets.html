@@ -1,14 +1,15 @@
 {% extends "Bases/FormBase.html" %}
-{% block title %}{{name}}{% endblock title %}
+{% block title %}Стихи и не только.{% endblock title %}
 {% block menu %}
 	<ul>
 		<li><a href="/lk">{{prompt}}</a></li>
+        <hr>
 		<li><a href="/no">Нет.</a></li>
 	</ul>
 {% endblock menu %}
 {% block body %}
     <center style="color:gainsboro">
-        <h1>Стихи.</h1>
+        <h1>Стихи и не только.</h1>
         <p>
             {% for name in let %}
             <a href="/lets/{{let[name]}}">{{name}}</a>
