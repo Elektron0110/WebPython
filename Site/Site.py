@@ -558,7 +558,7 @@ def e_code_from_root():
 
 @app.route('/lets')
 def lets():
-	names = {'no': 'Нет'}
+	names = json.load(open('lets.json', encoding='utf-8'))
 	if 'user' in session:
 		prompt = session.get('user')
 	else:
@@ -573,7 +573,7 @@ def let(name):
 	else:
 		prompt = 'Вход/Регистрация'
 	try:
-		names = {'no': 'Нет'}
+		names = json.load(open('lets.json', encoding='utf-8'))
 		let = [p.split('&') for p in open('lets/'+name, encoding='utf-8').read().replace('\n', '').split('%')]
 		return render_template('lets.html', name=names[name], let=let, prompt=prompt)
 	except:
@@ -582,12 +582,7 @@ def let(name):
 			let = [p.split('&') for p in open('lets/'+name, encoding='utf-8').read().replace('\n', '').split('%')]
 			return render_template('lets.html', name=name, let=let, prompt=prompt)
 		else:
-			return ('<strong><strong><h1>It is not.</h1></strong></strong>', 404)
-
-@app.route('/no1.JPG')
-@app.route('/no2.jpg')
-def poem_from_root():
-	return send_from_directory(app.static_folder, 'img/st/1'+request.path)
+			return ('<h1>It is not.</h1>', 404)
 
 @app.route('/mess/<q>', methods=['GET', 'POST'])
 def am_checker(q):
