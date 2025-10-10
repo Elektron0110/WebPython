@@ -154,7 +154,7 @@ new_user(email='test@test', password='Bug', s='Тестов', f='Тест', t='�
 
 app.secret_key = os.urandom(24)
 open('Site/log', 'a').write(f'\nStart at {datetime.now().strftime("%d.%m.%Y %H:%M")}.')
-admins = ['s762672@ya.ru', 'test@test']
+admins = ['s762672@ya.ru', 'test@test', 'sovr@sovr']
 
 
 # @app.errorhandler(404)
@@ -567,20 +567,30 @@ def lets():
 	let = {names[file] if file in names.keys() else file: file for file in os.listdir('lets')}
 	return render_template('all_lets.html', let=let, prompt=prompt)
 
-@app.route('/lets/<name>')
-def let(name):
+@app.route('/lets/<letter>')
+def let(letter: str):
 	if 'user' in session:
 		prompt = session.get('user')
 	else:
 		prompt = 'Вход/Регистрация'
 	try:
 		names = json.load(open('lets.json', encoding='utf-8'))
-		let = [p.split('&') for p in open('lets/'+name, encoding='utf-8').read().replace('\n', '').split('%')]
+		let = [p.split('&') for p in open('lets/'+letter, encoding='utf-8').read().replace('\n', '').split('%')]
+		if let[0][0][0] == '?':
+			name = let[0][0][let[0][0].find('?')+1:let[0][0].find('?', let[0][0].find('?')+1)]
+			let[0].pop(0)
+		else:
+			name = letter
 		return render_template('lets.html', name=names[name], let=let, prompt=prompt)
 	except:
-		if 'user' in session:
+		if session.get('email') in admins:
 			prompt = session.get('user')
-			let = [p.split('&') for p in open('lets/'+name, encoding='utf-8').read().replace('\n', '').split('%')]
+			let = [p.split('&') for p in open('lets/'+letter, encoding='utf-8').read().replace('\n', '').split('%')]
+			if let[0][0][0] == '?':
+				name = let[0][0][let[0][0].find('?')+1:let[0][0].find('?', let[0][0].find('?')+1)]
+				let[0].pop(0)
+			else:
+				name = letter
 			return render_template('lets.html', name=name, let=let, prompt=prompt)
 		else:
 			return abort(403)
@@ -641,7 +651,7 @@ def sovt():
 	meetings = open('static/sovr/meetings.txt', encoding='utf-8').read().split('\n')
 	if not meetings[-1]: meetings = meetings[:-1]
 	if 'user' in session:
-		if session['email'] in sovrers+['sovr@sovr']:
+		if session['email'] in sovrers+admins:
 			nsovrers = []
 			with app.app_context():
 				for sovrer in sovrers:
@@ -656,10 +666,11 @@ def wear():
 	if request.args.get('code'):
 		email = request.args.get('code')[1:-1]
 		ui = UserInfo.query.filter_by(email=email).first()
-		session['user'] = f'{ui.s} {ui.f} {ui.t}'
-		session['telephone'] = ui.tel
-		session['birthday'] = ui.b_day
-		session['email'] = ui.email
+		if ui:
+			session['user'] = f'{ui.s} {ui.f} {ui.t}'
+			session['telephone'] = ui.tel
+			session['birthday'] = ui.b_day
+			session['email'] = ui.email
 	return redirect('lk')
 
 if os.path.isdir('C:'):
