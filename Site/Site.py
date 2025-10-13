@@ -671,6 +671,7 @@ def wear():
 		email = request.args.get('code')[1:-1]
 		ui = UserInfo.query.filter_by(email=email).first()
 		if ui:
+			if session.get('email'): authorized[session['email']] -= 1
 			session['user'] = f'{ui.s} {ui.f} {ui.t}'
 			session['telephone'] = ui.tel
 			session['birthday'] = ui.b_day
