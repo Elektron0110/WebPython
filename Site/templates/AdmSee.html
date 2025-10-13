@@ -50,6 +50,13 @@
 		</div>
 		<div class="adm_main">
 			<ul>
+				{% for el in c %}
+				<li>{{el}} - {{c[el]}}</li>
+				{% endfor %}
+			</ul>
+		</div>
+		<div class="adm_main">
+			<ul>
 				{% for el in a %}
 				<li>{{el}}</li>
 				{% endfor %}

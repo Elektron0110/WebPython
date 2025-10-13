@@ -155,7 +155,7 @@ new_user(email='test@test', password='Bug', s='Тестов', f='Тест', t='�
 app.secret_key = os.urandom(24)
 open('Site/log', 'a').write(f'\nStart at {datetime.now().strftime("%d.%m.%Y %H:%M")}.')
 admins = ['s762672@ya.ru', 'test@test', 'sovr@sovr']
-
+authorized = {}
 
 # @app.errorhandler(404)
 # @app.route('/')
@@ -197,6 +197,8 @@ def login():
 				session['telephone'] = ui.tel
 				session['birthday'] = ui.b_day
 				session['email'] = ui.email
+				if session['email'] not in authorized: authorized[session['email']] = 1
+				else: authorized[session['email']] += 1
 				return render_template('LK.html', name=name, session=session)
 			else:
 				print(password, u.password)
@@ -210,6 +212,7 @@ def login():
 
 @app.route('/logout')
 def logout():
+	authorized[session['email']] -= 1
 	session.pop('user')
 	session.pop('telephone')
 	session.pop('birthday')
@@ -291,6 +294,7 @@ def admin(comm):
 				return render_template(name=name, template_name_or_list='AdmSee.html',
 				                       u=AuthUser.query.all(),
 				                       d=UserInfo.query.all(),
+									   c=authorized,
 				                       a=Applications.query.all())
 			elif comm == 'del':
 				with app.app_context():
@@ -671,6 +675,8 @@ def wear():
 			session['telephone'] = ui.tel
 			session['birthday'] = ui.b_day
 			session['email'] = ui.email
+			if session['email'] not in authorized: authorized[session['email']] = 1
+			else: authorized[session['email']] += 1
 	return redirect('lk')
 
 if os.path.isdir('C:'):
