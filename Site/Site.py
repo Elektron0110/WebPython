@@ -152,7 +152,7 @@ new_user(email='test@test', password='Bug', s='Тестов', f='Тест', t='�
 
 # -------------------------------------------------------------------------------------------------------------
 
-app.secret_key = os.urandom(24)
+app.secret_key = 'YOU-NOT-KNOW-THIS-I-SURE'#os.urandom(24)
 open('Site/log', 'a').write(f'\nStart at {datetime.now().strftime("%d.%m.%Y %H:%M")}.')
 admins = ['s762672@ya.ru', 'test@test', 'sovr@sovr']
 authorized = {}
