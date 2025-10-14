@@ -548,7 +548,10 @@ def trains():
 def limit_remote_addr():
 	e = session.get('email')
 	if e and not last.get(e): last[e] = ''
-	if e and 'static' not in request.path: last[e] += f'{request.path}; '
+	if e and 'static' not in request.path:
+		while len(last[e].split('; ')) >= 3:
+			last[e] = last[e][last[e].find(';')+2:]
+		last[e] += f'{request.path}; '
 	if not os.path.isfile('static/blocked_ips'): open('static/blocked_ips', 'w').write('')
 	blocked_ips = open('static/blocked_ips', 'r').read().split('\n')
 	if request.remote_addr in blocked_ips:
