@@ -156,6 +156,7 @@ app.secret_key = os.urandom(24)
 open('Site/log', 'a').write(f'\nStart at {datetime.now().strftime("%d.%m.%Y %H:%M")}.')
 admins = ['s762672@ya.ru', 'test@test', 'sovr@sovr']
 authorized = {}
+last = {}
 
 # @app.errorhandler(404)
 # @app.route('/')
@@ -295,6 +296,7 @@ def admin(comm):
 				                       u=AuthUser.query.all(),
 				                       d=UserInfo.query.all(),
 									   c=authorized,
+									   l=last,
 				                       a=Applications.query.all())
 			elif comm == 'del':
 				with app.app_context():
@@ -544,6 +546,9 @@ def trains():
 
 @app.before_request
 def limit_remote_addr():
+	e = session.get('email')
+	if e and not last.get(e): last[e] = ''
+	if e and 'static' not in request.path: last[e] += f'{request.path}; '
 	if not os.path.isfile('static/blocked_ips'): open('static/blocked_ips', 'w').write('')
 	blocked_ips = open('static/blocked_ips', 'r').read().split('\n')
 	if request.remote_addr in blocked_ips:
