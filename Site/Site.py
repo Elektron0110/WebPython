@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from searcher import fly
 from alice import bp, json
 from requests import post
+import qrcode
 
 slicer = r'\|/'
 name = 'Alexis'
@@ -549,9 +550,10 @@ def limit_remote_addr():
 	e = session.get('email')
 	if e and not last.get(e): last[e] = ''
 	if e and 'static' not in request.path:
-		while len(last[e].split('; ')) >= 3:
+		while len(last[e].split('; ')) > 5:
 			last[e] = last[e][last[e].find(';')+2:]
 		last[e] += f'{request.path}; '
+	if session['email'] not in authorized: authorized[session['email']] = 1
 	if not os.path.isfile('static/blocked_ips'): open('static/blocked_ips', 'w').write('')
 	blocked_ips = open('static/blocked_ips', 'r').read().split('\n')
 	if request.remote_addr in blocked_ips:
@@ -687,6 +689,13 @@ def wear():
 			if session['email'] not in authorized: authorized[session['email']] = 1
 			else: authorized[session['email']] += 1
 	return redirect('lk')
+
+@app.route('/get_qr')
+def qrcoder():
+	if session.get('email'):
+		img = qrcode.make(f'https://s762672.cloudpub.ru/get_acc?code={random.randint(0, 9)}{session.get('email')}{random.randint(0, 9)}')
+		img.save("qr.png")
+		return send_from_directory('qr.png')
 
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
