@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 from searcher import fly
 from alice import bp, json
-from requests import post
+from requests import post, get
 import qrcode
 
 slicer = r'\|/'
@@ -541,7 +541,7 @@ def trains():
 				'stationArrivalId'		: stations[request.form['stationArrivalId']],
 				'departure'				: request.form.get('departure', True),
 				'date'					: datetime.today().strftime("%d.%m.%Y")}
-		response = post('https://www.rzd.ru/tt/train/schedule', json=data, headers=headers)
+		response = post('https://www.rzd.ru/tt/train/schedule', json=data, headers=headers, timeout=10)
 		with open('output.json', 'w') as f: json.dump(response.json(), f)
 		return render_template(name=name, template_name_or_list='TSee.html', trains=response.json()['trains'])
 
@@ -693,9 +693,13 @@ def wear():
 @app.route('/get_qr')
 def qrcoder():
 	if session.get('email'):
-		img = qrcode.make(f'https://s762672.cloudpub.ru/get_acc?code={random.randint(0, 9)}{session.get('email')}{random.randint(0, 9)}')
-		img.save("qr.png")
-		return send_from_directory('qr.png')
+		response = get(
+		'https://clck.ru/--',
+		{'url': f'https://s762672.cloudpub.ru/get_acc?code={random.randint(0, 9)} \
+			{session.get('email')}{random.randint(0, 9)}'}, timeout=10)
+		img = qrcode.make(response.text)
+		img.save("static/qr.png")
+		return send_from_directory(app.static_folder, 'qr.png')
 
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
