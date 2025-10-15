@@ -37,7 +37,6 @@ def fly(рейс: str | list[str]):
 	Авиакомпания = fr_api.get_flights(компания)
 	print(рейс)
 	for ac in Авиакомпания:
-		print(рейс, ac.callsign, рейс==ac.callsign)
 		if рейс == ac.callsign:
 			for предмет in интерес:
 				global самолёт
