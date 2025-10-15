@@ -37,8 +37,10 @@ def fly(рейс: str | list[str]):
 	Авиакомпания = fr_api.get_flights(компания)
 	print(рейс)
 	for ac in Авиакомпания:
+		print(рейс, ac.callsign, рейс==ac.callsign)
 		if рейс == ac.callsign:
 			for предмет in интерес:
+				global самолёт
 				самолёт[интерес[предмет]] = eval(f'ac.{предмет}')
 				if str(eval(f'ac.{предмет}'))[0].isdigit():
 					самолёт[интерес[предмет]] = round(eval(f'ac.{предмет}'), 2)
@@ -50,4 +52,7 @@ def fly(рейс: str | list[str]):
 				отправления = fr_api.get_airport(самолёт['Аэропорт отправления'])
 				отправления = f'{отправления.name} - {отправления.city}'
 				самолёт['Аэропорт отправления'] = отправления
-	return str(самолёт).replace("{", "").replace("}", "").replace(", ", "<br>").replace(": ", " ― ").replace("'", "")
+	if not самолёт:
+		самолёт = ['Данный рейс находится вне нашего видения.',
+				   'Другие рейсы этой авиакомпании:'] + [ac.callsign for ac in Авиакомпания]
+	return str(самолёт).replace("{", "").replace("}", "").replace("[", "").replace("]", "").replace(", ", "<br>").replace(": ", " ― ").replace("'", "")
