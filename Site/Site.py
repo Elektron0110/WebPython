@@ -6,8 +6,6 @@ from flask import Flask
 from flask import render_template, request, session, redirect, send_from_directory, abort
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
-from searcher import fly
-from alice import bp, json
 from requests import post, get
 import qrcode
 
@@ -17,7 +15,6 @@ name = 'Alexis'
 app = Flask(__name__)
 app.config["DEBUG"] = True
 app.config["EXPLAIN_TEMPLATE_LOADING"] = True
-app.register_blueprint(bp)
 app.register_blueprint(new_broker.app)
 
 if not os.path.isdir('Site'):
@@ -155,7 +152,7 @@ new_user(email='test@test', password='Bug', s='Тестов', f='Тест', t='�
 
 app.secret_key = 'YOU-NOT-KNOW-THIS-I-SURE'#os.urandom(24)
 open('Site/log', 'a').write(f'\nStart at {datetime.now().strftime("%d.%m.%Y %H:%M")}.')
-admins = ['s762672@ya.ru', 'test@test', 'sovr@sovr']
+admins = ['s762672@ya.ru', 'test@test']
 authorized = {}
 last = {}
 
@@ -483,13 +480,19 @@ def dmail(id):
 	else:
 		return redirect('/mail')
 
-@app.route('/flight', methods=['GET', 'POST'])
-def Flight ():
-	if request.method == 'POST':
-		print('Fl',request.form['flight'])
-		return fly(request.form['flight'])
-	else:
-		return render_template(name=name, template_name_or_list='Fly.html')
+
+try:
+	from searcher import fly
+	from alice import bp, json
+	app.register_blueprint(bp)
+	@app.route('/flight', methods=['GET', 'POST'])
+	def Flight ():
+		if request.method == 'POST':
+			print('Fl',request.form['flight'])
+			return fly(request.form['flight'])
+		else:
+			return render_template(name=name, template_name_or_list='Fly.html')
+except: print('INF')
 
 @app.route('/down', methods=['GET', 'POST'])
 def Down ():
@@ -553,7 +556,7 @@ def limit_remote_addr():
 		while len(last[e].split('; ')) > 5:
 			last[e] = last[e][last[e].find(';')+2:]
 		last[e] += f'{request.path}; '
-	if session['email'] not in authorized: authorized[session['email']] = 1
+	if e and e not in authorized: authorized[session['email']] = 1
 	if not os.path.isfile('static/blocked_ips'): open('static/blocked_ips', 'w').write('')
 	blocked_ips = open('static/blocked_ips', 'r').read().split('\n')
 	if request.remote_addr in blocked_ips:
@@ -665,7 +668,7 @@ def sovt():
 	meetings = open('static/sovr/meetings.txt', encoding='utf-8').read().split('\n')
 	if not meetings[-1]: meetings = meetings[:-1]
 	if 'user' in session:
-		if session['email'] in sovrers+admins:
+		if session['email'] in sovrers+admins+['sovr@sovr']:
 			nsovrers = []
 			with app.app_context():
 				for sovrer in sovrers:
