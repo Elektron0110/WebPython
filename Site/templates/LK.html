@@ -31,6 +31,9 @@
 				<li><a href="/new">Оставить заявку</a></li>
 				<li><a href="/update">Обновление данных</a></li>
 				<li><a href="/get_qr">Создать QR код.</a></li>
+				{% for l in add %}
+				<li><a href="{{l}}">{{add[l]}}</a></li>
+				{% endfor %}
 				<li><a href="/logout">Выход</a></li>
 			</ul>
 		</div>

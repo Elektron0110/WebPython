@@ -174,7 +174,7 @@ def main():
 def login():
 	if request.method == 'GET':
 		if 'user' in session:
-			return render_template('LK.html', name=name, session=session)
+			return render_template('LK.html', name=name, session=session, add={'/adm/see': 'Административная панель'})
 		else:
 			return render_template(name=name, template_name_or_list='login.html')
 	if request.method == 'POST':
