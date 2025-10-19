@@ -58,7 +58,7 @@
 		<div class="adm_main">
 			<ul>
 				{% for el in l %}
-				<li>{{el}} - {{l[el]}}</li>
+				<li>{{el}} - {% for r in l[el] %}{{r}}, {% endfor %}</li>
 				{% endfor %}
 			</ul>
 		</div>

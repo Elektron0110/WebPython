@@ -155,7 +155,7 @@ app.secret_key = 'YOU-NOT-KNOW-THIS-I-SURE'#os.urandom(24)
 open('Site/log', 'a').write(f'\nStart at {datetime.now().strftime("%d.%m.%Y %H:%M")}.')
 admins = ['s762672@ya.ru', 'test@test']
 authorized = json.load(open('auth.json'))
-last = {}
+last: dict[str, list[str]] = json.load(open('last.json'))
 
 # @app.errorhandler(404)
 # @app.route('/')
@@ -558,12 +558,16 @@ def trains():
 
 @app.before_request
 def limit_remote_addr():
-	e = session.get('email')
-	if e and not last.get(e): last[e] = ''
-	if e and 'static' not in request.path:
-		while len(last[e].split('; ')) > 5:
-			last[e] = last[e][last[e].find(';')+2:]
-		last[e] += f'{request.path}; '
+	e: str = session.get('email')
+	if e and not last.get(e): last[e] = []
+	if e and '.' not in request.path:
+		print(last[e])
+		while len(last[e]) > 10-1:
+			le = last[e]
+			le.pop(0)
+			last[e] = le
+		last[e] += [request.path]
+		json.dump(last, open('last.json', 'w'))
 	if e and e not in authorized: authorized[session['email']] = 1
 	if authorized != json.load(open('auth.json')):
 		json.dump(authorized, open('auth.json', 'w'))
