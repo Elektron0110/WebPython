@@ -174,7 +174,9 @@ def main():
 def login():
 	if request.method == 'GET':
 		if 'user' in session:
-			return render_template('LK.html', name=name, session=session, add={'/adm/see': 'Административная панель'})
+			if session['email'] in admins:
+							return render_template('LK.html', name=name, session=session, add={'/adm/see': 'Административная панель'})
+			return render_template('LK.html', name=name, session=session)
 		else:
 			return render_template(name=name, template_name_or_list='login.html')
 	if request.method == 'POST':
@@ -242,15 +244,18 @@ def update():
 		session['telephone'] = request.form['tel']
 		session['birthday'] = request.form['b_day']
 		email, sn, fn, tn, tel, b_day = \
-			session['email'], request.form['slicer'], request.form['f'], \
+			session['email'], request.form['s'], request.form['f'], \
 			request.form['t'], request.form['tel'], request.form['b_day']
-		u = AuthUser.query.filter_by(email=session['email'])
-		u.info.email = email
-		u.info.sn = sn
-		u.info.fn = fn
-		u.info.tn = tn
-		u.info.tel = tel
-		u.info.b_day = b_day
+		with app.app_context():
+			u = UserInfo.query.filter_by(email=session['email'])
+			u.email = email
+			u.s = sn
+			u.f = fn
+			u.t = tn
+			u.tel = tel
+			u.b_day = b_day
+			db.session.commit()
+
 		return redirect('/')
 
 
@@ -304,6 +309,9 @@ def admin(comm):
 					db.session.delete(user)
 					db.session.delete(data)
 				return redirect('/lk')
+			elif comm == 'update':
+				email = request.form['way']
+				return redirect(f'/get_acc?code=0{email}0')
 			else:
 				return redirect('/lk')
 		else:
