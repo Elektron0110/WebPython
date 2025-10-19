@@ -7,6 +7,7 @@ from flask import render_template, request, session, redirect, send_from_directo
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 from requests import post, get
+import json
 import qrcode
 
 slicer = r'\|/'
@@ -153,7 +154,7 @@ new_user(email='test@test', password='Bug', s='Тестов', f='Тест', t='�
 app.secret_key = 'YOU-NOT-KNOW-THIS-I-SURE'#os.urandom(24)
 open('Site/log', 'a').write(f'\nStart at {datetime.now().strftime("%d.%m.%Y %H:%M")}.')
 admins = ['s762672@ya.ru', 'test@test']
-authorized = {}
+authorized = json.load(open('auth.json'))
 last = {}
 
 # @app.errorhandler(404)
@@ -490,8 +491,7 @@ def dmail(id):
 
 
 try:
-	from searcher import fly
-	from alice import bp, json
+	from alice import bp, fly
 	app.register_blueprint(bp)
 	@app.route('/flight', methods=['GET', 'POST'])
 	def Flight ():
@@ -565,6 +565,8 @@ def limit_remote_addr():
 			last[e] = last[e][last[e].find(';')+2:]
 		last[e] += f'{request.path}; '
 	if e and e not in authorized: authorized[session['email']] = 1
+	if authorized != json.load(open('auth.json')):
+		json.dump(authorized, open('auth.json', 'w'))
 	if not os.path.isfile('static/blocked_ips'): open('static/blocked_ips', 'w').write('')
 	blocked_ips = open('static/blocked_ips', 'r').read().split('\n')
 	if request.remote_addr in blocked_ips:
