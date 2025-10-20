@@ -7,6 +7,7 @@ from flask import render_template, request, session, redirect, send_from_directo
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 from requests import post, get
+from alf import alf as rltrs
 import json
 import qrcode
 
@@ -574,6 +575,17 @@ def limit_remote_addr():
 	blocked_ips = open('static/blocked_ips', 'r').read().split('\n')
 	if request.remote_addr in blocked_ips:
 		abort(403)  # Forbiden
+
+@app.after_request
+def after_request(response):
+	e: str = session.get('email')
+	if e and not request.cookies.get('Name'):
+		n = session['user']
+		ltrs = {ltr for ltr in n}
+		for ltr in ltrs:
+			n.replace(ltr, rltrs[ltr])
+		response.set_cookie('Name', n)
+	return response
 
 @app.route('/robots.txt')
 @app.route('/sitemap.xml')
