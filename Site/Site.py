@@ -1,15 +1,11 @@
 """Модуль, отвечающий за работу сервера."""
-import os
-import random
-import new_broker
+import os, random, new_broker, json, qrcode
 from flask import Flask
 from flask import render_template, request, session, redirect, send_from_directory, abort
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 from requests import post, get
 from alf import alf
-import json
-import qrcode
 
 slicer = r'\|/'
 name = 'Alexis'
@@ -202,7 +198,7 @@ def login():
 				session['email'] = ui.email
 				if session['email'] not in authorized: authorized[session['email']] = 1
 				else: authorized[session['email']] += 1
-				return render_template('LK.html', name=name, session=session)
+				return redirect('lk')
 			else:
 				print(password, u.password)
 				return 'Password in invalid.'
