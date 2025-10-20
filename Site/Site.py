@@ -561,7 +561,6 @@ def limit_remote_addr():
 	e: str = session.get('email')
 	if e and not last.get(e): last[e] = []
 	if e and '.' not in request.path:
-		print(last[e])
 		while len(last[e]) > 10-1:
 			le = last[e]
 			le.pop(0)
