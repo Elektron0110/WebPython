@@ -7,7 +7,7 @@ from flask import render_template, request, session, redirect, send_from_directo
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 from requests import post, get
-from alf import alf as rltrs
+from alf import alf
 import json
 import qrcode
 
@@ -580,10 +580,12 @@ def limit_remote_addr():
 def after_request(response):
 	e: str = session.get('email')
 	if e and not request.cookies.get('Name'):
-		n = session['user']
+		n: str = session['user'].upper()
 		ltrs = {ltr for ltr in n}
+		alf[' '] = ' '
 		for ltr in ltrs:
-			n.replace(ltr, rltrs[ltr])
+			n.replace(ltr, alf[ltr])
+		n = n.lower().title()
 		response.set_cookie('Name', n)
 	return response
 
