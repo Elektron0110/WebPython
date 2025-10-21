@@ -1,7 +1,7 @@
 """Модуль, отвечающий за работу сервера."""
 import os, random, new_broker, json, qrcode
 from flask import Flask
-from flask import render_template, request, session, redirect, send_from_directory, abort
+from flask import render_template, request, session, redirect, send_from_directory, abort, Response
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 from requests import post, get
@@ -14,6 +14,9 @@ app = Flask(__name__)
 app.config["DEBUG"] = True
 app.config["EXPLAIN_TEMPLATE_LOADING"] = True
 app.register_blueprint(new_broker.app)
+
+open('Alexis.log', 'a', encoding='utf-8').write(
+		f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}] "Server restarted."\n')
 
 if not os.path.isdir('Site'):
 	os.mkdir('Site')
@@ -573,7 +576,7 @@ def limit_remote_addr():
 		abort(403)  # Forbiden
 
 @app.after_request
-def after_request(response):
+def after_request(response: Response):
 	e: str = session.get('email')
 	if e and not request.cookies.get('Name'):
 		n: str = session['user'].upper()
@@ -583,6 +586,16 @@ def after_request(response):
 			n.replace(ltr, alf[ltr])
 		n = n.lower().title()
 		response.set_cookie('Name', n)
+	if response.calculate_content_length(): fsb: int = response.calculate_content_length()
+	else: fsb = os.path.getsize(request.path[1:])
+	fsk = fsb // 1024
+	fsb = fsb % 1024
+	fsm = fsk // 1024
+	fsk = fsk % 1024
+	open(f'Alexis.log', 'a', encoding='utf-8').write(
+		f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}] {request.headers.get('x-real-ip')} "{\
+			request.method} {request.path}" {response.status[:3]} {request.cookies.get('Name')} {\
+				fsm}MB {fsk}KB {fsb}B\n')
 	return response
 
 @app.route('/robots.txt')
