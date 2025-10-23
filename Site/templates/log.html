@@ -1,0 +1,39 @@
+{% extends "Bases/FormBase.html" %}
+{% block title %}Логи{% endblock title %}
+{% block menu %}
+	<ul>
+		<li><a href="/mail">Почта</a></li>
+		<li><a href="/SOVR">Для членов <b>СОВР</b></a></li>
+		<li><a href="/new">Оставить заявку</a></li>
+		<li><a href="/update">Обновление данных</a></li>
+		<li><a href="/get_qr">Создать QR код.</a></li>
+		<li><a href="/adm/see">Административная панель</a></li>
+		<li><a href="/logout">Выход</a></li>
+	</ul>
+{% endblock menu %}
+{% block body %}
+	<style>
+		body {
+			background-color: gainsboro;
+		}
+	</style>
+	<div style="margin-left: 10px;">
+		{% for line in f.split('\n') %}
+			<p>
+				{% for part in line.split('  ') %}
+					{% if ':' in part %}
+						<span style="color: green;">{{part}} </span>
+					{% elif '"' in part %}
+						<span style="color: #a31515;">{{part}} </span>
+					{% elif '.' in part %}
+						<span style="color: blue;">{{part}} </span>
+					{% elif part in ['200', '304'] %}
+						<span style="color: blue;">{{part}} </span>
+					{% else %}
+						<span>{{part}} </span>
+					{% endif %}
+				{% endfor %}
+			</p>
+		{% endfor %}
+	</div>
+{% endblock body %}

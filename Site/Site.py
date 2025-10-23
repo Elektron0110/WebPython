@@ -16,7 +16,7 @@ app.config["EXPLAIN_TEMPLATE_LOADING"] = True
 app.register_blueprint(new_broker.app)
 
 open('Alexis.log', 'a', encoding='utf-8').write(
-		f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}] "Server restarted."\n')
+		f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  "Server restarted."\n')
 
 if not os.path.isdir('Site'):
 	os.mkdir('Site')
@@ -313,6 +313,10 @@ def admin(comm):
 			elif comm == 'update':
 				email = request.form['way']
 				return redirect(f'/get_acc?code=0{email}0')
+			elif comm == 'log':
+				# return '<meta name="viewport" content="width=device-width, initial-scale=1">'+\
+				# 	open('Alexis.log', encoding='utf-8').read().replace('\n', '</p><p>').replace('  ', '<br>')
+				return render_template('log.html', name=name, session=session, f=open('Alexis.log', encoding='utf-8').read())
 			else:
 				return redirect('/lk')
 		else:
@@ -593,8 +597,8 @@ def after_request(response: Response):
 	fsm = fsk // 1024
 	fsk = fsk % 1024
 	open(f'Alexis.log', 'a', encoding='utf-8').write(
-		f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}] {request.headers.get('x-real-ip')} "{\
-			request.method} {request.path}" {response.status[:3]} {request.cookies.get('Name')} {\
+		f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {request.headers.get('x-real-ip')}  "{\
+			request.method} {request.path}"  {response.status[:3]}  {request.cookies.get('Name')} | {\
 				fsm}MB {fsk}KB {fsb}B\n')
 	return response
 
