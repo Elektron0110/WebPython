@@ -314,9 +314,15 @@ def admin(comm):
 				email = request.form['way']
 				return redirect(f'/get_acc?code=0{email}0')
 			elif comm == 'log':
-				# return '<meta name="viewport" content="width=device-width, initial-scale=1">'+\
-				# 	open('Alexis.log', encoding='utf-8').read().replace('\n', '</p><p>').replace('  ', '<br>')
-				return render_template('log.html', name=name, session=session, f=open('Alexis.log', encoding='utf-8').read())
+				date = request.args.get('date')
+				if not date: date = datetime.today().strftime("%d.%m.%Y")
+				dt_0 = (datetime.strptime(date, '%d.%m.%Y')-timedelta(1)).strftime('%d.%m.%Y') \
+					if datetime.strptime(date, '%d.%m.%Y') >= datetime(2025, 10, 22) else None
+				dt_1 = (datetime.strptime(date, '%d.%m.%Y')+timedelta(1)).strftime('%d.%m.%Y') \
+					if datetime.strptime(date, '%d.%m.%Y') < datetime.today()-timedelta(1) else None
+				date1 = '['+(datetime.strptime(date, '%d.%m.%Y')+timedelta(1)).strftime('%d.%m.%Y')
+				f = open('Alexis.log', encoding='utf-8').read()
+				return render_template('log.html', name=name, session=session, f=f[f.find(date)-1:f.find(date1)], dt_0=dt_0, dt_1=dt_1)
 			else:
 				return redirect('/lk')
 		else:

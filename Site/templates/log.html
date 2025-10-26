@@ -8,6 +8,17 @@
 		<li><a href="/update">Обновление данных</a></li>
 		<li><a href="/get_qr">Создать QR код.</a></li>
 		<li><a href="/adm/see">Административная панель</a></li>
+		<hr>
+		<div style="display: flex;justify-content: space-around;font-weight: bold;">
+			{% if dt_0 %}
+			<a style="color: chocolate; text-decoration: none;" href="?date={{dt_0}}" title="{{dt_0}}">-1 день</a>
+			{% endif %}
+			{% if dt_1 %}
+			<a style="color: chocolate; text-decoration: none;" href="?date={{dt_1}}" title="{{dt_1}}">+1 день</a>
+			{% endif %}
+			<a style="color: chocolate; text-decoration: none;" href="/adm/log">Сегодня</a>
+		</div>
+		<hr>
 		<li><a href="/logout">Выход</a></li>
 	</ul>
 {% endblock menu %}
