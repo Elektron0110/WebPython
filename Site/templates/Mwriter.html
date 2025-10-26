@@ -1,28 +1,7 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-	<meta charset="UTF-8">
-	<title>Написать сообщение</title>
+{% extends "Bases/MailBase.html" %}
+{% block title %}Написать сообщение{% endblock title %}
+{% block body %}
 	<link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet" type="text/css" />
-	<link rel="icon" sizes="256x256" type="image/ico" href="{{ url_for('static', filename='img/Mf.ico') }}">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-<body>
-	<header>
-		<nav class="navbar">
-			<div class="navbar_div">
-				<a href="/" class="navbar name">
-					<img src="{{ url_for('static', filename='img/pr.png') }}">
-					{{name}}
-				</a>
-				<div>
-					<button type="button" class="navbar-button " id="menu_button" onclick="func()">
-						<img id="img" title="Меню" src="{{ url_for('static', filename='img/menu.png') }}">
-					</button>
-				</div>
-			</div>
-		</nav>
-	</header>
 	<div class="form">
 		<form method="post" action="/mail/new">
 			<div style=" display: grid; justify-content: center;">
@@ -42,5 +21,4 @@
 			</center>
 		</form>
 	</div>
-</body>
-</html>
+{% endblock body %}
