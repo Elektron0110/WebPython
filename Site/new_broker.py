@@ -100,7 +100,7 @@ def sun():
 	fig.update_xaxes(range=[dt.strptime(date, '%Y.%m.%d')-td(1), dt.strptime(date+' 23:59', '%Y.%m.%d %H:%M')])
 	graph_html = fig.to_html(full_html=False)
 
-	return render_template(f'sun.html', graph=graph_html, dt_0=dt_0, dt_1=dt_1)
+	return render_template(f'sun.html', graph=graph_html, dt_0=dt_0, dt_1=dt_1, loc=locate())
 
 @app.route('/sun/average')
 def sunaver():
@@ -134,3 +134,68 @@ def sunaver():
 	fig.update_xaxes(range=[dt.strptime(date, '%Y.%m.%d')-td(1), dt.strptime(date+' 23:59', '%Y.%m.%d %H:%M')])
 	graph_html = fig.to_html(full_html=False)
 	return render_template(f'sun.html', graph=graph_html, dt_0=dt_0, dt_1=dt_1)
+
+def locate():
+	URL = 'https://api.sunrise-sunset.org/json'
+	par = {
+		'lat': 60,
+		'lng': 30
+	}
+	res = get(URL, params=par, timeout=60)
+	res: dict[str, str] = res.json()['results']
+
+	ch = int(dt.now().strftime("%H"))
+	cm = int(dt.now().strftime("%M"))
+
+	uh = int(res['sunrise'][:res['sunrise'].find(':')])
+	um = int(res['sunrise'][:res['sunrise'].find(':')])
+	dh = int(res['sunset'][res['sunset'].find(':')+1:res['sunset'].rfind(':')])+12
+	dm = int(res['sunset'][res['sunset'].find(':')+1:res['sunset'].rfind(':')])+00
+
+	a1 = ch - uh
+	a2 = cm - um
+	a3 = a1 * 60
+	a4 = a2 + a3
+	a5 = dh - uh
+	a6 = dm - um
+	a7 = a5 * 60 + a6
+	a8 = a7 / 180
+	a9 = a4 / a8
+
+	q = a9
+	q1 = (q * 5) / 9
+	qw = str(int(q1)) + "%"
+	ni = "мин."
+	if q > 180:
+		q1 = ((ch * 60 + cm) - (dh * 60 + dm)) % 60
+		q2 = int(((ch * 60 + cm) - (dh * 60 + dm)) / 60)
+		if int(str(q1)[-1]) == 1:
+			ni = "минуту"
+		if int(str(q1)[-1]) > 4:
+			ni = "минут"
+		elif 1 < int(str(q1)[-1]) < 5:
+			ni = "минуты"
+		if int(str(q2)[-1]) == 1:
+			nii = "час"
+		if int(str(q2)[-1]) > 2:
+			nii = "часа"
+		elif int(str(q2)[-1]) > 4:
+			nii = "часов"
+		return f"Солнце зашло за горизонт {q2} {nii} {q1} {ni} назад."
+	if q < 0:
+		q1 = ((uh * 60 + um) - (ch * 60 + cm)) % 60
+		q2 = int(((uh * 60 + um) - (ch * 60 + cm)) / 60)
+		if int(str(q1)[-1]) == 1:
+			ni = "минуту"
+		if int(str(q1)[-1]) > 4:
+			ni = "минут"
+		elif 1 < int(str(q1)[-1]) < 5:
+			ni = "минуты"
+		if int(str(q2)[-1]) == 1:
+			nii = "час"
+		if int(str(q2)[-1]) > 2:
+			nii = "часа"
+		elif int(str(q2)[-1]) > 4:
+			nii = "часов"
+		return f"Солнце взайдёт из-за горизонта через {q2} {nii} {q1} {ni}."
+	return f'Солнце прошло {qw} своего дневного пути по небосводу.'

@@ -1,20 +1,21 @@
 {% extends "Bases/FormBase.html" %}
 {% block title %}Sun Activity{% endblock title %}
 {% block body %}
-<style>
-	body {
-    	background-color: white;
-	}
-</style>
+	<center><h6>{{loc}}</h6></center>
+	<style>
+		body {
+			background-color: white;
+		}
+	</style>
 
-<div>{{ graph | safe }}</div>
-<div style="display: flex;justify-content: space-around;font-size: 25px;font-weight: bold;">
-	{% if dt_0 %}
-	<a style="color: chocolate; text-decoration: none;" href="/sun?date={{dt_0}}" title="{{dt_0}}">-1 день</a>
-	{% endif %}
-	{% if dt_1 %}
-	<a style="color: chocolate; text-decoration: none;" href="/sun?date={{dt_1}}" title="{{dt_1}}">+1 день</a>
-	{% endif %}
-	<a style="color: chocolate; text-decoration: none;" href="/sun">Сегодня</a>
-</div>
+	<div>{{ graph | safe }}</div>
+	<div style="display: flex;justify-content: space-around;font-size: 25px;font-weight: bold;">
+		{% if dt_0 %}
+		<a style="color: chocolate; text-decoration: none;" href="/sun?date={{dt_0}}" title="{{dt_0}}">-1 день</a>
+		{% endif %}
+		{% if dt_1 %}
+		<a style="color: chocolate; text-decoration: none;" href="/sun?date={{dt_1}}" title="{{dt_1}}">+1 день</a>
+		{% endif %}
+		<a style="color: chocolate; text-decoration: none;" href="/sun">Сегодня</a>
+	</div>
 {% endblock body %}
