@@ -1,6 +1,7 @@
 {% extends "Bases/ALINBase.html" %}
 {% block title %}Заявка на обработку чего-либо{% endblock title %}
 {% block body %}
+	<link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet" type="text/css" />
 	<div class="form">
 		<form method="post" action="/new">
 			<div style="display: grid; justify-content: center;">
@@ -20,7 +21,7 @@
 				<br>
 				<label>
 					Ваш день рождения.
-					{% if session.get('birthday']) %}
+					{% if session.get('birthday') %}
 					<input readonly type="date" name="b_day" class="in" max="{{date}}" value="{{session['birthday']}}">
 					{% else %}
 					<input required type="date" name="b_day" class="in" max="{{date}}">
