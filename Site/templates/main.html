@@ -1,18 +1,20 @@
 {% extends "Bases/FormBase.html" %}
 {% block title %}Alexis{% endblock title %}
 {% block menu %}
-	<ul>
-		<li><a href="/lk">{{prompt}}</a></li>
-		<li><a href="/flight">Сервис для отслеживания самолётов.</a></li>
-		<li><a href="/train">Сервис для отслеживания поездов.</a></li>
-		<li><a href="/Ums">Сервис для наблюдения за погодой.</a></li>
-		<li><a href="/sun">Сервис для наблюдения за уровнем солнечной активности.</a></li>
-		<hr>
-		<li><a href="/down">Сервис для скачивания последних версий приложений наших парнёров.</a></li>
-		<li><a href="/lets">Сервис для чтения литературных произведений наших партнёров.</a></li>
-		<hr>
-		<li><a href="/about">О нас.</a></li>
-	</ul>
+<ul>
+	<li><a href="/lk">{{prompt}}</a></li>
+	<li><a href="/flight">Сервис для отслеживания самолётов.</a></li>
+	<li><a href="/train">Сервис для отслеживания поездов.</a></li>
+	<li><a href="/Ums">Сервис для наблюдения за погодой.</a></li>
+	<li><a href="/sun">Сервис для наблюдения за уровнем солнечной активности.</a></li>
+	{% if session.get('user') %}
+	<hr>
+	<li><a href="/down">Сервис для скачивания последних версий приложений наших парнёров.</a></li>
+	<li><a href="/lets">Сервис для чтения литературных произведений наших партнёров.</a></li>
+	{% endif %}
+	<hr>
+	<li><a href="/about">О нас.</a></li>
+</ul>
 {% endblock menu %}
 {% block body %}
 {% endblock body %}
