@@ -147,9 +147,9 @@ def locate():
 	ch = int(dt.now().strftime("%H"))
 	cm = int(dt.now().strftime("%M"))
 
-	uh = int(res['sunrise'][:res['sunrise'].find(':')])
+	uh = int(res['sunrise'][:res['sunrise'].find(':')])+3
 	um = int(res['sunrise'][:res['sunrise'].find(':')])
-	dh = int(res['sunset'][res['sunset'].find(':')+1:res['sunset'].rfind(':')])+12
+	dh = int(res['sunset'][res['sunset'].find(':')+1:res['sunset'].rfind(':')])+12+3
 	dm = int(res['sunset'][res['sunset'].find(':')+1:res['sunset'].rfind(':')])+00
 
 	a1 = ch - uh
