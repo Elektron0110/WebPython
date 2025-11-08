@@ -168,7 +168,7 @@ def main():
 		prompt = session.get('user')
 	else:
 		prompt = 'Вход/Регистрация'
-	return render_template('main.html', name=name, prompt=prompt, session)
+	return render_template('main.html', name=name, prompt=prompt, session=session)
 
 
 @app.route('/lk', methods=['GET', 'POST'])
