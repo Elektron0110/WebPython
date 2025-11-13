@@ -148,9 +148,9 @@ def locate():
 	cm = int(dt.now().strftime("%M"))
 
 	uh = int(res['sunrise'][:res['sunrise'].find(':')])+3
-	um = int(res['sunrise'][:res['sunrise'].find(':')])
-	dh = int(res['sunset'][res['sunset'].find(':')+1:res['sunset'].rfind(':')])+12+3
-	dm = int(res['sunset'][res['sunset'].find(':')+1:res['sunset'].rfind(':')])+00
+	um = int(res['sunrise'][res['sunrise'].find(':')+1:res['sunrise'].rfind(':')])
+	dh = int(res['sunset'][:res['sunset'].find(':')])+12+3
+	dm = int(res['sunset'][res['sunset'].find(':')+1:res['sunset'].rfind(':')])
 
 	a1 = ch - uh
 	a2 = cm - um
@@ -166,6 +166,7 @@ def locate():
 	q1 = (q * 5) / 9
 	qw = str(int(q1)) + "%"
 	ni = "мин."
+	nii = "ч."
 	if q > 180:
 		q1 = ((ch * 60 + cm) - (dh * 60 + dm)) % 60
 		q2 = int(((ch * 60 + cm) - (dh * 60 + dm)) / 60)
@@ -179,7 +180,7 @@ def locate():
 			nii = "час"
 		if int(str(q2)[-1]) > 2:
 			nii = "часа"
-		elif int(str(q2)[-1]) > 4:
+		elif int(str(q2)[-1]) in [0, 5, 6, 7, 8, 9]:
 			nii = "часов"
 		return f"Солнце зашло за горизонт {q2} {nii} {q1} {ni} назад."
 	if q < 0:
@@ -195,7 +196,7 @@ def locate():
 			nii = "час"
 		if int(str(q2)[-1]) > 2:
 			nii = "часа"
-		elif int(str(q2)[-1]) > 4:
+		elif int(str(q2)[-1]) in [0, 5, 6, 7, 8, 9]:
 			nii = "часов"
 		return f"Солнце взайдёт из-за горизонта через {q2} {nii} {q1} {ni}."
 	return f'Солнце прошло {qw} своего дневного пути по небосводу.'
