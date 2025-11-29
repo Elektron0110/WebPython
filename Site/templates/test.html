@@ -1,0 +1,15 @@
+{% extends "Bases/FormBase.html" %}
+{% block title %}Личный кабинет{% endblock title %}
+{% block body %}
+    <link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet" type="text/css" />
+    <div class="form">
+		<form method="post" action="/lk">
+			<div style="display: grid; justify-content: center;">
+                <!-- <input required type="text" name="text" class="in" placeholder="text"> -->
+            </div>
+			<center>
+				<input type="submit" value="Вход/Регистрация" class="in submit">
+			</center>
+        </form>
+    </div>
+{% endblock body %}
