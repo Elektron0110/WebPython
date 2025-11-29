@@ -3,12 +3,13 @@
 {% block body %}
     <link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet" type="text/css" />
     <div class="form">
-		<form method="post" action="/lk">
+		<form method="post" action="/test">
 			<div style="display: grid; justify-content: center;">
-                <!-- <input required type="text" name="text" class="in" placeholder="text"> -->
+                <input required type="text" name="text" class="in" placeholder="text">
+                <br>
             </div>
 			<center>
-				<input type="submit" value="Вход/Регистрация" class="in submit">
+				<input type="submit" value="Отправить" class="in submit">
 			</center>
         </form>
     </div>

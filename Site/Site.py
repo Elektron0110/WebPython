@@ -750,6 +750,14 @@ def qrcoder():
 		img.save("static/qr.png")
 		return send_from_directory(app.static_folder, 'qr.png')
 
+@app.route('/test', methods=['GET', 'POST'])
+def test():
+	if request.method == 'GET':
+		return render_template('test.html')
+	if request.method == 'POST':
+		open('test.txt', 'a').write(str(request.form)+'\n')
+		return redirect('lk')
+
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
 	import webbrowser
