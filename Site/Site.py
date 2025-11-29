@@ -753,7 +753,9 @@ def qrcoder():
 @app.route('/test', methods=['GET', 'POST'])
 def test():
 	if request.method == 'GET':
-		return render_template('test.html')
+		if session.get('name'):
+			return render_template('test.html')
+		else: redirect('lk')
 	if request.method == 'POST':
 		open('test.txt', 'a').write(str(request.form)+'\n')
 		return redirect('lk')

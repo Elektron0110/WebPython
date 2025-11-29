@@ -1,11 +1,13 @@
 {% extends "Bases/FormBase.html" %}
-{% block title %}Личный кабинет{% endblock title %}
+{% block title %}Анкета{% endblock title %}
 {% block body %}
     <link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet" type="text/css" />
     <div class="form">
 		<form method="post" action="/test">
 			<div style="display: grid; justify-content: center;">
                 <input required type="text" name="text" class="in" placeholder="text">
+                <br>
+                <input required hidden type="text" name="name" class="in" value="{{session['name']}}" placeholder="text">
                 <br>
             </div>
 			<center>
