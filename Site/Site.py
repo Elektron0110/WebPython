@@ -518,6 +518,7 @@ def Down ():
 
 @app.route('/down/<file>', methods=['GET', 'POST'])
 def Download (file):
+	name = os.listdir('down')[[name[:name.rfind('.')] for name in os.listdir('down')].index(file)]
 	if file == 'Alex':
 		if request.method == 'POST':
 			with app.app_context():
@@ -527,8 +528,10 @@ def Download (file):
 					db.session.commit()
 			return send_from_directory('down', 'Alex.exe')
 		else: return render_template(name=name, template_name_or_list='ADown.html')
-	else: 
-		return send_from_directory('down', file+'.exe') if os.path.isfile(f'down/{file}.exe') else 'Файл не найден.'
+	elif file in [name[:name.rfind('.')] for name in os.listdir('down')]:
+		return send_from_directory('down', name)
+	else:
+		return 'Файл не найден.'
 
 @app.route('/train', methods=['GET', 'POST'])
 def trains():
@@ -597,7 +600,12 @@ def after_request(response: Response):
 		n = n.lower().title()
 		response.set_cookie('Name', n)
 	if response.calculate_content_length(): fsb: int = response.calculate_content_length()
-	else: fsb = os.path.getsize(request.path[1:])
+	else:
+		if not 'manifest.json' in request.path:
+			if 'down/' not in request.path:
+				fsb = os.path.getsize(request.path[1:])
+			else: fsb = os.path.getsize(request.path[1:]+'.exe')
+		else: fsb = 0
 	fsk = fsb // 1024
 	fsb = fsb % 1024
 	fsm = fsk // 1024

@@ -7,6 +7,9 @@
 			<button type="button" class="dnld_u" id="Alex">
 				Alex
 			</button>
+			<button type="button" class="dnld_u" id="Test">
+				ЩИТ
+			</button>
 		</p>
 	</center>
 	<div>
@@ -20,20 +23,36 @@
 					<br>
 					<img title="Значёк программы." src="{{ url_for('static', filename='img/d/M.ico') }}">
 					<br>
-					<a target="_blank" href="/down/Alex">Ссылка на скачивание Alex for Windows >= v.2.0.0.</a>
+					<a href="/down/Alex">Ссылка на скачивание Alex for Windows >= v.2.0.0.</a>
 					<br>
-					<a target="_blank" href="/down/Alex 1.2.1">Ссылка на скачивание Alex for Windows v.1.2.1.</a>
+					<a href="/down/Alex 1.2.1">Ссылка на скачивание Alex for Windows v.1.2.1.</a>
 					<br>
-					<a target="_blank" style="pointer-events: none;" href="/down/Alex (AE)">Ссылка на скачивание Alex for Android.</a>
+					<a style="pointer-events: none;" href="/down/Alex (AE)">Ссылка на скачивание Alex for Android.</a>
 					<span style="color: #102c5d;" title="Появится в будущем.">*</span>
 				</div>
 			</div>
 		</div>
 		<br>
+		<div class="div" id="win_t" style="display: none">
+			<div class="name">
+				<h1>ЩИТ</h1>
+			</div>
+			<div class="down">
+				<div>
+					<h2>Скачать ЩИТ.</h2>
+					<br>
+					<img title="Значёк программы." src="{{ url_for('static', filename='img/d/icon-console.ico') }}">
+					<br>
+					<a href="/down/Shield v.0.7">Ссылка на скачивание ЩИТ for Windows v.0.7.</a>
+				</div>
+			</div>
+		</div>
 	</div>
 	<script>
 		let Alex = document.getElementById("Alex")
 		let wa = document.getElementById("win_a")
+		let Test = document.getElementById("Test")
+		let wt = document.getElementById("win_t")
 
 		Alex.addEventListener('click', () => {
 		if (Alex.className == "dnld_u") {
@@ -43,6 +62,15 @@
 			Alex.className = "dnld_u";
 		}
 		wa.style.display === 'none' ? wa.style.display = 'block' : wa.style.display = 'none';
+		});
+		Test.addEventListener('click', () => {
+		if (Test.className == "dnld_u") {
+			Test.className = "dnld_d";
+		}
+		else {
+			Test.className = "dnld_u";
+		}
+		wt.style.display === 'none' ? wt.style.display = 'block' : wt.style.display = 'none';
 		});
 	</script>
 {% endblock body %}
