@@ -155,6 +155,7 @@ app.secret_key = 'YOU-NOT-KNOW-THIS-I-SURE'#os.urandom(24)
 open('Site/log', 'a').write(f'\nStart at {datetime.now().strftime("%d.%m.%Y %H:%M")}.')
 admins = ['s762672@ya.ru', 'test@test']
 authorized = json.load(open('auth.json'))
+white = True
 last: dict[str, list[str]] = json.load(open('last.json'))
 
 # @app.errorhandler(404)
@@ -583,9 +584,9 @@ def limit_remote_addr():
 	if e and e not in authorized: authorized[session['email']] = 1
 	if authorized != json.load(open('auth.json')):
 		json.dump(authorized, open('auth.json', 'w'))
-	if not os.path.isfile('static/blocked_ips'): open('static/blocked_ips', 'w').write('')
-	blocked_ips = open('static/blocked_ips', 'r').read().split('\n')
-	if request.remote_addr in blocked_ips:
+	if not os.path.isfile('static/not_blocked_ips'): open('static/not_blocked_ips', 'w').write('')
+	not_blocked_ips = open('static/not_blocked_ips', 'r').read().split('\n')
+	if white and request.headers.get('x-real-ip') not in not_blocked_ips:
 		abort(403)  # Forbiden
 
 @app.after_request
