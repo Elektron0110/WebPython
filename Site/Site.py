@@ -155,7 +155,7 @@ app.secret_key = 'YOU-NOT-KNOW-THIS-I-SURE'#os.urandom(24)
 open('Site/log', 'a').write(f'\nStart at {datetime.now().strftime("%d.%m.%Y %H:%M")}.')
 admins = ['s762672@ya.ru', 'test@test']
 authorized = json.load(open('auth.json'))
-white = True
+white = False
 last: dict[str, list[str]] = json.load(open('last.json'))
 
 # @app.errorhandler(404)
@@ -602,11 +602,13 @@ def after_request(response: Response):
 		response.set_cookie('Name', n)
 	if response.calculate_content_length(): fsb: int = response.calculate_content_length()
 	else:
-		if not 'manifest.json' in request.path:
-			if 'down/' not in request.path:
-				fsb = os.path.getsize(request.path[1:])
-			else: fsb = os.path.getsize(request.path[1:]+'.exe')
-		else: fsb = 0
+		try:
+			if not 'manifest.json' in request.path:
+				if 'down/' not in request.path:
+					fsb = os.path.getsize(request.path[1:])
+				else: fsb = os.path.getsize(request.path[1:]+'.exe')
+			else: fsb = 0
+		except: fsb = 0
 	fsk = fsb // 1024
 	fsb = fsb % 1024
 	fsm = fsk // 1024
@@ -762,9 +764,9 @@ def qrcoder():
 @app.route('/test', methods=['GET', 'POST'])
 def test():
 	if request.method == 'GET':
-		if session.get('name'):
-			return render_template('test.html')
-		else: redirect('lk')
+		if request.cookies.get('Name'):
+			return render_template('test.html', session=session)
+		else: return redirect('lk')
 	if request.method == 'POST':
 		open('test.txt', 'a').write(str(request.form)+'\n')
 		return redirect('lk')
