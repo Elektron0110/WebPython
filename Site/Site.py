@@ -771,6 +771,14 @@ def test():
 		open('test.txt', 'a').write(str(request.form)+'\n')
 		return redirect('lk')
 
+@app.route('/test/result')
+def test_result():
+	f = open('test.txt').read().replace('ImmutableMultiDict([', '').replace('])', '').replace('), ', '|') \
+		.replace('(', '').replace(')', '').replace("'", '').replace('attitude', '').replace('advice', '') \
+		.replace('mood', '').replace('verb', '').replace('adjective', '').replace('verdict', '') \
+		.replace('name', '').replace(', ', '').replace(',', '')
+	return render_template('log.html', name=name, session=session, f=f)
+
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
 	import webbrowser
