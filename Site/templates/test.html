@@ -25,9 +25,9 @@
                     <input required type="text" name="mood" class="in" placeholder="В каком настроении я обычно нахожусь?">
                     <br>
                     <label>Что Вы бы мне посоветовали?</label>
-                    <input required type="text" name="advice" class="in" placeholder="Что Вы бы мне посоветовали?">
+                    <textarea required type="text" name="advice" class="in"
+                        placeholder="Что Вы бы мне посоветовали?"></textarea>
                     <br>
-                    <input required hidden type="text" name="name" class="in" value="{{session['user']}}">
                 </div>
                 <div id="div4" style="display: none; justify-content: center;">
                     <input required type="text" name="verdict" class="in" placeholder="Мне место в 8«Б1»?" list="y/n">
@@ -37,6 +37,8 @@
                         <option value="Нет">
                         <option value="Нет!">
                     </datalist>
+                    <br>
+                    <input required hidden type="text" name="name" class="in" value="{{session['user']}}">
                 </div>
             </div>
             <div id="div2" style="display: none;">
@@ -59,15 +61,15 @@
         let div4 = document.getElementById("div4")
         button.addEventListener('click', () => {
             div.style.display = 'grid';
-            div2.style.display = 'block';
+            div2.style.display = 'grid';
             button.style.display = 'none';
             label.style.display = 'none';
         });
         button2.addEventListener('click', () => {
             div.style.display = 'none';
             div2.style.display = 'none';
-            div3.style.display = 'block';
-            div4.style.display = 'block';
+            div3.style.display = 'grid';
+            div4.style.display = 'grid';
         });
     </script>
 {% endblock body %}

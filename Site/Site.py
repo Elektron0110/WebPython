@@ -764,7 +764,7 @@ def qrcoder():
 @app.route('/test', methods=['GET', 'POST'])
 def test():
 	if request.method == 'GET':
-		if request.cookies.get('Name'):
+		if session.get('user'):
 			return render_template('test.html', session=session)
 		else: return redirect('lk')
 	if request.method == 'POST':
