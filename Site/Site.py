@@ -779,6 +779,9 @@ def test_result():
 		.replace('name', '').replace(', ', '').replace(',', '')
 	return render_template('log.html', name=name, session=session, f=f)
 
+@app.route('/class')
+def clas(): return render_template('class.html')
+
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
 	import webbrowser
