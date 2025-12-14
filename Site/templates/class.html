@@ -106,7 +106,7 @@
 	</div>
 	<script>
 		var lst = [];
-		var obj = {
+		var names = {
 			"ЛН": "Ларионов Никита", "ИР": "Инкин Роман", "АД": "Андреева Дарья",
 			"КВ": "Климовская Валерия", "ГР": "Гамзатов Руслан", "ИМ": "Исупов Максим",
 			"ПС": "Плюснин Семён", "КЕ": "Киселёва Елизавета", "ХД": "Хомченко Дарья",
@@ -117,13 +117,25 @@
 			"БВ": "Буханков Владимир", "СМ": "Сафаров Мехроб", "БА": "Блюм Александр",
 			"ВН": "Выборнов Никита", "ХК": "Хазов Кирилл", "ММ": "Максимов Максим"
 		};
+		var weights = {
+			"ЛН": 0, "ИР": 0, "АД": 0, "КВ": -1, "ГР": +2, "ИМ": 0, "ПС": 0, "КЕ": 0, "ХД": 0,
+			"СА": +1, "РМ": 0, "ПМ": 0, "ЗВ": 0, "ЧД": +1, "РЮ": 0, "ХТ": 0, "ШГ": 0, "КИ": 0,
+			"❌": "❌", "ДИ": 0, "ША": "❌", "БВ": 0, "СМ": -1, "БА": 0, "ВН": +1, "ХК": 0, "ММ": 0
+		};
+		var note = {
+			"ЛН": null, "ИР": null, "АД": null, "КВ": "C", "ГР": "C", "ИМ": null, "ПС": null, "КЕ": null, "ХД": null,
+			"СА": null, "РМ": "C", "ПМ": null, "ЗВ": null, "ЧД": null, "РЮ": null, "ХТ": null, "ШГ": null, "КИ": null,
+			"❌": null, "ДИ": null, "ША": null, "БВ": null, "СМ": null, "БА": null, "ВН": null, "ХК": null, "ММ": null
+		};
 		for (let i = 1; i < document.getElementsByTagName('button').length; i++) {
 			document.getElementsByTagName('button')[i].addEventListener('click', () => {
-				alert(obj[document.getElementsByTagName('button')[i].textContent])
+				alert(names[document.getElementsByTagName('button')[i].textContent]+'\n'+
+					weights[document.getElementsByTagName('button')[i].textContent]+'\n'+
+					note[document.getElementsByTagName('button')[i].textContent])
 			})
 			lst.push(document.getElementsByTagName('button')[i].textContent);
 		}
 		// alert(lst)
-		// alert(obj[lst[5]])
+		// alert(names[lst[5]])
 	</script>
 {% endblock body %}
