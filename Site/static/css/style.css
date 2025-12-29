@@ -46,3 +46,54 @@ img {
     outline-color: blueviolet;
     outline-offset: 10px;
 }
+.snow span {
+	position: absolute;
+	text-align: center;
+	display: inline-block;
+	color: #D6FAFF;
+	margin: -280px 40px 54px -34px;
+	-webkit-animation: fallSnow 10s infinite linear;
+	-moz-animation: fallSnow 10s infinite linear;
+}
+.snow span:nth-child(5n+5){
+	-webkit-animation-delay: 1.3s;
+	-moz-animation-delay: 1.3s;
+}
+.snow span:nth-child(3n+2){
+	-webkit-animation-delay: 1.5s;
+	-moz-animation-delay: 1.5s;
+}
+.snow span:nth-child(2n+5){
+	-webkit-animation-delay: 1.7s;
+	-moz-animation-delay: 1.7s;
+}
+.snow span:nth-child(3n+10){
+	-webkit-animation-delay: 2.7s;
+	-moz-animation-delay: 2.7s;
+}
+.snow span:nth-child(7n+2){
+	-webkit-animation-delay: 3.5s;
+	-moz-animation-delay: 3.5s;
+}
+.snow span:nth-child(4n+5){
+	-webkit-animation-delay: 5.5s;
+	-moz-animation-delay: 5.5s;
+}
+.snow span:nth-child(3n+7){
+	-webkit-animation-delay: 8s;
+	-moz-animation-delay: 8s;
+}
+@-webkit-keyframes fallSnow{
+	0%{
+		opacity: 1;
+		-webkit-transform: translate(0,0px) rotateZ(0deg);
+	}
+	75%{
+		opacity: 1;
+		-webkit-transform: translate(100px,600px) rotateZ(270deg);
+	}
+	100%{
+		opacity: 0;
+		-webkit-transform: translate(150px,600px) rotateZ(360deg);
+	}
+}
