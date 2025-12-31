@@ -22,7 +22,7 @@ body {
 }
 .pressed {
 	background-color: rgb(215, 215, 215);
-	color: rgb(240, 240, 240);
+	color: rgb(255, 255, 255);
 }
 .name {
 	font: caption;
@@ -41,7 +41,7 @@ img {
 	height: 90px;
 }
 .sender {
-	color: silver;
+	color: rgb(255, 255, 255);
 }
 .topic {
 	font-weight: bold;
@@ -50,7 +50,7 @@ img {
 	color: black;
 }
 .date {
-	color: darkgray;
+	color: rgb(255, 255, 255);
 }
 .message {
     display: flex;

@@ -22,7 +22,7 @@ body {
 }
 .pressed {
 	background-color: rgb(215, 215, 215);
-	color: rgb(240, 240, 240);
+	color: rgb(255, 255, 255);
 }
 .name {
 	font: caption;
