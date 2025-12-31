@@ -5,14 +5,14 @@ body {
     margin: 0;
 }
 .form {
-	background-color: lightsteelblue;
+	background-color: rgb(0, 174, 255);
 	display: flex;
 	height: calc(100vh - 100px);
 	justify-content: center;
 	align-items: center;
 }
 .spec_form {
-	background-color: lightsteelblue;
+	background-color: rgb(0, 174, 255);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -20,27 +20,27 @@ body {
 form {
     outline: double;
     border-radius: 5px;
-    outline-color: blueviolet;
+    outline-color: blue;
     outline-offset: 10px;
 }
 .in {
     font-size: smaller;
     border-radius: 5px;
     border: double;
-    border-color: aqua;
-    background-color: aliceblue;
+    border-color: blue;
+    background-color: white;
 }
 .submit {
-    background-color: cornflowerblue;
+    background-color: rgb(255, 0, 0);
     font-size: larger;
-    color: aliceblue;
+    color: white;
 }
 span.required {
-	color: red;
+	color: white;
 }
 .navbar {
-    background-color: rgb(140, 140, 255);
-    color: rgb(240 240 240);
+    background-color: rgb(250, 0, 0);
+    color: rgb(255, 255, 255);
     height: 100px;
 }
 .navbar_div {
