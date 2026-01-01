@@ -1,20 +1,29 @@
 {% extends "Bases/FormBase.html" %}
 {% block title %}Погода{% endblock title %}
+{% block menu %}
+    <div style="margin: 20px;">
+        <a style="color: chocolate; text-decoration: none;" href="/sun">Солнечная активность</a>
+        <hr>
+        <a style="color: chocolate; text-decoration: none;" href="/Ums/pressure">Атмосферное давление</a>
+        <div style="display: flex;justify-content: space-around;font-size: 25px;font-weight: bold;">
+            {% if dt_0 %}
+            <a style="color: chocolate; text-decoration: none;" href="/Ums?date={{dt_0}}" title="{{dt_0}}">-1 день</a>
+            {% endif %}
+            {% if dt_1 %}
+            <a style="color: chocolate; text-decoration: none;" href="/Ums?date={{dt_1}}" title="{{dt_1}}">+1 день</a>
+            {% endif %}
+            <a style="color: chocolate; text-decoration: none;" href="/Ums">Сегодня</a>
+        </div>
+    </div>
+{% endblock menu %}
+
 {% block body %}
     <style>
         body {
             background-color: white;
         }
     </style>
+
     <center><h1>УМная погода</h1></center>
     <div>{{ graph | safe }}</div>
-    <div style="display: flex;justify-content: space-around;font-size: 25px;font-weight: bold;">
-        {% if dt_0 %}
-        <a style="color: chocolate; text-decoration: none;" href="/Ums?date={{dt_0}}" title="{{dt_0}}">-1 день</a>
-        {% endif %}
-        {% if dt_1 %}
-        <a style="color: chocolate; text-decoration: none;" href="/Ums?date={{dt_1}}" title="{{dt_1}}">+1 день</a>
-        {% endif %}
-        <a style="color: chocolate; text-decoration: none;" href="/Ums">Сегодня</a>
-    </div>
 {% endblock body %}
