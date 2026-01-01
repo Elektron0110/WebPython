@@ -7,8 +7,8 @@ BROKER_HOST = "m6.wqtt.ru"
 BROKER_PORT = 19310
 USERNAME = "Qwerty"
 PASSWORD = "1234567890"
-SUBS = ['Temperature', 'Humidity', 'Led', 'Um2T', 'Um2H', 'Um3T', 'Um3H']
-TOPICS = {'Um1': ['Temperature', 'Humidity', 'Led'],
+SUBS = ['Temperature', 'Humidity', 'Led', 'Pressure', 'Um2T', 'Um2H', 'Um3T', 'Um3H']
+TOPICS = {'Um1': ['Temperature', 'Humidity', 'Led', 'Pressure'],
           'Um2': ['Um2T', 'Um2H'],
           'Um3': ['Um3T', 'Um3H']}
 data = {}
