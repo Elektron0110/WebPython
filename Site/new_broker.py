@@ -57,9 +57,10 @@ def index():
 		weather: dict[str, list[str | dt | float]] = dict(topic=[], time=[], value=[])
 		for time in datae:
 			for data in datae[time]:
-				weather['topic'].append(data)
-				weather['time'].append(dt.strptime(time, '%Y.%m.%d %H:%M'))
-				weather['value'].append(float(datae[time][data]))
+				if 'P' not in data:
+					weather['topic'].append(data)
+					weather['time'].append(dt.strptime(time, '%Y.%m.%d %H:%M'))
+					weather['value'].append(float(datae[time][data]))
 		df = pd.DataFrame(weather)
 		fig = px.line(df, 'time', 'value', color="topic", markers=True)
 		graph_html = fig.to_html(full_html=False)
