@@ -62,6 +62,8 @@ def index():
 					weather['time'].append(dt.strptime(time, '%Y.%m.%d %H:%M'))
 					weather['value'].append(float(datae[time][data]))
 		df = pd.DataFrame(weather)
+		df['value'] = df.groupby('topic')['value'].transform(
+			lambda x: x.rolling(window=10, min_periods=1).mean())
 		fig = px.line(df, 'time', 'value', color="topic", markers=True)
 		graph_html = fig.to_html(full_html=False)
 
@@ -92,6 +94,8 @@ def press():
 					weather['time'].append(dt.strptime(time, '%Y.%m.%d %H:%M'))
 					weather['value'].append(float(datae[time][data])/133.3)
 		df = pd.DataFrame(weather)
+		df['value'] = df.groupby('topic')['value'].transform(
+			lambda x: x.rolling(window=10, min_periods=1).mean())
 		fig = px.line(df, 'time', 'value', color="topic", markers=True)
 		graph_html = fig.to_html(full_html=False)
 
