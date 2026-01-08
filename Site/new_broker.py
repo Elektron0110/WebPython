@@ -78,7 +78,7 @@ def index():
 '''
 
 @app.route('/Ums/hard')
-def index():
+def hindex():
 	date = request.args.get('date')
 	if not date: date = dt.today().strftime("%Y.%m.%d")
 	dt_0 = (dt.strptime(date, '%Y.%m.%d')-td(1)).strftime('%Y.%m.%d') if dt.strptime(date, '%Y.%m.%d') >= dt(2025, 8, 18) else None
