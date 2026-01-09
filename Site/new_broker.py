@@ -30,7 +30,7 @@ def show_graph():
 		datae: dict[str, dict[str, str]] = json.loads(open(f'graph/{dt.today().strftime('%Y.%m.%d')}', 'r').read())
 		# Create a plot
 		plt.figure()
-		plt.plot([dt.strptime(t, '%Y.%m.%d %H:%M') for t in datae], # type: ignore
+		plt.plot([dt.strptime(t, '%Y.%m.%d %H:%M:%S') for t in datae], # type: ignore
 		   [[float(datae[t][k]) for k in datae[t]] for t in datae]) # type: ignore
 		plt.title("График УМа")
 		plt.xlabel("Время")
@@ -59,7 +59,7 @@ def index():
 			for data in datae[time]:
 				if 'P' not in data:
 					weather['topic'].append(data)
-					weather['time'].append(dt.strptime(time, '%Y.%m.%d %H:%M'))
+					weather['time'].append(dt.strptime(time, '%Y.%m.%d %H:%M:%S'))
 					weather['value'].append(float(datae[time][data]))
 		df = pd.DataFrame(weather)
 		df['value'] = df.groupby('topic')['value'].transform(
@@ -91,7 +91,7 @@ def hindex():
 			for data in datae[time]:
 				if 'P' not in data:
 					weather['topic'].append(data)
-					weather['time'].append(dt.strptime(time, '%Y.%m.%d %H:%M'))
+					weather['time'].append(dt.strptime(time, '%Y.%m.%d %H:%M:%S'))
 					weather['value'].append(float(datae[time][data]))
 		df = pd.DataFrame(weather)
 		fig = px.line(df, 'time', 'value', color="topic", markers=True)
@@ -121,7 +121,7 @@ def press():
 			for data in datae[time]:
 				if 'P' in data:
 					weather['topic'].append(data)
-					weather['time'].append(dt.strptime(time, '%Y.%m.%d %H:%M'))
+					weather['time'].append(dt.strptime(time, '%Y.%m.%d %H:%M:%S'))
 					weather['value'].append(float(datae[time][data])/133.3)
 		df = pd.DataFrame(weather)
 		df['value'] = df.groupby('topic')['value'].transform(
@@ -162,7 +162,7 @@ def sun():
 	fig.update_yaxes(range=[-9*0.000001, -2*0.000001],
 				  	 tickvals=[-9*0.000001, -8*0.000001, -7*0.000001, -6*0.000001, -5*0.000001, -4*0.000001, -3*0.000001, -2*0.000001],
 					 ticktext=['10⁻⁹', '10⁻⁸(A)', '10⁻⁷(B)', '10⁻⁶(C)', '10⁻⁵(M)', '10⁻⁴(X)', '10⁻³(X10)', '10⁻²'])
-	fig.update_xaxes(range=[dt.strptime(date, '%Y.%m.%d')-td(1), dt.strptime(date+' 23:59', '%Y.%m.%d %H:%M')])
+	fig.update_xaxes(range=[dt.strptime(date, '%Y.%m.%d')-td(1), dt.strptime(date+' 23:59', '%Y.%m.%d %H:%M:%S')])
 	graph_html = fig.to_html(full_html=False)
 
 	return render_template(f'sun.html', graph=graph_html, dt_0=dt_0, dt_1=dt_1, loc=locate())
@@ -196,7 +196,7 @@ def sunaver():
 	fig.update_yaxes(range=[-9*0.000001, -2*0.000001],
 				  	 tickvals=[-9*0.000001, -8*0.000001, -7*0.000001, -6*0.000001, -5*0.000001, -4*0.000001, -3*0.000001, -2*0.000001],
 					 ticktext=['10⁻⁹', '10⁻⁸(A)', '10⁻⁷(B)', '10⁻⁶(C)', '10⁻⁵(M)', '10⁻⁴(X)', '10⁻³(X10)', '10⁻²'])
-	fig.update_xaxes(range=[dt.strptime(date, '%Y.%m.%d')-td(1), dt.strptime(date+' 23:59', '%Y.%m.%d %H:%M')])
+	fig.update_xaxes(range=[dt.strptime(date, '%Y.%m.%d')-td(1), dt.strptime(date+' 23:59', '%Y.%m.%d %H:%M:%S')])
 	graph_html = fig.to_html(full_html=False)
 	return render_template(f'sun.html', graph=graph_html, dt_0=dt_0, dt_1=dt_1)
 

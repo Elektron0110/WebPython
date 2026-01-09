@@ -35,14 +35,14 @@ def on_message(client, userdata, msg):
 		if topic in TOPICS[um]:
 			topic = 'Temperature' if topic[-1:] == 'T' else ('Humidity' if topic[-1:] == 'H' else topic)
 			if datae:
-				if int(list(datae.keys())[-1][-5:].replace(':', '')) > int(datetime.now().strftime('%H%M')):
+				if int(list(datae.keys())[-1][-5:].replace(':', '')) > int(datetime.now().strftime('%H%M%S')):
 					datae.clear()
 			if um not in data.keys():
 				data[um] = {}
-			if datetime.now().strftime('%Y.%m.%d %H:%M') not in datae.keys():
-				datae[datetime.now().strftime('%Y.%m.%d %H:%M')] = {}
+			if datetime.now().strftime('%Y.%m.%d %H:%M:%S') not in datae.keys():
+				datae[datetime.now().strftime('%Y.%m.%d %H:%M:%S')] = {}
 			data[um][topic] = msg.payload.decode()
-			datae[datetime.now().strftime('%Y.%m.%d %H:%M')][msg.topic] = msg.payload.decode()
+			datae[datetime.now().strftime('%Y.%m.%d %H:%M:%S')][msg.topic] = msg.payload.decode()
 	open('data', 'w').write(str(data).replace("'", '"'))
 	open(f'graph/{datetime.today().strftime('%Y.%m.%d')}', 'w').write(str(datae).replace("'", '"'))
 
