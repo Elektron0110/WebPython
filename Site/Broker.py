@@ -32,7 +32,7 @@ def on_message(client, userdata, msg):
 				'Humidity' if topic[3:] == 'H' else (
 				'Pressure' if topic[3:] == 'P' else topic))
 		if datae:
-			if int(list(datae.keys())[-1][-5:].replace(':', '')) > int(datetime.now().strftime('%H%M%S')):
+			if int(list(datae.keys())[-1][-7:].replace(':', '')) > int(datetime.now().strftime('%H%M%S')):
 				datae.clear()
 		if um not in data.keys():
 			data[um] = {}
