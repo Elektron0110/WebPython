@@ -122,7 +122,7 @@ def press():
 				if 'P' in data:
 					weather['topic'].append(data)
 					weather['time'].append(dt.strptime(time, '%Y.%m.%d %H:%M:%S'))
-					weather['value'].append(float(datae[time][data])/133.3)
+					weather['value'].append(float(datae[time][data])/(400/3))
 		df = pd.DataFrame(weather)
 		df['value'] = df.groupby('topic')['value'].transform(
 			lambda x: x.rolling(window=10, min_periods=1).mean())
@@ -154,7 +154,7 @@ def hpress():
 				if 'P' in data:
 					weather['topic'].append(data)
 					weather['time'].append(dt.strptime(time, '%Y.%m.%d %H:%M:%S'))
-					weather['value'].append(float(datae[time][data])/133.3)
+					weather['value'].append(float(datae[time][data])/(400/3))
 		df = pd.DataFrame(weather)
 		fig = px.line(df, 'time', 'value', color="topic", markers=True)
 		graph_html = fig.to_html(full_html=False)
