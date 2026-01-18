@@ -192,7 +192,7 @@ def sun():
 	fig.update_yaxes(range=[-9*0.000001, -2*0.000001],
 				  	 tickvals=[-9*0.000001, -8*0.000001, -7*0.000001, -6*0.000001, -5*0.000001, -4*0.000001, -3*0.000001, -2*0.000001],
 					 ticktext=['10⁻⁹', '10⁻⁸(A)', '10⁻⁷(B)', '10⁻⁶(C)', '10⁻⁵(M)', '10⁻⁴(X)', '10⁻³(X10)', '10⁻²'])
-	fig.update_xaxes(range=[dt.strptime(date, '%Y.%m.%d')-td(1), dt.strptime(date+' 23:59', '%Y.%m.%d %H:%M:%S')])
+	fig.update_xaxes(range=[dt.strptime(date, '%Y.%m.%d')-td(1), dt.strptime(date+' 23:59', '%Y.%m.%d %H:%M')])
 	graph_html = fig.to_html(full_html=False)
 
 	return render_template(f'sun.html', graph=graph_html, dt_0=dt_0, dt_1=dt_1, loc=locate())
@@ -226,7 +226,7 @@ def sunaver():
 	fig.update_yaxes(range=[-9*0.000001, -2*0.000001],
 				  	 tickvals=[-9*0.000001, -8*0.000001, -7*0.000001, -6*0.000001, -5*0.000001, -4*0.000001, -3*0.000001, -2*0.000001],
 					 ticktext=['10⁻⁹', '10⁻⁸(A)', '10⁻⁷(B)', '10⁻⁶(C)', '10⁻⁵(M)', '10⁻⁴(X)', '10⁻³(X10)', '10⁻²'])
-	fig.update_xaxes(range=[dt.strptime(date, '%Y.%m.%d')-td(1), dt.strptime(date+' 23:59', '%Y.%m.%d %H:%M:%S')])
+	fig.update_xaxes(range=[dt.strptime(date, '%Y.%m.%d')-td(1), dt.strptime(date+' 23:59', '%Y.%m.%d %H:%M')])
 	graph_html = fig.to_html(full_html=False)
 	return render_template(f'sun.html', graph=graph_html, dt_0=dt_0, dt_1=dt_1)
 
