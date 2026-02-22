@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 from requests import post, get
 from alf import alf
+from my_lib.Python.new import file_to_list as ftl
 
 slicer = r'\|/'
 name = 'Alexis'
@@ -291,6 +292,37 @@ def new():
 			return f'''Заявка отправлена.
 Ориентировочная стоимость выполнения задачи: {50 * int(lines) * 2.25}₽.'''
 
+
+@app.route('/rss.xml')
+def rss():
+	up = '''<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+	<channel>
+        <title>Alexis Log</title>
+        <link>https://s762672.cloudpub.ru/adm/log</link>
+        <description>RSS logging of my site</description>
+        <language>ru-ru</language>'''
+	items = ''
+	for i in ftl('Alexis.log', sort=False)[-100:][::-1]:
+		s = i.split('  ')
+		if len(s) > 2:
+			try:
+				title = s[2].replace('"', '').replace('GET ', 'GET "')
+				description = f"""
+Code: {s[3]},\tPerson: {s[4].split(' | ')[0]},\tIP: {s[1]},\tWeight: {s[4].split(' | ')[1]}
+			"""
+				pubDate = datetime.strptime(s[0], '[%d.%m.%Y %H:%M:%S]')
+				items += f'''
+		<item>
+			<title>{title}"</title>
+			<description>{description}</description>
+			<pubDate>{pubDate}</pubDate>
+		</item>'''
+			except:
+				pass
+	down = '</channel></rss>'
+	open('rss.xml', 'w', encoding='utf-8').write(up+items+down)
+	return send_from_directory('', 'rss.xml')
 
 @app.route('/adm/<comm>', methods=['GET', 'POST'])
 def admin(comm):
@@ -781,6 +813,9 @@ def test_result():
 
 @app.route('/class')
 def clas(): return render_template('class.html')
+
+@app.route('/favicon.ico')
+def favicon(): return send_from_directory('static/img', 'f.ico')
 
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
