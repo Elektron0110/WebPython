@@ -10,6 +10,7 @@ from my_lib.Python.new import file_to_list as ftl
 
 slicer = r'\|/'
 name = 'Alexis'
+start = -100
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -295,15 +296,16 @@ def new():
 
 @app.route('/rss.xml')
 def rss():
-	up = '''<?xml version="1.0" encoding="UTF-8"?>
+	global start
+	'''<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
 	<channel>
         <title>Alexis Log</title>
         <link>https://s762672.cloudpub.ru/adm/log</link>
         <description>RSS logging of my site</description>
-        <language>ru-ru</language>'''
+        <language>ru-ru</language></channel></rss>'''
 	items = ''
-	for i in ftl('Alexis.log', sort=False)[-100:][::-1]:
+	for i in ftl('Alexis.log', sort=False)[start:][::-1]:
 		s = i.split('  ')
 		if len(s) > 2:
 			try:
@@ -321,8 +323,10 @@ Code: {s[3]},\tPerson: {s[4].split(' | ')[0]},\tIP: {s[1]},\tWeight: {s[4].split
 			except:
 				pass
 	down = '</channel></rss>'
-	open('rss.xml', 'w', encoding='utf-8').write(up+items+down)
-	return send_from_directory('', 'rss.xml')
+	a = open('rss.xml', 'r', encoding='utf-8').read()[:-16]
+	open('rss.xml', 'w', encoding='utf-8').write(a+items+down)
+	start += (ftl('Alexis.log', sort=False).index(i)+1 -start)
+	# return send_from_directory('', 'rss.xml')
 
 @app.route('/adm/<comm>', methods=['GET', 'POST'])
 def admin(comm):
@@ -800,15 +804,15 @@ def test():
 			return render_template('test.html', session=session)
 		else: return redirect('lk')
 	if request.method == 'POST':
-		open('test.txt', 'a').write(str(request.form)+'\n')
+		open('test.txt', 'a', encoding='utf-8').write(str(request.form)+'\n')
 		return redirect('lk')
 
 @app.route('/test/result')
 def test_result():
-	f = open('test.txt').read().replace('ImmutableMultiDict([', '').replace('])', '').replace('), ', '|') \
-		.replace('(', '').replace(')', '').replace("'", '').replace('attitude', '').replace('advice', '') \
-		.replace('mood', '').replace('verb', '').replace('adjective', '').replace('verdict', '') \
-		.replace('name', '').replace(', ', '').replace(',', '')
+	f = open('test.txt', encoding='utf-8').read().replace('ImmutableMultiDict([', '').replace('])', '') \
+		.replace('), ', '|').replace('(', '').replace(')', '').replace("'", '').replace('attitude', '') \
+		.replace('advice', '').replace('mood', '').replace('verb', '').replace('adjective', '') \
+		.replace('verdict', '').replace('name', '').replace(', ', '').replace(',', '')
 	return render_template('log.html', name=name, session=session, f=f)
 
 @app.route('/class')
@@ -816,6 +820,8 @@ def clas(): return render_template('class.html')
 
 @app.route('/favicon.ico')
 def favicon(): return send_from_directory('static/img', 'f.ico')
+
+rss()
 
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
