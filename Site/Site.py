@@ -1,6 +1,6 @@
 """Модуль, отвечающий за работу сервера."""
 import os, random, new_broker, json, qrcode
-from flask import Flask
+from flask import Flask, Request
 from flask import render_template, request, session, redirect, send_from_directory, abort, Response
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
@@ -820,6 +820,26 @@ def clas(): return render_template('class.html')
 
 @app.route('/favicon.ico')
 def favicon(): return send_from_directory('static/img', 'f.ico')
+
+@app.route('/webdav', methods=['OPTIONS', 'PROPFIND'])
+def webdav():
+	if request.method == 'OPTIONS':
+		return Response('''HTTP/1.1 204 No Content
+Allow: GET, POST, PUT, DELETE, OPTIONS
+Access-Control-Allow-Origin: https://s762672.cloudpub.ru
+Access-Control-Allow-Methods: GET, POST, PUT
+Access-Control-Allow-Headers: Content-Type, Authorization
+Access-Control-Max-Age: 3600
+''', 204)
+	else:
+		print(request.get_data(as_text=True))
+		return Response('''HTTP/1.1 207 Multi-Status
+Content-Type: application/xml
+
+<?xml version="1.0"?>
+<D:propfind xmlns:D="DAV:">
+  <D:allprop/>
+</D:propfind>''', 207)
 
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
