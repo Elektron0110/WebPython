@@ -7,6 +7,8 @@ from datetime import datetime, timedelta
 from requests import post, get
 from alf import alf
 from my_lib.Python.new import file_to_list as ftl
+from cheroot import wsgi
+from wsgidav.wsgidav_app import WsgiDAVApp
 
 slicer = r'\|/'
 name = 'Alexis'
@@ -25,6 +27,19 @@ if not os.path.isdir('Site'):
 	open('Site/log', 'w').write('Start.')
 if not os.path.isdir('Site/applications'):
 	os.mkdir('Site/applications')
+
+class WsgiDAVMiddleware:
+    def __init__(self, flask_app, dav_app, dav_path="/webdav"):
+        self.flask_app = flask_app
+        self.dav_app = dav_app
+        self.dav_path = dav_path
+
+    def __call__(self, environ, start_response):
+        # Если путь начинается с /webdav, передаём запрос в WsgiDAV
+        if environ.get("PATH_INFO", "").startswith(self.dav_path):
+            return self.dav_app(environ, start_response)
+        # Иначе — в Flask
+        return self.flask_app(environ, start_response)
 
 # -------------------------------------------------------------------------------------------------------------
 
@@ -828,3 +843,40 @@ if os.path.isdir('C:'):
 	date = '9999' #datetime.now().strftime("%H%M")
 	#webbrowser.open_new_tab('http://127.0.0.1:{}/'.format(date))
 	app.run(port=int(date))
+
+	dav_config = {
+		"host": "127.0.0.1",
+		"port": date,
+		"provider_mapping": {
+			"/webdav": "C:\\Users\\Alex\\Desktop\\JetBr\\Python\\WebPython\\Third\\Site\\graph",
+		},
+		"http_authenticator": {
+			"domain_controller": None,
+			"accept_basic": True,
+			"accept_digest": False,
+			"default_to_digest": False
+		},
+		"simple_dc": {
+			"user_mapping": {
+				"/webdav": True
+			}
+		},
+		"verbose": 2,
+	}
+
+	# Создаём экземпляр WsgiDAV
+	dav_app = WsgiDAVApp(dav_config)
+	app.wsgi_app = WsgiDAVMiddleware(app.wsgi_app, dav_app)
+
+	# Запускаем сервер Cheroot, который обслуживает и Flask, и WsgiDAV
+	server = wsgi.Server(
+		bind_addr=("127.0.0.1", date),
+		wsgi_app=app.wsgi_app
+	)
+	print(f"Flask + WsgiDAV запущен: http://127.0.0.1:{date}/")
+	print(f"WebDAV: http://127.0.0.1:{date}/webdav")
+	try:
+		server.start()
+	except KeyboardInterrupt:
+		print("\nСервер остановлен.")
+		server.stop()
