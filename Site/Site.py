@@ -326,7 +326,7 @@ Code: {s[3]},\tPerson: {s[4].split(' | ')[0]},\tIP: {s[1]},\tWeight: {s[4].split
 	a = open('rss.xml', 'r', encoding='utf-8').read()[:-16]
 	open('rss.xml', 'w', encoding='utf-8').write(a+items+down)
 	start += (ftl('Alexis.log', sort=False).index(i)+1 -start)
-	# return send_from_directory('', 'rss.xml')
+	return send_from_directory('', 'rss.xml')
 
 @app.route('/adm/<comm>', methods=['GET', 'POST'])
 def admin(comm):
