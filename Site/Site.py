@@ -1,6 +1,6 @@
 """Модуль, отвечающий за работу сервера."""
 import os, random, new_broker, json, qrcode
-from flask import Flask, Request
+from flask import Flask
 from flask import render_template, request, session, redirect, send_from_directory, abort, Response
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
@@ -820,8 +820,6 @@ def clas(): return render_template('class.html')
 
 @app.route('/favicon.ico')
 def favicon(): return send_from_directory('static/img', 'f.ico')
-
-rss()
 
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
