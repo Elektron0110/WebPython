@@ -326,7 +326,7 @@ Code: {s[3]},\tPerson: {s[4].split(' | ')[0]},\tIP: {s[1]},\tWeight: {s[4].split
 	a = open('rss.xml', 'r', encoding='utf-8').read()[:-16]
 	open('rss.xml', 'w', encoding='utf-8').write(a+items+down)
 	start += (ftl('Alexis.log', sort=False).index(i)+1 -start)
-	return send_from_directory('', 'rss.xml')
+	# return send_from_directory('', 'rss.xml')
 
 @app.route('/adm/<comm>', methods=['GET', 'POST'])
 def admin(comm):
@@ -821,25 +821,7 @@ def clas(): return render_template('class.html')
 @app.route('/favicon.ico')
 def favicon(): return send_from_directory('static/img', 'f.ico')
 
-@app.route('/webdav', methods=['OPTIONS', 'PROPFIND'])
-def webdav():
-	if request.method == 'OPTIONS':
-		return Response('''HTTP/1.1 204 No Content
-Allow: GET, POST, PUT, DELETE, OPTIONS
-Access-Control-Allow-Origin: https://s762672.cloudpub.ru
-Access-Control-Allow-Methods: GET, POST, PUT
-Access-Control-Allow-Headers: Content-Type, Authorization
-Access-Control-Max-Age: 3600
-''', 204)
-	else:
-		print(request.get_data(as_text=True))
-		return Response('''HTTP/1.1 207 Multi-Status
-Content-Type: application/xml
-
-<?xml version="1.0"?>
-<D:propfind xmlns:D="DAV:">
-  <D:allprop/>
-</D:propfind>''', 207)
+rss()
 
 if os.path.isdir('C:'):
 	"""Функция, запускающая работу сервера."""
