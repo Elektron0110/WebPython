@@ -29,7 +29,7 @@ if not os.path.isdir('Site/applications'):
 	os.mkdir('Site/applications')
 
 class WsgiDAVMiddleware:
-    def __init__(self, flask_app, dav_app, dav_path="/webdav"):
+    def __init__(self, flask_app, dav_app, dav_path=("/webdav", "/:dir_browser")):
         self.flask_app = flask_app
         self.dav_app = dav_app
         self.dav_path = dav_path
