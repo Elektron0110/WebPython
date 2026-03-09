@@ -837,12 +837,12 @@ def clas(): return render_template('class.html')
 def favicon(): return send_from_directory('static/img', 'f.ico')
 
 if os.path.isdir('C:'):
-	"""Функция, запускающая работу сервера."""
-	import webbrowser
+	# """Функция, запускающая работу сервера."""
+	# import webbrowser
 
 	date = '9999' #datetime.now().strftime("%H%M")
-	#webbrowser.open_new_tab('http://127.0.0.1:{}/'.format(date))
-	app.run(port=int(date))
+	# #webbrowser.open_new_tab('http://127.0.0.1:{}/'.format(date))
+	# app.run(port=int(date))
 
 	dav_config = {
 		"host": "127.0.0.1",
