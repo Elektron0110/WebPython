@@ -840,9 +840,9 @@ if os.path.isdir('C:'):
 	# """Функция, запускающая работу сервера."""
 	# import webbrowser
 
-	date = '9999' #datetime.now().strftime("%H%M")
+	date = 9999 #datetime.now().strftime("%H%M")
 	# #webbrowser.open_new_tab('http://127.0.0.1:{}/'.format(date))
-	# app.run(port=int(date))
+	# app.run(port=date)
 
 	dav_config = {
 		"host": "127.0.0.1",
