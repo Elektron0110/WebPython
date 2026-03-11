@@ -3,27 +3,33 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="generator" content="WsgiDAV/{{ version }}">
-  <title>WsgiDAV - Index of {{ display_path }} </title>
-  <link rel="shortcut icon" href="{{ htdocs }}/favicon.ico">
+  <title>WebDAV - Index of {{ display_path }} </title>
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/static/css/style.css" />
   <link rel="stylesheet" href="{{ htdocs }}/style.css" />
   <script defer src="{{ htdocs }}/script.js"></script>
   <style type="text/css"> A {behavior: url(#default#AnchorClick);} </style>
 </head>
 
-<body onload="onLoad()">
-
-  <h1>
-    {%- if config.icon %}
-    <img class="logo" alt="WsgiDAV" title="WsgiDAV" src="{{ htdocs }}/logo.png">
-    {% endif -%}
+<body onload="onLoad()" style="padding: 0px;">
+  <header>
+    <nav class="navbar">
+      <div class="navbar_div">
+        <a href="/webdav" class="navbar name">
+          {%- if config.icon %}
+          <img class="logo" alt="WsgiDAV" title="WsgiDAV" src="/static/img/pr.png">
+          {% endif -%}
     Index of {{ display_path }}
-  </h1>
-
-  {% if config.davmount_links %}
-  <p class="links">
-    <a title="Open this folder in a registered WebDAV client." href="{{ url }}?davmount">Mount</a>
-  </p>
-  {% endif %}
+        </a>
+      </div>
+  
+      {% if config.davmount_links %}
+      <p class="links">
+        <a title="Open this folder in a registered WebDAV client." href="{{ url }}?davmount">Mount</a>
+      </p>
+      {% endif %}
+    </nav>
+  </header>
 
   {%- if user_name and config.show_user %}
   <p class="auth-user">
@@ -38,7 +44,7 @@
   {% endif -%}
 
   <hr>
-
+  <div style="padding-left: 8px; padding-right: 8px; padding-bottom: 8px;">
   <table class="dir-listing" onclick="return onClickTable(event)">
 
     <colgroup>
@@ -91,12 +97,9 @@
       {% endfor %}
     </tbody>
   </table>
+  </div>
 
   <hr>
-
-  {% if trailer %}
-  <p class="trailer">{{ trailer | safe }}</p>
-  {% endif %}
 
   <object id="winFirefoxPlugin" type="application/x-sharepoint"
       width="0" height="0" style="visibility: hidden;"></object>
