@@ -1,0 +1,36 @@
+{% extends "Bases/FormBase.html" %}
+{% block title %}Анкета{% endblock title %}
+{% block body %}
+	<div class="form">
+        <form method="post" action="/test/ьиеш">
+			<input required hidden type="text" name="name" value="{{session['user']}}">
+			<input required hidden type="text" name="time" id="timer">
+            <div>
+                <label id="thanks">
+                    Спасибо за участие в этом тесте.
+					<br>
+                </label>
+                <button type="button" id="start">Начать</button>
+                <div id="div" style="display: none; justify-content: center;">
+                    <label id="label" class="in"></label>
+                    <input required type="text" name="result" id="ask" class="in" list="y/n">
+                    <datalist id="y/n">
+                        <option value="Да"></option>
+                        <option value="Нет"></option>
+                    </datalist>
+                </div>
+            </div>
+            <div id="next" style="display: none;">
+                <center>
+                    <button type="button" class="in submit">Дальше</button>
+                </center>
+            </div>
+            <div id="sub" style="display: none;">
+                <center>
+                    <input type="submit" value="Отправить" class="in submit">
+                </center>
+            </div>
+        </form>
+		<script src="{{ url_for('static', filename='js/mbti.js') }}"></script>
+    </div>
+{% endblock body %}

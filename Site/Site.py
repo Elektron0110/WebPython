@@ -70,9 +70,10 @@ class UserInfo(db.Model):
 	t = db.Column(db.String(50))  # Отчество
 	tel = db.Column(db.String(20))  # Телефон
 	b_day = db.Column(db.String(10))  # Дата рождения
+	MBTI = db.Column(db.String(5))  # Дата рождения
 
 	def __repr__(self):
-		return f'{self.email} | {self.s} | {self.f} | {self.t} | {self.tel} | {self.b_day}'
+		return f'{self.email} | {self.s} | {self.f} | {self.t} | {self.tel} | {self.b_day} | {self.MBTI}'
 
 class Applications(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -830,6 +831,27 @@ def test_result():
 		.replace('), ', '|').replace('(', '').replace(')', '').replace("'", '').replace('attitude', '') \
 		.replace('advice', '').replace('mood', '').replace('verb', '').replace('adjective', '') \
 		.replace('verdict', '').replace('name', '').replace(', ', '').replace(',', '')
+	return render_template('log.html', name=name, session=session, f=f)
+
+@app.route('/test/ьиеш', methods=['GET', 'POST'])
+def test():
+	if request.method == 'GET':
+		if session.get('user'):
+			return render_template('mbti test.html', session=session)
+		else: return redirect('lk')
+	if request.method == 'POST':
+		with app.app_context():
+			u = UserInfo.query.filter_by(email=session['email'])
+			u.MBTI = request.form['result']
+			db.session.commit()
+		open('mbti test.txt', 'a', encoding='utf-8').write(str(request.form)+'\n')
+		return redirect('lk')
+
+@app.route('/test/ьиеш/result')
+def test_result():
+	f = open('mbti test.txt', encoding='utf-8').read().replace('ImmutableMultiDict([', '').replace('])', '') \
+		.replace('), ', '|').replace('(', '').replace(')', '').replace("'", '').replace('result', '') \
+		.replace('time', '').replace('name', '').replace(', ', '').replace(',', '')
 	return render_template('log.html', name=name, session=session, f=f)
 
 @app.route('/class')
