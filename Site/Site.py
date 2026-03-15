@@ -37,6 +37,8 @@ class WsgiDAVMiddleware:
     def __call__(self, environ, start_response):
         # Если путь начинается с /webdav, передаём запрос в WsgiDAV
         if environ.get("PATH_INFO", "").startswith(self.dav_path):
+            open(f'Alexis.log', 'a', encoding='utf-8').write(
+				f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  "{environ['PATH_INFO']}"\n')
             return self.dav_app(environ, start_response)
         # Иначе — в Flask
         return self.flask_app(environ, start_response)
