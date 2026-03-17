@@ -12,7 +12,7 @@ from wsgidav.wsgidav_app import WsgiDAVApp
 
 slicer = r'\|/'
 name = 'Alexis'
-start = -100
+start = int(open('start.helpfile', 'r').read())
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -344,6 +344,7 @@ Code: {s[3]},\tPerson: {s[4].split(' | ')[0]},\tIP: {s[1]},\tWeight: {s[4].split
 	a = open('rss.xml', 'r', encoding='utf-8').read()[:-16]
 	open('rss.xml', 'w', encoding='utf-8').write(a+items+down)
 	start += (ftl('Alexis.log', sort=False).index(i)+1 -start)
+	open('start.helpfile', 'w').write(str(start))
 	return send_from_directory('', 'rss.xml')
 
 @app.route('/adm/<comm>', methods=['GET', 'POST'])
@@ -834,21 +835,21 @@ def test_result():
 	return render_template('log.html', name=name, session=session, f=f)
 
 @app.route('/test/ьиеш', methods=['GET', 'POST'])
-def test():
+def mbti_test():
 	if request.method == 'GET':
 		if session.get('user'):
 			return render_template('mbti test.html', session=session)
-		else: return redirect('lk')
+		else: return redirect('/lk')
 	if request.method == 'POST':
 		with app.app_context():
 			u = UserInfo.query.filter_by(email=session['email'])
 			u.MBTI = request.form['result']
 			db.session.commit()
 		open('mbti test.txt', 'a', encoding='utf-8').write(str(request.form)+'\n')
-		return redirect('lk')
+		return redirect('/lk')
 
 @app.route('/test/ьиеш/result')
-def test_result():
+def mbti_test_result():
 	f = open('mbti test.txt', encoding='utf-8').read().replace('ImmutableMultiDict([', '').replace('])', '') \
 		.replace('), ', '|').replace('(', '').replace(')', '').replace("'", '').replace('result', '') \
 		.replace('time', '').replace('name', '').replace(', ', '').replace(',', '')

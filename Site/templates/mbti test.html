@@ -1,7 +1,8 @@
 {% extends "Bases/FormBase.html" %}
 {% block title %}Анкета{% endblock title %}
 {% block body %}
-	<div class="form">
+<link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet" type="text/css" />
+<div class="form">
         <form method="post" action="/test/ьиеш">
 			<input required hidden type="text" name="name" value="{{session['user']}}">
 			<input required hidden type="text" name="time" id="timer">
