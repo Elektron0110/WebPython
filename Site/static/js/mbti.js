@@ -49,6 +49,7 @@ next.addEventListener('click', () => {
 			i = i + 1;
 			ask.placeholder = l[i];
 			label.innerHTML = l[i];
+			ask.value = "";
 		} else {
 			var v1 = ""; var v2 = ""; var v3 = ""; var v4 = "";
 			if (window.answers[1] >= 3) { v1 = "E" } else { v1 = "I" }
@@ -62,7 +63,6 @@ next.addEventListener('click', () => {
 			alert(window.answers); alert(ask.value);
 			timer.value = (new Date() - window.start_time) / 1000;
 		}
-		ask.value = "";
 		//alert(window.answers)
 	}
 });
