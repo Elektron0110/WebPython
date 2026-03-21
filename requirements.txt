@@ -1,4 +1,6 @@
+beautifulsoup4==4.14.3
 blinker==1.9.0
+brotli==1.2.0
 certifi==2026.2.25
 charset-normalizer==3.4.6
 cheroot==11.1.2
@@ -6,9 +8,10 @@ click==8.3.1
 colorama==0.4.6
 contourpy==1.3.3
 cycler==0.12.1
+defusedxml==0.7.1
 Flask==3.1.3
 Flask-SQLAlchemy==3.1.1
-flightradar24==0.3.1
+FlightRadarAPI==1.4.0
 fonttools==4.62.1
 greenlet==3.3.2
 idna==3.11
@@ -16,6 +19,7 @@ itsdangerous==2.2.0
 jaraco.functools==4.4.0
 Jinja2==3.1.6
 kiwisolver==1.5.0
+lxml==6.0.2
 MarkupSafe==3.0.3
 matplotlib==3.10.8
 more-itertools==10.8.0
@@ -31,6 +35,7 @@ python-dateutil==2.9.0.post0
 qrcode==8.2
 requests==2.32.5
 six==1.17.0
+soupsieve==2.8.3
 SQLAlchemy==2.0.48
 typing_extensions==4.15.0
 tzdata==2025.3
