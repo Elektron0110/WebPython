@@ -269,13 +269,9 @@ def update():
 			session['email'], request.form['s'], request.form['f'], \
 			request.form['t'], request.form['tel'], request.form['b_day']
 		with app.app_context():
-			u = UserInfo.query.filter_by(email=session['email'])
-			u.email = email
-			u.s = sn
-			u.f = fn
-			u.t = tn
-			u.tel = tel
-			u.b_day = b_day
+			UserInfo.query.filter(UserInfo.email==email).update({
+				UserInfo.email: email, UserInfo.s: sn, UserInfo.f: fn, UserInfo.t: tn,
+				UserInfo.tel: tel, UserInfo.b_day: b_day})
 			db.session.commit()
 
 		return redirect('/')
@@ -842,8 +838,9 @@ def mbti_test():
 		else: return redirect('/lk')
 	if request.method == 'POST':
 		with app.app_context():
-			u = UserInfo.query.filter_by(email=session['email'])
-			u.MBTI = request.form['result']
+			print(request.form['result'])
+			UserInfo.query.filter(UserInfo.email==session['email']).update({
+				UserInfo.MBTI: request.form['result']})
 			db.session.commit()
 		open('mbti test.txt', 'a', encoding='utf-8').write(str(request.form)+'\n')
 		return redirect('/lk')
