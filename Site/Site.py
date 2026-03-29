@@ -6,21 +6,19 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 from requests import post, get
 from alf import alf
-from my_lib.Python.new import file_to_list as ftl
+from my_lib.Python.new import file_to_list as ftl, Log
 from cheroot import wsgi
 from wsgidav.wsgidav_app import WsgiDAVApp
 
 slicer = r'\|/'
 name = 'Alexis'
+logging = Log('Alexis.log')
 start = int(open('start.helpfile', 'r').read())
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
 app.config["EXPLAIN_TEMPLATE_LOADING"] = True
 app.register_blueprint(new_broker.app)
-
-open('Alexis.log', 'a', encoding='utf-8').write(
-		f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  "Server restarted."\n')
 
 if not os.path.isdir('Site'):
 	os.mkdir('Site')
@@ -37,8 +35,7 @@ class WsgiDAVMiddleware:
     def __call__(self, environ, start_response):
         # Если путь начинается с /webdav, передаём запрос в WsgiDAV
         if environ.get("PATH_INFO", "").startswith(self.dav_path):
-            # open(f'Alexis.log', 'a', encoding='utf-8').write(
-			# 	f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  "{environ['PATH_INFO']}"\n')
+            # logging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  "{environ['PATH_INFO']}"')
             return self.dav_app(environ, start_response)
         # Иначе — в Flask
         return self.flask_app(environ, start_response)
@@ -664,10 +661,9 @@ def after_request(response: Response):
 	fsb = fsb % 1024
 	fsm = fsk // 1024
 	fsk = fsk % 1024
-	open(f'Alexis.log', 'a', encoding='utf-8').write(
-		f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {request.headers.get('x-real-ip')}  "{\
-			request.method} {request.path}"  {response.status[:3]}  {request.cookies.get('Name')} | {\
-				fsm}MB {fsk}KB {fsb}B\n')
+	logging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {request.headers.get('x-real-ip')}  "{\
+			request.method} {request.path}"  {response.status[:3]}  {request.cookies.get('Name')}',
+				slice=' | ', fw=f'{fsm}MB {fsk}KB {fsb}B')
 	return response
 
 @app.route('/robots.txt')
@@ -899,6 +895,10 @@ if os.path.isdir('C:'):
 	)
 	print(f"Flask + WsgiDAV запущен: http://127.0.0.1:{date}/")
 	print(f"WebDAV: http://127.0.0.1:{date}/webdav")
+
+	print('\n\n')
+	logging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  "Server restarted."')
+
 	try:
 		server.start()
 	except KeyboardInterrupt:
