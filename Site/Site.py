@@ -314,10 +314,10 @@ def rss():
 	'''<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
 	<channel>
-        <title>Alexis Log</title>
-        <link>https://s762672.cloudpub.ru/adm/log</link>
-        <description>RSS logging of my site</description>
-        <language>ru-ru</language></channel></rss>'''
+		<title>Alexis Log</title>
+		<link>https://s762672.cloudpub.ru/adm/log</link>
+		<description>RSS logging of my site</description>
+		<language>ru-ru</language></channel></rss>'''
 	items = ''
 	for i in ftl('Alexis.log', sort=False)[start:][::-1]:
 		s = i.split('  ')
