@@ -316,7 +316,7 @@ def rss():
 		<description>RSS logging of my site</description>
 		<language>ru-ru</language></channel></rss>'''
 	items = ''
-	for i in ftl('Alexis.log', sort=False)[start:][::-1]:
+	for i in ftl('Alexis.log', sort=False)[start:]:
 		s = i.split('  ')
 		if len(s) > 2:
 			try:
@@ -902,5 +902,5 @@ if os.path.isdir('C:'):
 	try:
 		server.start()
 	except KeyboardInterrupt:
-		print("\nСервер остановлен.")
+		print("\nСервер остановлен.\n\n")
 		server.stop()
