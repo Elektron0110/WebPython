@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 from requests import post, get
 from alf import alf
-from my_lib.Python.new import file_to_list as ftl, Log
+from my_lib import file_to_list as ftl, Log
 from cheroot import wsgi
 from wsgidav.wsgidav_app import WsgiDAVApp
 
