@@ -169,6 +169,50 @@ def hpress():
 <a style="color: chocolate; text-decoration: none;" href="{("/Ums?date="+dt_1) if dt_1 else ""}" title="{dt_1 if dt_1 else "Дальше данных нет!"}">+1 день</a>
 '''
 
+
+@app.route('/Ums/ex')
+def exindex():
+	weather: dict[str, list[str | dt | float]] = dict(topic=[], time=[], value=[])
+
+	for date in os.listdir('graph'):
+		if len(date) == 10:
+			print(date)
+			datae: dict[str, dict[str, str]] = json.loads(open(f'graph/{date}', 'r').read())
+			for time in datae:
+				for data in datae[time]:
+					if 'P' not in data:
+						weather['topic'].append(data)
+						weather['time'].append(dt.strptime(time, '%Y.%m.%d %H:%M:%S'))
+						weather['value'].append(float(datae[time][data]))
+	df = pd.DataFrame(weather)
+	df['value'] = df.groupby('topic')['value'].transform(
+		lambda x: x.rolling(window=10, min_periods=1).mean())
+	fig = px.line(df, 'time', 'value', color="topic", markers=True)
+	graph_html = fig.to_html(full_html=False)
+
+	return render_template(f'graph.html', graph=graph_html)
+
+@app.route('/Ums/hard/ex')
+def exhindex():
+	weather: dict[str, list[str | dt | float]] = dict(topic=[], time=[], value=[])
+
+	for date in os.listdir('graph'):
+		if len(date) == 10:
+			print(date)
+			datae: dict[str, dict[str, str]] = json.loads(open(f'graph/{date}', 'r').read())
+			for time in datae:
+				for data in datae[time]:
+					if 'P' not in data:
+						weather['topic'].append(data)
+						weather['time'].append(dt.strptime(time, '%Y.%m.%d %H:%M:%S'))
+						weather['value'].append(float(datae[time][data]))
+	df = pd.DataFrame(weather)
+	fig = px.line(df, 'time', 'value', color="topic", markers=True)
+	graph_html = fig.to_html(full_html=False)
+
+	return render_template(f'graph.html', graph=graph_html,)
+
+
 @app.route('/sun')
 def sun():
 	date = request.args.get('date')
