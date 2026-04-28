@@ -25,6 +25,9 @@
 			<button type="button" class="dnld_u" id="Sun">
 				Сервис для наблюдения за уровнем солнечной активности.
 			</button>
+			<button type="button" class="dnld_u" id="We">
+				Мы.
+			</button>
 		</p>
 	</center>
 	<div>
@@ -68,6 +71,20 @@
 				</p>
 			</div>
 		</div>
+		<br>
+		<div class="div" id="win_w" style="display: none">
+			<div class="name">
+				<h1>Мы</h1>
+			</div>
+			<div>
+				<p>
+					Этот сайт - мой личный учебный проект, а также страница моей "компании" МНДК (Маленький Но Дружный Коллектив (из одного человека - меня)).
+					Сайт является OpenSource проектом и его основной код располагается в <a href="https://gitlab.com/Elektron0110/WebPython">моём репозитории gitlab</a>.
+					<br>
+					Вся конфедициальная информация пользователей из репозитория удалена.
+				</p>
+			</div>
+		</div>
 	</div>
 	<script>
 		let Flight = document.getElementById("Flight")
@@ -76,6 +93,8 @@
 		let wt = document.getElementById("win_t")
 		let Sun = document.getElementById("Sun")
 		let ws = document.getElementById("win_s")
+		let We = document.getElementById("We")
+		let ww = document.getElementById("win_w")
 
 		Flight.addEventListener('click', () => {
 			if (Flight.className == "dnld_u") {
@@ -105,6 +124,16 @@
 				Sun.className = "dnld_u";
 			}
 			ws.style.display === 'none' ? ws.style.display = 'block' : ws.style.display = 'none';
+		});
+
+		We.addEventListener('click', () => {
+			if (We.className == "dnld_u") {
+				We.className = "dnld_d";
+			}
+			else {
+				We.className = "dnld_u";
+			}
+			ww.style.display === 'none' ? ww.style.display = 'block' : ww.style.display = 'none';
 		});
 	</script>
 {% endblock body %}
