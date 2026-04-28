@@ -13,6 +13,7 @@ from wsgidav.wsgidav_app import WsgiDAVApp
 slicer = r'\|/'
 name = 'Alexis'
 logging = Log('Alexis.log')
+wlogging = Log('WebDav.log')
 start = int(open('start.helpfile', 'r').read())
 
 app = Flask(__name__)
@@ -35,7 +36,8 @@ class WsgiDAVMiddleware:
     def __call__(self, environ, start_response):
         # Если путь начинается с /webdav, передаём запрос в WsgiDAV
         if environ.get("PATH_INFO", "").startswith(self.dav_path):
-            # logging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  "{environ['PATH_INFO']}"')
+            wlogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {\
+				environ.get("HTTP_X_REAL_IP")}  "{environ["REQUEST_METHOD"]} {environ['PATH_INFO']}"')
             return self.dav_app(environ, start_response)
         # Иначе — в Flask
         return self.flask_app(environ, start_response)
@@ -898,6 +900,7 @@ if os.path.isdir('C:'):
 
 	print('\n\n')
 	logging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  "Server restarted."')
+	wlogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  "WebDav restarted."')
 
 	try:
 		server.start()
