@@ -7,12 +7,10 @@ Site/graph
 visual.*
 Site/sun
 Site/static/qr.png
-Site/auth.json
-Site/last.json
-Site/Alexis.log
+Site/*.json
+Site/*.log
 Site/static/not_blocked_ips
 Site/rss.xml
-Site/test.txt
 Users/
-Site/mbti test.txt
-Site/start.helpfile
+Site/*.txt
+Site/*.helpfile
