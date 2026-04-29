@@ -1,5 +1,9 @@
 """Модуль, отвечающий за работу сервера."""
-import os, random, new_broker, json, qrcode
+import os
+import random
+import new_broker
+import json
+import qrcode
 from flask import Flask
 from flask import render_template, request, session, redirect, send_from_directory, abort, Response
 from flask_sqlalchemy import SQLAlchemy
@@ -27,6 +31,7 @@ if not os.path.isdir('Site'):
 if not os.path.isdir('Site/applications'):
 	os.mkdir('Site/applications')
 
+
 class WsgiDAVMiddleware:
 	def __init__(self, flask_app, dav_app, dav_path=("/webdav", "/:dir_browser")):
 		self.flask_app = flask_app
@@ -36,13 +41,14 @@ class WsgiDAVMiddleware:
 	def __call__(self, environ, start_response):
 		# Если путь начинается с /webdav, передаём запрос в WsgiDAV
 		if environ.get("PATH_INFO", "").startswith(self.dav_path):
-			wlogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {\
+			wlogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {
 				environ.get("HTTP_X_REAL_IP")}  "{environ["REQUEST_METHOD"]} {environ['PATH_INFO']}"')
 			return self.dav_app(environ, start_response)
 		# Иначе — в Flask
 		return self.flask_app(environ, start_response)
 
 # -------------------------------------------------------------------------------------------------------------
+
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Site.db'
 app.config['SQLALCHEMY_BINDS'] = {
@@ -61,9 +67,11 @@ class AuthUser(db.Model):
 	def __repr__(self):
 		return f'{self.email} | {self.password}'
 
+
 class UserInfo(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
-	email = db.Column(db.String(120), db.ForeignKey('auth_user.email'), unique=True, nullable=False)
+	email = db.Column(db.String(120), db.ForeignKey(
+		'auth_user.email'), unique=True, nullable=False)
 	s = db.Column(db.String(50))  # Фамилия
 	f = db.Column(db.String(50))  # Имя
 	t = db.Column(db.String(50))  # Отчество
@@ -74,9 +82,11 @@ class UserInfo(db.Model):
 	def __repr__(self):
 		return f'{self.email} | {self.s} | {self.f} | {self.t} | {self.tel} | {self.b_day} | {self.MBTI}'
 
+
 class Applications(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
-	email = db.Column(db.String(120), db.ForeignKey('auth_user.email'), nullable=False)
+	email = db.Column(db.String(120), db.ForeignKey(
+		'auth_user.email'), nullable=False)
 	lines = db.Column(db.Integer)
 	way = db.Column(db.String(120))
 	number = db.Column(db.Integer)
@@ -95,6 +105,7 @@ class MUsers(db.Model):
 	def __repr__(self):
 		return f'{self.id} | {self.email} | {self.date.strftime("%d.%m.%Y %H:%M")}'
 
+
 class MMess(db.Model):
 	__bind_key__ = 'mail'
 	id = db.Column(db.Integer, primary_key=True)
@@ -107,12 +118,14 @@ class MMess(db.Model):
 	def __repr__(self):
 		return f'{self.sender}'
 
+
 class AUsers(db.Model):
 	__bind_key__ = 'AM'
 	id = db.Column(db.Integer, primary_key=True)
 	Username = db.Column(db.String(50), nullable=False, unique=True)
 	Password = db.Column(db.String(50), nullable=False)
 	Rating = db.Column(db.Integer, nullable=False)
+
 
 class AMesses(db.Model):
 	__bind_key__ = 'AM'
@@ -126,6 +139,7 @@ class AMesses(db.Model):
 	def __repr__(self):
 		return f'{self.id}%$%{self.Sender}%$%{self.Text}'
 
+
 # Создание таблиц в базе данных
 with app.app_context():
 	db.create_all()
@@ -134,7 +148,8 @@ with app.app_context():
 def new_user(**k):
 	with app.app_context():
 		if AuthUser.query.filter_by(email=k.get('email', '')).first() is None:
-			a = AuthUser(email=k.get('email', ''), password=k.get('password', ''))
+			a = AuthUser(email=k.get('email', ''),
+						 password=k.get('password', ''))
 			i = UserInfo(email=k.get('email', ''), s=k.get('s', ''),
 						 f=k.get('f', ''), t=k.get('t', ''), tel=k.get('tel', ''),
 						 b_day=k.get('b_day', ''))
@@ -147,8 +162,8 @@ def new_user(**k):
 			db.session.commit()
 			rec = MUsers.query.filter_by(email=k.get('email', '')).first()
 			mm = MMess(recipient=rec.id, topic='Добро пожаловать в Почту.',
-			  text=f'Добро пожаловать в Почту, {k.get('f', '')}. Почта - мой новый проект.',
-			  date=datetime.today())
+					   text=f'Добро пожаловать в Почту, {k.get('f', '')}. Почта - мой новый проект.',
+					   date=datetime.today())
 			db.session.add(mm)
 			db.session.commit()
 
@@ -170,8 +185,9 @@ new_user(email='test@test', password='Bug', s='Тестов', f='Тест', t='�
 
 # -------------------------------------------------------------------------------------------------------------
 
-app.secret_key = 'YOU-NOT-KNOW-THIS-I-SURE'#os.urandom(24)
-open('Site/log', 'a').write(f'\nStart at {datetime.now().strftime("%d.%m.%Y %H:%M")}.')
+app.secret_key = 'YOU-NOT-KNOW-THIS-I-SURE'  # os.urandom(24)
+open('Site/log',
+	 'a').write(f'\nStart at {datetime.now().strftime("%d.%m.%Y %H:%M")}.')
 admins = ['s762672@ya.ru', 'test@test']
 authorized = json.load(open('auth.json'))
 white = False
@@ -181,6 +197,7 @@ last: dict[str, list[str]] = json.load(open('last.json'))
 # @app.route('/')
 # def to():
 # 	return 'Сайт на тех.обслуживании.'
+
 
 @app.route('/')
 def main():
@@ -196,7 +213,7 @@ def login():
 	if request.method == 'GET':
 		if 'user' in session:
 			if session['email'] in admins:
-							return render_template('LK.html', name=name, session=session, add={'/adm/see': 'Административная панель'})
+				return render_template('LK.html', name=name, session=session, add={'/adm/see': 'Административная панель'})
 			return render_template('LK.html', name=name, session=session)
 		else:
 			return render_template(name=name, template_name_or_list='login.html')
@@ -210,7 +227,8 @@ def login():
 			tn = request.form['t_name']
 			tel = request.form['tel']
 			b_day = request.form['b_day']
-			new_user(email=email, password=password, s=sn, f=fn, t=tn, tel=tel, b_day=b_day)
+			new_user(email=email, password=password, s=sn,
+					 f=fn, t=tn, tel=tel, b_day=b_day)
 		ui = UserInfo.query.filter_by(email=email).first()
 		u = AuthUser.query.filter_by(email=email).first()
 		if u:
@@ -219,8 +237,10 @@ def login():
 				session['telephone'] = ui.tel
 				session['birthday'] = ui.b_day
 				session['email'] = ui.email
-				if session['email'] not in authorized: authorized[session['email']] = 1
-				else: authorized[session['email']] += 1
+				if session['email'] not in authorized:
+					authorized[session['email']] = 1
+				else:
+					authorized[session['email']] += 1
 				return redirect('lk')
 			else:
 				print(password, u.password)
@@ -268,7 +288,7 @@ def update():
 			session['email'], request.form['s'], request.form['f'], \
 			request.form['t'], request.form['tel'], request.form['b_day']
 		with app.app_context():
-			UserInfo.query.filter(UserInfo.email==email).update({
+			UserInfo.query.filter(UserInfo.email == email).update({
 				UserInfo.email: email, UserInfo.s: sn, UserInfo.f: fn, UserInfo.t: tn,
 				UserInfo.tel: tel, UserInfo.b_day: b_day})
 			db.session.commit()
@@ -302,7 +322,8 @@ def new():
 			today = datetime.today()
 			# open(f'Site/applications/new={number}', 'w').write(text)
 			request.files['fileInput'].save(f'Site/applications/new={number}')
-			new_application(email=session['email'], line=lines, way=way, num=number, date=today)
+			new_application(
+				email=session['email'], line=lines, way=way, num=number, date=today)
 			return f'''Заявка отправлена.
 Ориентировочная стоимость выполнения задачи: {50 * int(lines) * 2.25}₽.'''
 
@@ -338,9 +359,10 @@ Code: {s[3]},\tPerson: {s[4].split(' | ')[0]},\tIP: {s[1]},\tWeight: {s[4].split
 	down = '</channel></rss>'
 	a = open('rss.xml', 'r', encoding='utf-8').read()[:-16]
 	open('rss.xml', 'w', encoding='utf-8').write(a+items+down)
-	start += (ftl('Alexis.log', sort=False).index(i)+1 -start)
+	start += (ftl('Alexis.log', sort=False).index(i)+1 - start)
 	open('start.helpfile', 'w').write(str(start))
 	return send_from_directory('', 'rss.xml')
+
 
 @app.route('/adm/<comm>', methods=['GET', 'POST'])
 def admin(comm):
@@ -366,12 +388,14 @@ def admin(comm):
 				return redirect(f'/get_acc?code=0{email}0')
 			elif comm == 'log':
 				date = request.args.get('date')
-				if not date: date = datetime.today().strftime("%d.%m.%Y")
+				if not date:
+					date = datetime.today().strftime("%d.%m.%Y")
 				dt_0 = (datetime.strptime(date, '%d.%m.%Y')-timedelta(1)).strftime('%d.%m.%Y') \
 					if datetime.strptime(date, '%d.%m.%Y') >= datetime(2025, 10, 22) else None
 				dt_1 = (datetime.strptime(date, '%d.%m.%Y')+timedelta(1)).strftime('%d.%m.%Y') \
 					if datetime.strptime(date, '%d.%m.%Y') < datetime.today()-timedelta(1) else None
-				date1 = '['+(datetime.strptime(date, '%d.%m.%Y')+timedelta(1)).strftime('%d.%m.%Y')
+				date1 = '['+(datetime.strptime(date, '%d.%m.%Y') +
+							 timedelta(1)).strftime('%d.%m.%Y')
 				f = open('Alexis.log', encoding='utf-8').read()
 				return render_template('log.html', name=name, session=session, f=f[f.find(date)-1:f.find(date1)], dt_0=dt_0, dt_1=dt_1)
 			else:
@@ -381,9 +405,11 @@ def admin(comm):
 	else:
 		return redirect('/lk')
 
+
 mname = 'Почта'
 
-def get_messages(t = True):
+
+def get_messages(t=True):
 	with app.app_context():
 		mu = MUsers.query.filter_by(email=session['email']).first()
 		mms = MMess.query.filter_by(recipient=mu.id).all()
@@ -392,7 +418,8 @@ def get_messages(t = True):
 			text = ''
 			mus = MUsers.query.filter_by(id=m.sender).first()
 			mue = str(mus).split(' | ')[1] if mus else 'System'
-			mu = UserInfo.query.filter_by(email=mue).first() if mus else 'System'
+			mu = UserInfo.query.filter_by(
+				email=mue).first() if mus else 'System'
 			mu = mu.f if mus else 'System'
 			if t:
 				for i in range(len(m.text)):
@@ -401,10 +428,12 @@ def get_messages(t = True):
 				text += '...'
 			else:
 				text = m.text
-			mm.append((m.id, mu, m.topic, text, m.date.strftime('%d.%m.%Y %H:%M')))
+			mm.append((m.id, mu, m.topic, text,
+					  m.date.strftime('%d.%m.%Y %H:%M')))
 		return mm
 
-def get_out_messages(t = True):
+
+def get_out_messages(t=True):
 	with app.app_context():
 		mu = MUsers.query.filter_by(email=session['email']).first()
 		mms = MMess.query.filter_by(sender=mu.id).all()
@@ -412,8 +441,10 @@ def get_out_messages(t = True):
 		for m in mms:
 			text = ''
 			mus = MUsers.query.filter_by(id=m.recipient).first()
-			mue = str(mus).split(' | ')[1] if mus else 'Неизвестный пользователь'
-			mu = UserInfo.query.filter_by(email=mue).first() if mus else 'Неизвестный пользователь'
+			mue = str(mus).split(' | ')[
+				1] if mus else 'Неизвестный пользователь'
+			mu = UserInfo.query.filter_by(email=mue).first(
+			) if mus else 'Неизвестный пользователь'
 			mu = mu.f if mus else 'Неизвестный пользователь'
 			if t:
 				for i in range(len(m.text)):
@@ -422,8 +453,11 @@ def get_out_messages(t = True):
 				text += '...'
 			else:
 				text = m.text
-			mm.append((m.id, mu, m.topic, text, m.date.strftime('%d.%m.%Y %H:%M')))
+			mm.append((m.id, mu, m.topic, text,
+					  m.date.strftime('%d.%m.%Y %H:%M')))
 		return mm
+
+
 @app.route('/mail', methods=['GET', 'POST'])
 def mmain():
 	if request.method == 'GET':
@@ -442,7 +476,8 @@ def mmain():
 				tn = request.form['t_name']
 				tel = request.form['tel']
 				b_day = request.form['b_day']
-				new_user(email=email, password=password, s=sn, f=fn, t=tn, tel=tel, b_day=b_day)
+				new_user(email=email, password=password, s=sn,
+						 f=fn, t=tn, tel=tel, b_day=b_day)
 			ui = UserInfo.query.filter_by(email=email).first()
 			u = AuthUser.query.filter_by(email=email).first()
 			if u:
@@ -457,14 +492,15 @@ def mmain():
 					return 'Password in invalid.'
 			else:
 				return render_template(name=mname, template_name_or_list='Mregister.html',
-									email=email,
-									password=password,
-									date=(datetime.today() - timedelta(days=365) * 18).strftime('%Y-%m-%d'))
+									   email=email,
+									   password=password,
+									   date=(datetime.today() - timedelta(days=365) * 18).strftime('%Y-%m-%d'))
 		else:
 			if 'user' in session:
 				return render_template('MLK.html', name=mname, session=session, messes=get_messages())
 			else:
 				return render_template(name=mname, template_name_or_list='Mlogin.html')
+
 
 @app.route('/mail/mess/<id>')
 def see(id):
@@ -485,6 +521,7 @@ def see(id):
 	else:
 		return redirect('/mail')
 
+
 @app.route('/mail/new/', methods=['GET', 'POST'])
 def mnewmess():
 	if request.method == 'GET':
@@ -499,10 +536,12 @@ def mnewmess():
 		with app.app_context():
 			rec = MUsers.query.filter_by(email=recipient).first()
 			sen = MUsers.query.filter_by(email=session['email']).first()
-			mm = MMess(recipient=rec.id if rec else 0, topic=topic, text=text, date=datetime.today(), sender=sen.id)
+			mm = MMess(recipient=rec.id if rec else 0, topic=topic,
+					   text=text, date=datetime.today(), sender=sen.id)
 			db.session.add(mm)
 			db.session.commit()
 		return redirect('/mail')
+
 
 @app.route('/mail/out')
 def moutmess():
@@ -510,6 +549,7 @@ def moutmess():
 		return render_template('MLK.html', name=mname, session=session, messes=get_out_messages())
 	else:
 		return render_template(name=mname, template_name_or_list='Mlogin.html')
+
 
 @app.route('/mail/answer/<id>')
 def answer(id):
@@ -522,12 +562,13 @@ def answer(id):
 			rid = mess.sender
 			topic = mess.topic
 			mus = MUsers.query.filter_by(id=int(rid)).first()
-			email = mus.email #str(mus).split(' | ')[1]
+			email = mus.email  # str(mus).split(' | ')[1]
 			return render_template(name=mname, template_name_or_list='Mwriter.html', rec=email, top=topic)
 		else:
 			return redirect('/mail')
 	else:
 		return redirect('/mail')
+
 
 @app.route('/mail/del/<id>')
 def dmail(id):
@@ -554,42 +595,51 @@ def dmail(id):
 try:
 	from alice import bp, fly
 	app.register_blueprint(bp)
+
 	@app.route('/flight', methods=['GET', 'POST'])
-	def Flight ():
+	def Flight():
 		if request.method == 'POST':
-			print('Fl',request.form['flight'])
+			print('Fl', request.form['flight'])
 			return fly(request.form['flight'])
 		else:
 			return render_template(name=name, template_name_or_list='Fly.html')
-except: print('INF')
+except:
+	print('INF')
+
 
 @app.route('/down', methods=['GET', 'POST'])
-def Down ():
+def Down():
 	return render_template(name=name, template_name_or_list='down.html')
 
+
 @app.route('/down/<file>', methods=['GET', 'POST'])
-def Download (file):
-	name = os.listdir('down')[[name[:name.rfind('.')] for name in os.listdir('down')].index(file)]
+def Download(file):
+	name = os.listdir('down')[[name[:name.rfind('.')]
+							   for name in os.listdir('down')].index(file)]
 	if file == 'Alex':
 		if request.method == 'POST':
 			with app.app_context():
 				if AUsers.query.filter_by(Username=request.form['name']).first() is None:
-					au = AUsers(Username=request.form['name'], Password=request.form['pass'], Rating=0)
+					au = AUsers(
+						Username=request.form['name'], Password=request.form['pass'], Rating=0)
 					db.session.add(au)
 					db.session.commit()
 			return send_from_directory('down', 'Alex.exe')
-		else: return render_template(name=name, template_name_or_list='ADown.html')
+		else:
+			return render_template(name=name, template_name_or_list='ADown.html')
 	elif file in [name[:name.rfind('.')] for name in os.listdir('down')]:
 		return send_from_directory('down', name)
 	else:
 		return 'Файл не найден.'
+
 
 @app.route('/train', methods=['GET', 'POST'])
 def trains():
 	stations = {}
 	file = open('static/stations', 'r', encoding='utf-8').read()
 	for line in file.split('\n'):
-		if line: stations[line.split('\t')[0]] = line.split('\t')[-1]
+		if line:
+			stations[line.split('\t')[0]] = line.split('\t')[-1]
 	headers = {"Accept": "application/json, text/javascript, */*; q=0.01",
 			   "Accept-Encoding": "gzip, deflate, br",
 			   "Accept-Language": "ru",
@@ -597,33 +647,37 @@ def trains():
 			   "Content-Length": "94",
 			   "Content-Type": "application/json; charset=UTF-8",
 			   "Host": "www.rzd.ru",
-			   "Origin": "https://www.rzd.ru",
-			   "Referer": "https://www.rzd.ru/ru/9278",
-			   "sec-ch-ua": "'Not_A Brand';v='99', 'Microsoft Edge';v='109', 'Chromium';v='109'",
-			   "sec-ch-ua-mobile": "?0",
-			   "sec-ch-ua-platform": "'Windows'",
-			   "Sec-Fetch-Dest": "empty",
-			   "Sec-Fetch-Mode": "cors",
-			   "Sec-Fetch-Site": "same-origin",
-			   "User-Agent": "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.140",
-			   "X-KL-saas-Ajax-Request": "Ajax_Request",
-			   "X-KL-safekids-Ajax-Request": "Ajax_Request",
-			   "X-Requested-With": "XMLHttpRequest"}
+					   "Origin": "https://www.rzd.ru",
+					   "Referer": "https://www.rzd.ru/ru/9278",
+					   "sec-ch-ua": "'Not_A Brand';v='99', 'Microsoft Edge';v='109', 'Chromium';v='109'",
+					   "sec-ch-ua-mobile": "?0",
+					   "sec-ch-ua-platform": "'Windows'",
+					   "Sec-Fetch-Dest": "empty",
+					   "Sec-Fetch-Mode": "cors",
+					   "Sec-Fetch-Site": "same-origin",
+					   "User-Agent": "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.140",
+					   "X-KL-saas-Ajax-Request": "Ajax_Request",
+					   "X-KL-safekids-Ajax-Request": "Ajax_Request",
+					   "X-Requested-With": "XMLHttpRequest"}
 	if request.method != 'POST':
 		return render_template(name=name, template_name_or_list='TChoice.html', stations=stations)
 	else:
-		data = {'stationDepartureId'	: stations[request.form['stationDepartureId']],
-				'stationArrivalId'		: stations[request.form['stationArrivalId']],
-				'departure'				: request.form.get('departure', True),
-				'date'					: datetime.today().strftime("%d.%m.%Y")}
-		response = post('https://www.rzd.ru/tt/train/schedule', json=data, headers=headers, timeout=10)
-		with open('output.json', 'w') as f: json.dump(response.json(), f)
+		data = {'stationDepartureId': stations[request.form['stationDepartureId']],
+				'stationArrivalId': stations[request.form['stationArrivalId']],
+				'departure': request.form.get('departure', True),
+				'date': datetime.today().strftime("%d.%m.%Y")}
+		response = post('https://www.rzd.ru/tt/train/schedule',
+						json=data, headers=headers, timeout=10)
+		with open('output.json', 'w') as f:
+			json.dump(response.json(), f)
 		return render_template(name=name, template_name_or_list='TSee.html', trains=response.json()['trains'])
+
 
 @app.before_request
 def limit_remote_addr():
 	e: str = session.get('email')
-	if e and not last.get(e): last[e] = []
+	if e and not last.get(e):
+		last[e] = []
 	if e and '.' not in request.path:
 		while len(last[e]) > 10-1:
 			le = last[e]
@@ -631,13 +685,16 @@ def limit_remote_addr():
 			last[e] = le
 		last[e] += [request.path]
 		json.dump(last, open('last.json', 'w'))
-	if e and e not in authorized: authorized[session['email']] = 1
+	if e and e not in authorized:
+		authorized[session['email']] = 1
 	if authorized != json.load(open('auth.json')):
 		json.dump(authorized, open('auth.json', 'w'))
-	if not os.path.isfile('static/not_blocked_ips'): open('static/not_blocked_ips', 'w').write('')
+	if not os.path.isfile('static/not_blocked_ips'):
+		open('static/not_blocked_ips', 'w').write('')
 	not_blocked_ips = open('static/not_blocked_ips', 'r').read().split('\n')
 	if white and request.headers.get('x-real-ip') not in not_blocked_ips:
 		abort(403)  # Forbiden
+
 
 @app.after_request
 def after_request(response: Response):
@@ -650,28 +707,34 @@ def after_request(response: Response):
 			n.replace(ltr, alf[ltr])
 		n = n.lower().title()
 		response.set_cookie('Name', n)
-	if response.calculate_content_length(): fsb: int = response.calculate_content_length()
+	if response.calculate_content_length():
+		fsb: int = response.calculate_content_length()
 	else:
 		try:
 			if not 'manifest.json' in request.path:
 				if 'down/' not in request.path:
 					fsb = os.path.getsize(request.path[1:])
-				else: fsb = os.path.getsize(request.path[1:]+'.exe')
-			else: fsb = 0
-		except: fsb = 0
+				else:
+					fsb = os.path.getsize(request.path[1:]+'.exe')
+			else:
+				fsb = 0
+		except:
+			fsb = 0
 	fsk = fsb // 1024
 	fsb = fsb % 1024
 	fsm = fsk // 1024
 	fsk = fsk % 1024
-	logging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {request.headers.get('x-real-ip')}  "{\
-			request.method} {request.path}"  {response.status[:3]}  {request.cookies.get('Name')}',
-				slice=' | ', fw=f'{fsm}MB {fsk}KB {fsb}B')
+	logging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {request.headers.get('x-real-ip')}  "{
+		request.method} {request.path}"  {response.status[:3]}  {request.cookies.get('Name')}',
+		slice=' | ', fw=f'{fsm}MB {fsk}KB {fsb}B')
 	return response
+
 
 @app.route('/robots.txt')
 @app.route('/sitemap.xml')
 def static_from_root():
 	return send_from_directory(app.static_folder, request.path[1:])
+
 
 @app.route('/Жизнь.mp4')
 @app.route('/ДНК.mp4')
@@ -680,6 +743,7 @@ def static_from_root():
 def e_code_from_root():
 	return send_from_directory(app.static_folder, 'E-Code'+request.path)
 
+
 @app.route('/lets')
 def lets():
 	names = json.load(open('lets.json', encoding='utf-8'))
@@ -687,8 +751,10 @@ def lets():
 		prompt = session.get('user')
 	else:
 		prompt = 'Вход/Регистрация'
-	let = {names[file] if file in names.keys() else file: file for file in os.listdir('lets')}
+	let = {names[file] if file in names.keys(
+	) else file: file for file in os.listdir('lets')}
 	return render_template('all_lets.html', let=let, prompt=prompt)
+
 
 @app.route('/lets/<letter>')
 def let(letter: str):
@@ -698,9 +764,11 @@ def let(letter: str):
 		prompt = 'Вход/Регистрация'
 	try:
 		names = json.load(open('lets.json', encoding='utf-8'))
-		let = [p.split('&') for p in open('lets/'+letter, encoding='utf-8').read().replace('\n', '').split('%')]
+		let = [p.split('&') for p in open(
+			'lets/'+letter, encoding='utf-8').read().replace('\n', '').split('%')]
 		if let[0][0][0] == '?':
-			name = let[0][0][let[0][0].find('?')+1:let[0][0].find('?', let[0][0].find('?')+1)]
+			name = let[0][0][let[0][0].find(
+				'?')+1:let[0][0].find('?', let[0][0].find('?')+1)]
 			let[0].pop(0)
 		else:
 			name = letter
@@ -708,9 +776,11 @@ def let(letter: str):
 	except:
 		if session.get('email') in admins:
 			prompt = session.get('user')
-			let = [p.split('&') for p in open('lets/'+letter, encoding='utf-8').read().replace('\n', '').split('%')]
+			let = [p.split('&') for p in open(
+				'lets/'+letter, encoding='utf-8').read().replace('\n', '').split('%')]
 			if let[0][0][0] == '?':
-				name = let[0][0][let[0][0].find('?')+1:let[0][0].find('?', let[0][0].find('?')+1)]
+				name = let[0][0][let[0][0].find(
+					'?')+1:let[0][0].find('?', let[0][0].find('?')+1)]
 				let[0].pop(0)
 			else:
 				name = letter
@@ -718,12 +788,14 @@ def let(letter: str):
 		else:
 			return abort(403)
 
+
 @app.route('/mess/<q>', methods=['GET', 'POST'])
 def am_checker(q):
 	if q == 'check':
 		with app.app_context():
 			return '{'+f'"check": "{
-				(AUsers.query.filter_by(Username=request.form["name"]).first().Password == request.form["pass"])
+				(AUsers.query.filter_by(Username=request.form["name"]).first(
+				).Password == request.form["pass"])
 				if AUsers.query.filter_by(Username=request.form["name"]).first() else False}"'+'}'
 	elif q == 'get':
 		if request.method == 'POST':
@@ -731,31 +803,41 @@ def am_checker(q):
 				if AUsers.query.filter_by(Username=request.form["name"]).first().Password == request.form["pass"]:
 					mm = []
 					for m in AMesses.query.filter_by(Recipient=request.form['name']).all():
-						sender = AUsers.query.filter_by(Username=request.form["name"]).first()
-						mm.append((m.id, m.Sender, m.Text, m.Type, m.Context, sender.Rating))
+						sender = AUsers.query.filter_by(
+							Username=request.form["name"]).first()
+						mm.append((m.id, m.Sender, m.Text, m.Type,
+								  m.Context, sender.Rating))
 					return json.dumps(mm)
-				else: return json.dumps('???')
-		else: return json.dumps('???')
+				else:
+					return json.dumps('???')
+		else:
+			return json.dumps('???')
 	elif q == 'send':
-		if request.method == 'GET': return json.dumps('???')
+		if request.method == 'GET':
+			return json.dumps('???')
 		else:
 			with app.app_context():
 				if AUsers.query.filter_by(Username=request.form["name"]).first().Password == request.form["pass"]:
 					am = AMesses(Sender=request.form['name'], Recipient=request.form['reci'], Text=request.form['text'],
-				  		Type=request.form['type'], Context=request.form['cont'])
+								 Type=request.form['type'], Context=request.form['cont'])
 					db.session.add(am)
 					db.session.commit()
 					return 'OK'
-				else: return json.dumps('???')
+				else:
+					return json.dumps('???')
 	elif q == 'bad':
-		if request.method == 'GET': return json.dumps('???')
+		if request.method == 'GET':
+			return json.dumps('???')
 		else:
 			with app.app_context():
-				AUsers.query.filter_by(Username=request.form["name"]).first().Rating -= int(request.form["count"])
+				AUsers.query.filter_by(Username=request.form["name"]).first(
+				).Rating -= int(request.form["count"])
 				# db.session.add(am)
 				db.session.commit()
 				return 'OK'
-	else: return json.dumps('???')
+	else:
+		return json.dumps('???')
+
 
 @app.route('/about')
 def about():
@@ -765,14 +847,19 @@ def about():
 		prompt = 'Вход/Регистрация'
 	return render_template('about.html', prompt=prompt)
 
+
 @app.route('/SOVR')
 def sovt():
 	sovrers = open('static/sovr/sovr.txt', encoding='utf-8').read().split('\n')
-	if not sovrers[-1]: sovrers = sovrers[:-1]
+	if not sovrers[-1]:
+		sovrers = sovrers[:-1]
 	List = open('static/sovr/List.txt', encoding='utf-8').read().split('\n')
-	if not List[-1]: List = List[:-1]
-	meetings = open('static/sovr/meetings.txt', encoding='utf-8').read().split('\n')
-	if not meetings[-1]: meetings = meetings[:-1]
+	if not List[-1]:
+		List = List[:-1]
+	meetings = open('static/sovr/meetings.txt',
+					encoding='utf-8').read().split('\n')
+	if not meetings[-1]:
+		meetings = meetings[:-1]
 	if 'user' in session:
 		if session['email'] in sovrers+admins+['sovr@sovr']:
 			nsovrers = []
@@ -784,41 +871,49 @@ def sovt():
 			return render_template('sovt.html', prompt=session.get('user'), sovr=nsovrers, list=List, meetings=meetings)
 	return abort(403)
 
+
 @app.route('/get_acc')
 def wear():
 	if request.args.get('code'):
 		email = request.args.get('code')[1:-1]
 		ui = UserInfo.query.filter_by(email=email).first()
 		if ui:
-			if session.get('email'): authorized[session['email']] -= 1
+			if session.get('email'):
+				authorized[session['email']] -= 1
 			session['user'] = f'{ui.s} {ui.f} {ui.t}'
 			session['telephone'] = ui.tel
 			session['birthday'] = ui.b_day
 			session['email'] = ui.email
-			if session['email'] not in authorized: authorized[session['email']] = 1
-			else: authorized[session['email']] += 1
+			if session['email'] not in authorized:
+				authorized[session['email']] = 1
+			else:
+				authorized[session['email']] += 1
 	return redirect('lk')
+
 
 @app.route('/get_qr')
 def qrcoder():
 	if session.get('email'):
 		response = get(
-		'https://clck.ru/--',
-		{'url': f'https://s762672.cloudpub.ru/get_acc?code={random.randint(0, 9)} \
+			'https://clck.ru/--',
+			{'url': f'https://s762672.cloudpub.ru/get_acc?code={random.randint(0, 9)} \
 			{session.get('email')}{random.randint(0, 9)}'}, timeout=10)
 		img = qrcode.make(response.text)
 		img.save("static/qr.png")
 		return send_from_directory(app.static_folder, 'qr.png')
+
 
 @app.route('/test', methods=['GET', 'POST'])
 def test():
 	if request.method == 'GET':
 		if session.get('user'):
 			return render_template('test.html', session=session)
-		else: return redirect('lk')
+		else:
+			return redirect('lk')
 	if request.method == 'POST':
 		open('test.txt', 'a', encoding='utf-8').write(str(request.form)+'\n')
 		return redirect('lk')
+
 
 @app.route('/test/result')
 def test_result():
@@ -828,20 +923,23 @@ def test_result():
 		.replace('verdict', '').replace('name', '').replace(', ', '').replace(',', '')
 	return render_template('log.html', name=name, session=session, f=f)
 
+
 @app.route('/test/ьиеш', methods=['GET', 'POST'])
 def mbti_test():
 	if request.method == 'GET':
 		if session.get('user'):
 			return render_template('mbti test.html', session=session)
-		else: return redirect('/lk')
+		else:
+			return redirect('/lk')
 	if request.method == 'POST':
 		with app.app_context():
 			print(request.form['result'])
-			UserInfo.query.filter(UserInfo.email==session['email']).update({
+			UserInfo.query.filter(UserInfo.email == session['email']).update({
 				UserInfo.MBTI: request.form['result']})
 			db.session.commit()
 		open('mbti test.txt', 'a', encoding='utf-8').write(str(request.form)+'\n')
 		return redirect('/lk')
+
 
 @app.route('/test/ьиеш/result')
 def mbti_test_result():
@@ -850,17 +948,20 @@ def mbti_test_result():
 		.replace('time', '').replace('name', '').replace(', ', '').replace(',', '')
 	return render_template('log.html', name=name, session=session, f=f)
 
+
 @app.route('/class')
 def clas(): return render_template('class.html')
 
+
 @app.route('/favicon.ico')
 def favicon(): return send_from_directory('static/img', 'f.ico')
+
 
 if os.path.isdir('C:'):
 	# """Функция, запускающая работу сервера."""
 	# import webbrowser
 
-	date = 9999 #datetime.now().strftime("%H%M")
+	date = 9999  # datetime.now().strftime("%H%M")
 	# #webbrowser.open_new_tab('http://127.0.0.1:{}/'.format(date))
 	# app.run(port=date)
 
@@ -870,7 +971,7 @@ if os.path.isdir('C:'):
 		"host": "127.0.0.1",
 		"port": date,
 		"provider_mapping": {
-			"/webdav": dir,
+				"/webdav": dir,
 		},
 		"http_authenticator": {
 			"domain_controller": None,
@@ -899,8 +1000,10 @@ if os.path.isdir('C:'):
 	print(f"WebDAV: http://127.0.0.1:{date}/webdav")
 
 	print('\n\n')
-	logging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  "Server restarted."')
-	wlogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  "WebDav restarted."')
+	logging.log(
+		f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  "Server restarted."')
+	wlogging.log(
+		f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  "WebDav restarted."')
 
 	try:
 		server.start()
