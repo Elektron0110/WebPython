@@ -28,19 +28,19 @@ if not os.path.isdir('Site/applications'):
 	os.mkdir('Site/applications')
 
 class WsgiDAVMiddleware:
-    def __init__(self, flask_app, dav_app, dav_path=("/webdav", "/:dir_browser")):
-        self.flask_app = flask_app
-        self.dav_app = dav_app
-        self.dav_path = dav_path
+	def __init__(self, flask_app, dav_app, dav_path=("/webdav", "/:dir_browser")):
+		self.flask_app = flask_app
+		self.dav_app = dav_app
+		self.dav_path = dav_path
 
-    def __call__(self, environ, start_response):
-        # Если путь начинается с /webdav, передаём запрос в WsgiDAV
-        if environ.get("PATH_INFO", "").startswith(self.dav_path):
-            wlogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {\
+	def __call__(self, environ, start_response):
+		# Если путь начинается с /webdav, передаём запрос в WsgiDAV
+		if environ.get("PATH_INFO", "").startswith(self.dav_path):
+			wlogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {\
 				environ.get("HTTP_X_REAL_IP")}  "{environ["REQUEST_METHOD"]} {environ['PATH_INFO']}"')
-            return self.dav_app(environ, start_response)
-        # Иначе — в Flask
-        return self.flask_app(environ, start_response)
+			return self.dav_app(environ, start_response)
+		# Иначе — в Flask
+		return self.flask_app(environ, start_response)
 
 # -------------------------------------------------------------------------------------------------------------
 
@@ -136,8 +136,8 @@ def new_user(**k):
 		if AuthUser.query.filter_by(email=k.get('email', '')).first() is None:
 			a = AuthUser(email=k.get('email', ''), password=k.get('password', ''))
 			i = UserInfo(email=k.get('email', ''), s=k.get('s', ''),
-			             f=k.get('f', ''), t=k.get('t', ''), tel=k.get('tel', ''),
-			             b_day=k.get('b_day', ''))
+						 f=k.get('f', ''), t=k.get('t', ''), tel=k.get('tel', ''),
+						 b_day=k.get('b_day', ''))
 			db.session.add(a)
 			db.session.add(i)
 			db.session.commit()
@@ -156,17 +156,17 @@ def new_user(**k):
 def new_application(**k):
 	with app.app_context():
 		ap = Applications(email=k.get('email', ''), lines=k.get('line', ''), way=k.get('way', ''),
-		                  number=k.get('num', ''), date=k.get('date', ''))
+						  number=k.get('num', ''), date=k.get('date', ''))
 		db.session.add(ap)
 		db.session.commit()
 
 
 new_user(email='example@mail.ru', password='', s='', f='System', t='',
-         tel='+0 (000) 00-00-00', b_day='00-00-00', id=-1)
+		 tel='+0 (000) 00-00-00', b_day='00-00-00', id=-1)
 new_user(email='s762672@ya.ru', password='Alex', s='Шульган', f='Алексей', t='Владимирович',
-         tel='+7 (904) 333-55-37', b_day='2011-10-01')
+		 tel='+7 (904) 333-55-37', b_day='2011-10-01')
 new_user(email='test@test', password='Bug', s='Тестов', f='Тест', t='Тестович',
-         tel='+0 (123) 456-78-90', b_day='0000-00-00')
+		 tel='+0 (123) 456-78-90', b_day='0000-00-00')
 
 # -------------------------------------------------------------------------------------------------------------
 
@@ -227,9 +227,9 @@ def login():
 				return 'Password in invalid.'
 		else:
 			return render_template(name=name, template_name_or_list='register.html',
-			                       email=email,
-			                       password=password,
-			                       date=(datetime.today() - timedelta(days=365) * 18).strftime('%Y-%m-%d'))
+								   email=email,
+								   password=password,
+								   date=(datetime.today() - timedelta(days=365) * 18).strftime('%Y-%m-%d'))
 
 
 @app.route('/logout')
@@ -245,9 +245,9 @@ def logout():
 @app.route('/hidden/<thing>')
 def session_data(thing):
 	things = {'session': str(session).replace('<', '').replace('>', ''),
-	          'user': session['user'],
-	          'telephone': session['telephone'],
-	          'birthday': session['birthday']}
+			  'user': session['user'],
+			  'telephone': session['telephone'],
+			  'birthday': session['birthday']}
 	return f"{things[thing]}"
 
 
@@ -255,11 +255,11 @@ def session_data(thing):
 def update():
 	if request.method == 'GET':
 		return render_template('all.html',
-		                       session=session,
-		                       name=name,
-		                       tel=session['telephone'],
-		                       birthday=session['birthday'],
-		                       date=(datetime.today() - timedelta(days=365) * 18).strftime('%Y-%m-%d'))
+							   session=session,
+							   name=name,
+							   tel=session['telephone'],
+							   birthday=session['birthday'],
+							   date=(datetime.today() - timedelta(days=365) * 18).strftime('%Y-%m-%d'))
 	elif request.method == 'POST':
 		session['user'] = f"{request.form['s']} {request.form['f']} {request.form['t']}"
 		session['telephone'] = request.form['tel']
@@ -280,8 +280,8 @@ def update():
 def new():
 	if request.method == 'GET':
 		return render_template(name=name, template_name_or_list='xxx.html',
-		                       session=session,
-		                       date=(datetime.today() - timedelta(days=365) * 18).strftime('%Y-%m-%d'))
+							   session=session,
+							   date=(datetime.today() - timedelta(days=365) * 18).strftime('%Y-%m-%d'))
 	elif request.method == 'POST':
 		if request.form['type'] == 'check':
 			session['user'] = f"{request.form['s']} {request.form['f']} {request.form['t']}"
@@ -348,11 +348,11 @@ def admin(comm):
 		if session['email'] in admins:
 			if comm == 'see':
 				return render_template(name=name, template_name_or_list='AdmSee.html',
-				                       u=AuthUser.query.all(),
-				                       d=UserInfo.query.all(),
+									   u=AuthUser.query.all(),
+									   d=UserInfo.query.all(),
 									   c=authorized,
 									   l=last,
-				                       a=Applications.query.all())
+									   a=Applications.query.all())
 			elif comm == 'del':
 				with app.app_context():
 					email = request.form['way']
