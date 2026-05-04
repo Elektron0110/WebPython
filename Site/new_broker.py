@@ -209,12 +209,14 @@ def hpress():
 '''
 
 
-@app.route('/Ums/ex')
-def exindex():
+@app.route('/Ums/for/<days>')
+def exindex(days):
+	days = int(days)
+	if days not in [3,5,7,10,15]: return '<script>alert("Хитро")</script><meta http-equiv="refresh" content="0; URL=/train" />'
 	weather: dict[str, list[str | dt | float]] = dict(
 		topic=[], time=[], value=[])
 
-	for date in os.listdir('graph'):
+	for date in (os.listdir('graph')[-days:]):
 		if len(date) == 10:
 			print(date)
 			datae: dict[str, dict[str, str]] = json.loads(
@@ -235,12 +237,14 @@ def exindex():
 	return render_template(f'graph.html', graph=graph_html)
 
 
-@app.route('/Ums/hard/ex')
-def exhindex():
+@app.route('/Ums/hard/for/<days>')
+def exhindex(days: int):
+	days = int(days)
+	if days not in [3,5,7,10,15]: return '<script>alert("Хитро")</script><meta http-equiv="refresh" content="0; URL=/train" />'
 	weather: dict[str, list[str | dt | float]] = dict(
 		topic=[], time=[], value=[])
 
-	for date in os.listdir('graph'):
+	for date in (os.listdir('graph')[-days:]):
 		if len(date) == 10:
 			print(date)
 			datae: dict[str, dict[str, str]] = json.loads(
