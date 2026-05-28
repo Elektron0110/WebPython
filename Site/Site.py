@@ -364,6 +364,24 @@ Code: {s[3]},\tPerson: {s[4].split(' | ')[0]},\tIP: {s[1]},\tWeight: {s[4].split
 	return send_from_directory('', 'rss.xml')
 
 
+@app.route('/adm/log/<comm>', methods=['GET', 'POST'])
+def adminlog(comm):
+	if 'user' in session:
+		if session['email'] in admins:
+			if f'{comm}.log' in os.listdir():
+				date = request.args.get('date')
+				if not date:
+					date = datetime.today().strftime("%d.%m.%Y")
+				dt_0 = (datetime.strptime(date, '%d.%m.%Y')-timedelta(1)).strftime('%d.%m.%Y') \
+					if datetime.strptime(date, '%d.%m.%Y') >= datetime(2025, 10, 22) else None
+				dt_1 = (datetime.strptime(date, '%d.%m.%Y')+timedelta(1)).strftime('%d.%m.%Y') \
+					if datetime.strptime(date, '%d.%m.%Y') < datetime.today()-timedelta(1) else None
+				date1 = '['+(datetime.strptime(date, '%d.%m.%Y') +
+								timedelta(1)).strftime('%d.%m.%Y')
+				f = open(f'{comm}.log', encoding='utf-8').read()
+				return render_template('log.html', name=name, session=session, f=f[f.find(date)-1:f.find(date1)], dt_0=dt_0, dt_1=dt_1)
+			else: abort(404)
+
 @app.route('/adm/<comm>', methods=['GET', 'POST'])
 def admin(comm):
 	if 'user' in session:
