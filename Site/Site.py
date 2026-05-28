@@ -34,15 +34,18 @@ if not os.path.isdir('Site/applications'):
 
 class WsgiDAVMiddleware:
 	def __init__(self, flask_app, dav_app, dav_path=("/webdav", "/:dir_browser")):
+		import urllib.parse
+		self.decode = urllib.parse.unquote
 		self.flask_app = flask_app
 		self.dav_app = dav_app
 		self.dav_path = dav_path
 
 	def __call__(self, environ, start_response):
 		# Если путь начинается с /webdav, передаём запрос в WsgiDAV
+		# open('env', 'w', encoding='utf-8').write(str(environ))
 		if environ.get("PATH_INFO", "").startswith(self.dav_path):
 			wlogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {
-				environ.get("HTTP_X_REAL_IP")}  "{environ["REQUEST_METHOD"]} {environ['PATH_INFO']}"')
+				environ.get("HTTP_X_REAL_IP")}  "{environ["REQUEST_METHOD"]} {self.decode(environ["REQUEST_URI"])}"')
 			return self.dav_app(environ, start_response)
 		# Иначе — в Flask
 		return self.flask_app(environ, start_response)
@@ -621,8 +624,8 @@ try:
 			return fly(request.form['flight'])
 		else:
 			return render_template(name=name, template_name_or_list='Fly.html')
-except:
-	print('INF')
+except Exception as e:
+	print(e)
 
 
 @app.route('/down', methods=['GET', 'POST'])
