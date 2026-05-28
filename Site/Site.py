@@ -13,7 +13,7 @@ from alf import alf
 from my_lib import file_to_list as ftl, Log
 from cheroot import wsgi
 from wsgidav.wsgidav_app import WsgiDAVApp
-from IPs import IP_Seeker as IP
+from IPs import IP_Seeker as IP # type: ignore
 
 slicer = r'\|/'
 name = 'Alexis'
