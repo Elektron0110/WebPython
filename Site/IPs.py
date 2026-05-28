@@ -53,3 +53,6 @@ class IP_Seeker:
             self.Seeker_3()
             self.Seeker_4()
             self.logging.log('=============================================')
+
+if __name__ == '__main__':
+    IP_Seeker(input('IP: ')).Seek()
