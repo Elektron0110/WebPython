@@ -13,6 +13,7 @@ from alf import alf
 from my_lib import file_to_list as ftl, Log
 from cheroot import wsgi
 from wsgidav.wsgidav_app import WsgiDAVApp
+from IPs import IP_Seeker as IP
 
 slicer = r'\|/'
 name = 'Alexis'
@@ -745,6 +746,9 @@ def after_request(response: Response):
 	fsb = fsb % 1024
 	fsm = fsk // 1024
 	fsk = fsk % 1024
+	ip = request.headers.get('x-real-ip')
+	if f'{ip}.IP' not in os.listdir('IPs'): 
+		IP(ip).Seek()
 	logging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {request.headers.get('x-real-ip')}  "{
 		request.method} {request.path}"  {response.status[:3]}  {request.cookies.get('Name')}',
 		slice=' | ', fw=f'{fsm}MB {fsk}KB {fsb}B')
