@@ -386,6 +386,14 @@ def adminlog(comm):
 				return render_template('log.html', name=name, session=session, f=f[f.find(date)-1:f.find(date1)], dt_0=dt_0, dt_1=dt_1)
 			else: abort(404)
 
+
+@app.route('/adm/IP/<ip>', methods=['GET'])
+def adminip(ip):
+	if 'user' in session:
+		if session['email'] in admins:
+			return send_from_directory(f'IPs', ip)
+
+
 @app.route('/adm/<comm>', methods=['GET', 'POST'])
 def admin(comm):
 	if 'user' in session:
@@ -420,6 +428,11 @@ def admin(comm):
 							 timedelta(1)).strftime('%d.%m.%Y')
 				f = open('Alexis.log', encoding='utf-8').read()
 				return render_template('log.html', name=name, session=session, f=f[f.find(date)-1:f.find(date1)], dt_0=dt_0, dt_1=dt_1)
+			elif comm == 'IP':
+				r = ''
+				for f in os.listdir('IPs'):
+					r += f'<a href="IPs/{f}">{f}</a><br>'
+				return r
 			else:
 				return redirect('/lk')
 		else:
