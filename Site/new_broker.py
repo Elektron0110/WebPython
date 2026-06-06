@@ -1,4 +1,4 @@
-from flask import send_file, render_template, request
+from flask import send_file, render_template, request, jsonify
 from flask import Blueprint as Flask
 import matplotlib.pyplot as plt
 import io
@@ -16,18 +16,9 @@ app = Flask(__name__, 'new_broker')
 
 @app.route('/Ums/text')
 def sr():
-	if os.path.isfile('data'):
-		import json
-		text = ''
-		data: dict[str, dict[str, str]] = json.loads(open('data', 'r').read())
-		for um in data:
-			text += um+': '
-			for k in data[um]:
-				text += f'{k}: {data[um][k]}, '
-			text = text[:-2]+'.\n'
-		return '<meta http-equiv="refresh" content="60">'+text.replace('\n', '<br>')
-	else:
-		return 'Запустите "Брокер" для работы данной вкладки.'
+	import json
+	data: dict[str, dict[str, str]] = json.loads(open('data', 'r').read())
+	return jsonify(data)
 
 
 @app.route('/Ums/secret')
