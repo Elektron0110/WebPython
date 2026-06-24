@@ -391,7 +391,7 @@ def adminlog(comm):
 def adminip(ip):
 	if 'user' in session:
 		if session['email'] in admins:
-			return send_from_directory(f'IPs', ip)
+			return open(f'IPs/{ip}', 'r').read() if os.isfile(f'IPs/{ip}') else abort(404)
 
 
 @app.route('/adm/<comm>', methods=['GET', 'POST'])
@@ -431,7 +431,7 @@ def admin(comm):
 			elif comm == 'IP':
 				r = ''
 				for f in os.listdir('IPs'):
-					r += f'<a href="IPs/{f}">{f}</a><br>'
+					r += f'<a href="IP/{f}">{f}</a><br>'
 				return r
 			else:
 				return redirect('/lk')
