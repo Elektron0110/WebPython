@@ -13,11 +13,13 @@ from alf import alf
 from my_lib import file_to_list as ftl, Log
 from cheroot import wsgi
 from wsgidav.wsgidav_app import WsgiDAVApp
+import import_threading
 from IPs import IP_Seeker as IP # type: ignore
 
 slicer = r'\|/'
 name = 'Alexis'
 logging = Log('Alexis.log')
+llogging = Log('Load.log')
 wlogging = Log('WebDav.log')
 start = int(open('start.helpfile', 'r').read())
 
@@ -762,9 +764,14 @@ def after_request(response: Response):
 	ip = request.headers.get('x-real-ip')
 	if f'{ip}.IP' not in os.listdir('IPs'): 
 		IP(ip).Seek()
-	logging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {request.headers.get('x-real-ip')}  "{
-		request.method} {request.path}"  {response.status[:3]}  {request.cookies.get('Name')}',
-		slice=' | ', fw=f'{fsm}MB {fsk}KB {fsb}B')
+	if not request.path.startswith(('/loader', '/video', '/films')):
+		logging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {ip}  "{
+			request.method} {request.full_path}"  {response.status[:3]}  {request.cookies.get('Name')}',
+			slice=' | ', fw=f'{fsm}MB {fsk}KB {fsb}B')
+	else:
+		llogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {ip}  "{
+			request.method} {request.full_path}"  {response.status[:3]}  {request.cookies.get('Name')}'
+		)
 	return response
 
 
@@ -995,6 +1002,77 @@ def clas(): return render_template('class.html')
 def favicon(): return send_from_directory('static/img', 'f.ico')
 
 
+@app.route('/loader/<chanel>/<smth>')
+def loader(smth: str, chanel: str):
+	if chanel == 'vk':
+		vurl = f'https://vkvideo.ru/video-{smth}'
+	else:
+		vurl = f'https://rutube.ru/video/{smth}'
+	import_threading.load(vurl)
+	return redirect('/video')
+
+
+h = ftl('links.helpfile', sort=False)[3]
+@app.route('/video')
+def video():
+	r = ''
+	for f in os.listdir(h):
+		if os.path.isdir(f'{h}/{f}'):
+			r += f'<a href="video/{f}"><b>{f}</b></a><br>'
+		else:
+			r += f'<a href="video/{f}">{f}</a><br>'
+	return r
+
+
+@app.route('/video/<fod>')
+def videofod(fod):
+	if os.path.isfile(f'{h}/{fod}'):
+		return send_from_directory(h, fod)
+	else:
+		r = ''
+		for f in os.listdir(f'{h}/{fod}'):
+			if os.path.isdir(f'{h}/{fod}/{f}'):
+				r += f'<a href="{fod}/{f}"><b>{f}</b></a><br>'
+		else:
+				r += f'<a href="{fod}/{f}">{f}</a><br>'
+		return r
+
+
+@app.route('/video/<directory>/<file>')
+def videodirectoryfile(directory, file):
+	return send_from_directory(f'{h}/{directory}', file)
+
+j = ftl('links.helpfile', sort=False)[2]
+@app.route('/films')
+def films():
+	r = ''
+	for f in os.listdir(j):
+		if os.path.isdir(f'{j}/{f}'):
+			r += f'<a href="films/{f}"><b>{f}</b></a><br>'
+		else:
+			r += f'<a href="films/{f}">{f}</a><br>'
+	return r
+
+
+@app.route('/films/<fod>')
+def filmsfod(fod):
+	if os.path.isfile(f'{j}/{fod}'):
+		return send_from_directory(j, fod)
+	else:
+		r = ''
+		for f in os.listdir(f'{j}/{fod}'):
+			if os.path.isdir(f'{j}/{fod}/{f}'):
+				r += f'<a href="{fod}/{f}"><b>{f}</b></a><br>'
+		else:
+				r += f'<a href="{fod}/{f}">{f}</a><br>'
+		return r
+
+
+@app.route('/films/<directory>/<file>')
+def filmsdirectoryfile(directory, file):
+	return send_from_directory(f'{j}/{directory}', file)
+
+
 if os.path.isdir('C:'):
 	# """Функция, запускающая работу сервера."""
 	# import webbrowser
@@ -1003,7 +1081,7 @@ if os.path.isdir('C:'):
 	# #webbrowser.open_new_tab('http://127.0.0.1:{}/'.format(date))
 	# app.run(port=date)
 
-	dir = "C:\\Users\\Alex\\Desktop\\JetBr\\Python\\WebPython\\Third\\Site\\webdav"
+	dir = ftl('links.helpfile', sort=False)[1]
 
 	dav_config = {
 		"host": "127.0.0.1",
