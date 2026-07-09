@@ -40,10 +40,10 @@ def load(video_url: tuple[str]):
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 ydl.download([v_url])
 
-            logging.log(f"[{v_url}] Успешно")
+            logging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  "[{v_url}] Успешно"')
 
         except Exception as e:
-            logging.log(f"[{v_url}] Ошибка: {e}")
+            logging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  "[{v_url}] Ошибка: {e}"')
 
     t = threading.Thread(target=download_video, args=(vurl,))
     t.daemon = True

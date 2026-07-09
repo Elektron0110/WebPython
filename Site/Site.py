@@ -1038,6 +1038,13 @@ def clas(): return render_template('class.html')
 def favicon(): return send_from_directory('static/img', 'f.ico')
 
 
+@app.route('/loader/twitch/<chanel>/<id>')
+def twitchloader(id: int, chanel: str):
+    vurl = f'https://twitch.tv/{chanel}/v/{id}'
+    import_threading.load(vurl)
+    return redirect('/video')
+
+
 @app.route('/loader/<chanel>/<smth>')
 def loader(smth: str, chanel: str):
     if chanel == 'vk':
@@ -1048,7 +1055,7 @@ def loader(smth: str, chanel: str):
     return redirect('/video')
 
 
-h = ftl('links.helpfile', sort=False)[3]
+h = ftl('links.helpfile', sort=False)[0]
 
 
 @app.route('/video')
@@ -1071,8 +1078,8 @@ def videofod(fod):
         for f in os.listdir(f'{h}/{fod}'):
             if os.path.isdir(f'{h}/{fod}/{f}'):
                 r += f'<a href="{fod}/{f}"><b>{f}</b></a><br>'
-        else:
-            r += f'<a href="{fod}/{f}">{f}</a><br>'
+            else:
+                r += f'<a href="{fod}/{f}">{f}</a><br>'
         return r
 
 
@@ -1104,14 +1111,20 @@ def filmsfod(fod):
         for f in os.listdir(f'{j}/{fod}'):
             if os.path.isdir(f'{j}/{fod}/{f}'):
                 r += f'<a href="{fod}/{f}"><b>{f}</b></a><br>'
-        else:
-            r += f'<a href="{fod}/{f}">{f}</a><br>'
+            else:
+                r += f'<a href="{fod}/{f}">{f}</a><br>'
         return r
 
 
 @app.route('/films/<directory>/<file>')
 def filmsdirectoryfile(directory, file):
     return send_from_directory(f'{j}/{directory}', file)
+
+
+@app.route('/ping')
+def ping():
+    return str(datetime.now())
+
 
 
 if os.path.isdir('C:'):
