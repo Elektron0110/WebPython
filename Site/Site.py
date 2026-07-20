@@ -1038,9 +1038,16 @@ def clas(): return render_template('class.html')
 def favicon(): return send_from_directory('static/img', 'f.ico')
 
 
-@app.route('/loader/twitch/<chanel>/<id>')
-def twitchloader(id: int, chanel: str):
-    vurl = f'https://twitch.tv/{chanel}/v/{id}'
+@app.route('/loader/twitch/<chanel>/<t>/<id>')
+def twitchloader(id: int, chanel: str, t: str):
+    vurl = f'https://twitch.tv/{chanel}/{t}/{id}'
+    import_threading.load(vurl)
+    return redirect('/video')
+
+
+@app.route('/loader/twitch/<chanel>')
+def twitch(id: int, chanel: str):
+    vurl = f'https://twitch.tv/{chanel}'
     import_threading.load(vurl)
     return redirect('/video')
 
