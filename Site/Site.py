@@ -1046,7 +1046,7 @@ def twitchloader(id: int, chanel: str, t: str):
 
 
 @app.route('/loader/twitch/<chanel>')
-def twitch(id: int, chanel: str):
+def twitch(chanel: str):
     vurl = f'https://twitch.tv/{chanel}'
     import_threading.load(vurl)
     return redirect('/video')
