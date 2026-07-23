@@ -10,6 +10,7 @@ Site/static/qr.png
 *.json
 *.log
 Site/static/not_blocked_ips
+Site/static/blocked_ips
 Site/rss.xml
 Users/
 *.txt

@@ -15,6 +15,7 @@ from cheroot import wsgi
 from wsgidav.wsgidav_app import WsgiDAVApp
 import import_threading
 from IPs import IP_Seeker as IP  # type: ignore
+from functools import wraps
 
 slicer = r'\|/'
 name = 'Alexis'
@@ -185,6 +186,55 @@ def new_application(**k):
         db.session.commit()
 
 
+def get_messages(t=True):
+    with app.app_context():
+        mu = MUsers.query.filter_by(email=session['email']).first()
+        mms = MMess.query.filter_by(recipient=mu.id).all()
+        mm = []
+        for m in mms:
+            text = ''
+            mus = MUsers.query.filter_by(id=m.sender).first()
+            mue = str(mus).split(' | ')[1] if mus else 'System'
+            mu = UserInfo.query.filter_by(
+                email=mue).first() if mus else 'System'
+            mu = mu.f if mus else 'System'
+            if t:
+                for i in range(len(m.text)):
+                    if i < 20:
+                        text += m.text[i]
+                text += '...'
+            else:
+                text = m.text
+            mm.append((m.id, mu, m.topic, text,
+                       m.date.strftime('%d.%m.%Y %H:%M')))
+        return mm
+
+
+def get_out_messages(t=True):
+    with app.app_context():
+        mu = MUsers.query.filter_by(email=session['email']).first()
+        mms = MMess.query.filter_by(sender=mu.id).all()
+        mm = []
+        for m in mms:
+            text = ''
+            mus = MUsers.query.filter_by(id=m.recipient).first()
+            mue = str(mus).split(' | ')[
+                1] if mus else 'Неизвестный пользователь'
+            mu = UserInfo.query.filter_by(email=mue).first(
+            ) if mus else 'Неизвестный пользователь'
+            mu = mu.f if mus else 'Неизвестный пользователь'
+            if t:
+                for i in range(len(m.text)):
+                    if i < 20:
+                        text += m.text[i]
+                text += '...'
+            else:
+                text = m.text
+            mm.append((m.id, mu, m.topic, text,
+                       m.date.strftime('%d.%m.%Y %H:%M')))
+        return mm
+
+
 new_user(email='example@mail.ru', password='', s='', f='System', t='',
          tel='+0 (000) 00-00-00', b_day='00-00-00', id=-1)
 new_user(email='s762672@ya.ru', password='Alex', s='Шульган', f='Алексей', t='Владимирович',
@@ -194,7 +244,7 @@ new_user(email='test@test', password='Bug', s='Тестов', f='Тест', t='�
 
 # -------------------------------------------------------------------------------------------------------------
 
-app.secret_key = 'YOU-NOT-KNOW-THIS-I-SURE'  # os.urandom(24)
+app.secret_key = 'YOU-NEVER-KNOW-THIS-I-SURE'  # os.urandom(24)
 open('Site/log',
      'a').write(f'\nStart at {datetime.now().strftime("%d.%m.%Y %H:%M")}.')
 admins = ['s762672@ya.ru', 'test@test']
@@ -206,6 +256,23 @@ last: dict[str, list[str]] = json.load(open('last.json'))
 # @app.route('/')
 # def to():
 # 	return 'Сайт на тех.обслуживании.'
+
+def check_auth(admin=False, link='/lk'):
+    def my_decorator(func):
+        @wraps(func)
+        def my_wrapper(*args, **kwargs):
+            if 'user' in session:
+                if admin:
+                    if session['email'] in admins:
+                        func(*args, **kwargs)
+                    else:
+                        return abort(403, 'This page only for administrators.')
+                else:
+                    func()
+            else:
+                return redirect(link, 401)
+        return my_wrapper
+    return my_decorator
 
 
 @app.route('/')
@@ -265,6 +332,7 @@ def login():
 
 
 @app.route('/logout')
+@check_auth
 def logout():
     authorized[session['email']] -= 1
     session.pop('user')
@@ -384,132 +452,75 @@ Code: {s[3]},\tPerson: {s[4].split(' | ')[0]},\tIP: {s[1]},\tWeight: {s[4].split
 
 
 @app.route('/adm/log/<comm>', methods=['GET', 'POST'])
+@check_auth(True)
 def adminlog(comm):
-    if 'user' in session:
-        if session['email'] in admins:
-            if f'{comm}.log' in os.listdir():
-                date = request.args.get('date')
-                if not date:
-                    date = datetime.today().strftime("%d.%m.%Y")
-                dt_0 = (datetime.strptime(date, '%d.%m.%Y') - timedelta(1)).strftime('%d.%m.%Y') \
-                    if datetime.strptime(date, '%d.%m.%Y') >= datetime(2025, 10, 22) else None
-                dt_1 = (datetime.strptime(date, '%d.%m.%Y') + timedelta(1)).strftime('%d.%m.%Y') \
-                    if datetime.strptime(date, '%d.%m.%Y') < datetime.today() - timedelta(1) else None
-                date1 = '[' + (datetime.strptime(date, '%d.%m.%Y') +
-                               timedelta(1)).strftime('%d.%m.%Y')
-                f = open(f'{comm}.log', encoding='utf-8').read()
-                return render_template('log.html', name=name, session=session, f=f[f.find(
-                    date) - 1:f.find(date1)], dt_0=dt_0, dt_1=dt_1)
-            else:
-                abort(404)
+    if f'{comm}.log' in os.listdir():
+        date = request.args.get('date')
+        if not date:
+            date = datetime.today().strftime("%d.%m.%Y")
+        dt_0 = (datetime.strptime(date, '%d.%m.%Y') - timedelta(1)).strftime('%d.%m.%Y') \
+            if datetime.strptime(date, '%d.%m.%Y') >= datetime(2025, 10, 22) else None
+        dt_1 = (datetime.strptime(date, '%d.%m.%Y') + timedelta(1)).strftime('%d.%m.%Y') \
+            if datetime.strptime(date, '%d.%m.%Y') < datetime.today() - timedelta(1) else None
+        date1 = '[' + (datetime.strptime(date, '%d.%m.%Y') +
+                        timedelta(1)).strftime('%d.%m.%Y')
+        f = open(f'{comm}.log', encoding='utf-8').read()
+        return render_template('log.html', name=name, session=session, f=f[f.find(
+            date) - 1:f.find(date1)], dt_0=dt_0, dt_1=dt_1)
+    else:
+        abort(404)
 
 
+@check_auth(True)
 @app.route('/adm/IP/<ip>', methods=['GET'])
 def adminip(ip):
-    if 'user' in session:
-        if session['email'] in admins:
-            return open(
-                f'IPs/{ip}', 'r').read() if os.isfile(f'IPs/{ip}') else abort(404)
+    return open(f'IPs/{ip}', 'r').read() if os.isfile(f'IPs/{ip}') else abort(404)
 
 
+@check_auth(True)
 @app.route('/adm/<comm>', methods=['GET', 'POST'])
 def admin(comm):
-    if 'user' in session:
-        if session['email'] in admins:
-            if comm == 'see':
-                return render_template(name=name, template_name_or_list='AdmSee.html',
-                                       u=AuthUser.query.all(),
-                                       d=UserInfo.query.all(),
-                                       c=authorized,
-                                       l=last,
-                                       a=Applications.query.all())
-            elif comm == 'del':
-                with app.app_context():
-                    email = request.form['way']
-                    user = AuthUser.query.filter_by(email=email).first()
-                    data = UserInfo.query.filter_by(email=email).first()
-                    db.session.delete(user)
-                    db.session.delete(data)
-                return redirect('/lk')
-            elif comm == 'update':
-                email = request.form['way']
-                return redirect(f'/get_acc?code=0{email}0')
-            elif comm == 'log':
-                date = request.args.get('date')
-                if not date:
-                    date = datetime.today().strftime("%d.%m.%Y")
-                dt_0 = (datetime.strptime(date, '%d.%m.%Y') - timedelta(1)).strftime('%d.%m.%Y') \
-                    if datetime.strptime(date, '%d.%m.%Y') >= datetime(2025, 10, 22) else None
-                dt_1 = (datetime.strptime(date, '%d.%m.%Y') + timedelta(1)).strftime('%d.%m.%Y') \
-                    if datetime.strptime(date, '%d.%m.%Y') < datetime.today() - timedelta(1) else None
-                date1 = '[' + (datetime.strptime(date, '%d.%m.%Y') +
-                               timedelta(1)).strftime('%d.%m.%Y')
-                f = open('Alexis.log', encoding='utf-8').read()
-                return render_template('log.html', name=name, session=session, f=f[f.find(
-                    date) - 1:f.find(date1)], dt_0=dt_0, dt_1=dt_1)
-            elif comm == 'IP':
-                r = ''
-                for f in os.listdir('IPs'):
-                    r += f'<a href="IP/{f}">{f}</a><br>'
-                return r
-            else:
-                return redirect('/lk')
-        else:
-            return redirect('/lk')
+    if comm == 'see':
+        return render_template(name=name, template_name_or_list='AdmSee.html',
+                                u=AuthUser.query.all(),
+                                d=UserInfo.query.all(),
+                                c=authorized,
+                                l=last,
+                                a=Applications.query.all())
+    elif comm == 'del':
+        with app.app_context():
+            email = request.form['way']
+            user = AuthUser.query.filter_by(email=email).first()
+            data = UserInfo.query.filter_by(email=email).first()
+            db.session.delete(user)
+            db.session.delete(data)
+        return redirect('/lk')
+    elif comm == 'update':
+        email = request.form['way']
+        return redirect(f'/get_acc?code=0{email}0')
+    elif comm == 'log':
+        date = request.args.get('date')
+        if not date:
+            date = datetime.today().strftime("%d.%m.%Y")
+        dt_0 = (datetime.strptime(date, '%d.%m.%Y') - timedelta(1)).strftime('%d.%m.%Y') \
+            if datetime.strptime(date, '%d.%m.%Y') >= datetime(2025, 10, 22) else None
+        dt_1 = (datetime.strptime(date, '%d.%m.%Y') + timedelta(1)).strftime('%d.%m.%Y') \
+            if datetime.strptime(date, '%d.%m.%Y') < datetime.today() - timedelta(1) else None
+        date1 = '[' + (datetime.strptime(date, '%d.%m.%Y') +
+                        timedelta(1)).strftime('%d.%m.%Y')
+        f = open('Alexis.log', encoding='utf-8').read()
+        return render_template('log.html', name=name, session=session, f=f[f.find(
+            date) - 1:f.find(date1)], dt_0=dt_0, dt_1=dt_1)
+    elif comm == 'IP':
+        r = ''
+        for f in os.listdir('IPs'):
+            r += f'<a href="IP/{f}">{f}</a><br>'
+        return r
     else:
         return redirect('/lk')
 
 
 mname = 'Почта'
-
-
-def get_messages(t=True):
-    with app.app_context():
-        mu = MUsers.query.filter_by(email=session['email']).first()
-        mms = MMess.query.filter_by(recipient=mu.id).all()
-        mm = []
-        for m in mms:
-            text = ''
-            mus = MUsers.query.filter_by(id=m.sender).first()
-            mue = str(mus).split(' | ')[1] if mus else 'System'
-            mu = UserInfo.query.filter_by(
-                email=mue).first() if mus else 'System'
-            mu = mu.f if mus else 'System'
-            if t:
-                for i in range(len(m.text)):
-                    if i < 20:
-                        text += m.text[i]
-                text += '...'
-            else:
-                text = m.text
-            mm.append((m.id, mu, m.topic, text,
-                       m.date.strftime('%d.%m.%Y %H:%M')))
-        return mm
-
-
-def get_out_messages(t=True):
-    with app.app_context():
-        mu = MUsers.query.filter_by(email=session['email']).first()
-        mms = MMess.query.filter_by(sender=mu.id).all()
-        mm = []
-        for m in mms:
-            text = ''
-            mus = MUsers.query.filter_by(id=m.recipient).first()
-            mue = str(mus).split(' | ')[
-                1] if mus else 'Неизвестный пользователь'
-            mu = UserInfo.query.filter_by(email=mue).first(
-            ) if mus else 'Неизвестный пользователь'
-            mu = mu.f if mus else 'Неизвестный пользователь'
-            if t:
-                for i in range(len(m.text)):
-                    if i < 20:
-                        text += m.text[i]
-                text += '...'
-            else:
-                text = m.text
-            mm.append((m.id, mu, m.topic, text,
-                       m.date.strftime('%d.%m.%Y %H:%M')))
-        return mm
 
 
 @app.route('/mail', methods=['GET', 'POST'])
@@ -562,21 +573,19 @@ def mmain():
 
 
 @app.route('/mail/mess/<id>')
+@check_auth(link='/mail')
 def see(id):
-    if 'user' in session:
-        mms = get_messages(False) + get_out_messages(False)
-        ids = [mm[0] for mm in mms]
-        if int(id) in ids:
-            mm = mms[ids.index(int(id))]
-            mess = f'''<title>{mm[2]}</title>
+    mms = get_messages(False) + get_out_messages(False)
+    ids = [mm[0] for mm in mms]
+    if int(id) in ids:
+        mm = mms[ids.index(int(id))]
+        mess = f'''<title>{mm[2]}</title>
 От: {mm[1]}<br>
 Тема: {mm[2]}<br>
 Текст письма: {mm[3]}<br>
 Время: {mm[4]}<br>
 <a href="../del/{id}" onclick="alert('Сообщение удалилось у всех связанных с ним пользователей.')">Удалить сообщение</a>'''
-            return str(mess)
-        else:
-            return redirect('/mail')
+        return str(mess)
     else:
         return redirect('/mail')
 
@@ -605,12 +614,9 @@ def mnewmess():
 
 
 @app.route('/mail/out')
+@check_auth(link='/mail')
 def moutmess():
-    if 'user' in session:
-        return render_template('MLK.html', name=mname,
-                               session=session, messes=get_out_messages())
-    else:
-        return render_template(name=mname, template_name_or_list='Mlogin.html')
+    return render_template('MLK.html', name=mname, session=session, messes=get_out_messages())
 
 
 @app.route('/mail/answer/<id>')
@@ -634,23 +640,21 @@ def answer(id):
 
 
 @app.route('/mail/del/<id>')
+@check_auth(link='/mail')
 def dmail(id):
     print(id)
     id = int(id)
-    if 'user' in session:
+    print(True)
+    mms = get_messages(False) + get_out_messages(False)
+    ids = [mm[0] for mm in mms]
+    if int(id) in ids:
         print(True)
-        mms = get_messages(False) + get_out_messages(False)
-        ids = [mm[0] for mm in mms]
-        if int(id) in ids:
-            print(True)
-            with app.app_context():
-                letter = MMess.query.filter_by(id=int(id)).first()
-                print(letter, type(letter))
-                db.session.delete(letter)
-                db.session.commit()
-            return redirect('/mail')
-        else:
-            return redirect('/mail')
+        with app.app_context():
+            letter = MMess.query.filter_by(id=int(id)).first()
+            print(letter, type(letter))
+            db.session.delete(letter)
+            db.session.commit()
+        return redirect('/mail')
     else:
         return redirect('/mail')
 
@@ -761,6 +765,11 @@ def limit_remote_addr():
     not_blocked_ips = open('static/not_blocked_ips', 'r').read().split('\n')
     if white and request.headers.get('x-real-ip') not in not_blocked_ips:
         abort(403)  # Forbiden
+    if not os.path.isfile('static/blocked_ips'):
+        open('static/blocked_ips', 'w').write('')
+    blocked_ips = open('static/blocked_ips', 'r').read().split('\n')
+    if request.headers.get('x-real-ip') in blocked_ips:
+        abort(403, 'You can not open this website.')
 
 
 @app.after_request
@@ -794,6 +803,8 @@ def after_request(response: Response):
     ip = request.headers.get('x-real-ip')
     if f'{ip}.IP' not in os.listdir('IPs'):
         IP(ip).Seek()
+    if f'{ip}.HEAD' not in os.listdir('HEADs'):
+        open(f'HEADs/{ip}.HEAD', 'w').write(str(request.headers))
     if not request.path.startswith(('/loader', '/video', '/films')):
         logging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {ip}  "{
             request.method} {request.full_path}"  {response.status[:3]}  {request.cookies.get('Name')}',
@@ -863,7 +874,7 @@ def let(letter: str):
             return render_template(
                 'lets.html', name=name, let=let, prompt=prompt)
         else:
-            return abort(403)
+            return abort(403, 'This page only for administrators.')
 
 
 @app.route('/mess/<q>', methods=['GET', 'POST'])
