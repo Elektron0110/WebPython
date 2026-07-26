@@ -264,11 +264,11 @@ def check_auth(admin=False, link='/lk'):
             if 'user' in session:
                 if admin:
                     if session['email'] in admins:
-                        func(*args, **kwargs)
+                        return func(*args, **kwargs)
                     else:
                         return abort(403, 'This page only for administrators.')
                 else:
-                    func()
+                    return func()
             else:
                 return redirect(link, 401)
         return my_wrapper
