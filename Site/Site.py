@@ -346,10 +346,9 @@ def logout():
 
 @app.route('/hidden/<thing>')
 def session_data(thing):
-    things = {'session': str(session).replace('<', '').replace('>', ''),
-              'user': session['user'],
-              'telephone': session['telephone'],
-              'birthday': session['birthday']}
+    things = {'session': str(session).replace('<', '').replace('>', '')}
+    for k in session:
+        things[k] = session[k]
     return f"{things[thing]}"
 
 
@@ -473,14 +472,14 @@ def adminlog(comm):
         abort(404)
 
 
-@check_auth(True)
 @app.route('/adm/IP/<ip>', methods=['GET'])
+@check_auth(True)
 def adminip(ip):
     return open(f'IPs/{ip}', 'r').read() if os.isfile(f'IPs/{ip}') else abort(404)
 
 
-@check_auth(True)
 @app.route('/adm/<comm>', methods=['GET', 'POST'])
+@check_auth(True)
 def admin(comm):
     if comm == 'see':
         return render_template(name=name, template_name_or_list='AdmSee.html',
@@ -811,7 +810,7 @@ def after_request(response: Response):
     ip = request.headers.get('x-real-ip')
     if f'{ip}.IP' not in os.listdir('IPs'):
         IP(ip).Seek()
-    if f'{ip}.HEAD' not in os.listdir('HEADs'):
+    if f'{ip}.HEAD' not in os.listdir('HEADs') and request.path == '/':
         open(f'HEADs/{ip}.HEAD', 'w').write(str(request.headers))
     if not request.path.startswith(('/loader', '/video', '/films')):
         logging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {ip}  "{
