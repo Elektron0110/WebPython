@@ -295,7 +295,8 @@ def login():
             return render_template('LK.html', name=name, session=session)
         else:
             return render_template(
-                name=name, template_name_or_list='login.html')
+                name=name, template_name_or_list='login.html',
+                prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
     if request.method == 'POST':
         thing = request.form['thing']
         email = request.form['email']
@@ -328,7 +329,8 @@ def login():
             return render_template(name=name, template_name_or_list='register.html',
                                    email=email,
                                    password=password,
-                                   date=(datetime.today() - timedelta(days=365) * 18).strftime('%Y-%m-%d'))
+                                   date=(datetime.today() - timedelta(days=365) * 18).strftime('%Y-%m-%d'),
+                                   prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 
 
 @app.route('/logout')
@@ -482,11 +484,12 @@ def adminip(ip):
 def admin(comm):
     if comm == 'see':
         return render_template(name=name, template_name_or_list='AdmSee.html',
-                                u=AuthUser.query.all(),
-                                d=UserInfo.query.all(),
-                                c=authorized,
-                                l=last,
-                                a=Applications.query.all())
+                               session=session,
+                               u=AuthUser.query.all(),
+                               d=UserInfo.query.all(),
+                               c=authorized,
+                               l=last,
+                               a=Applications.query.all())
     elif comm == 'del':
         with app.app_context():
             email = request.form['way']
@@ -669,14 +672,16 @@ try:
             print('Fl', request.form['flight'])
             return fly(request.form['flight'])
         else:
-            return render_template(name=name, template_name_or_list='Fly.html')
+            return render_template(name=name, template_name_or_list='Fly.html',
+                                   prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 except Exception as e:
     print(e)
 
 
 @app.route('/down', methods=['GET', 'POST'])
 def Down():
-    return render_template(name=name, template_name_or_list='down.html')
+    return render_template(name=name, template_name_or_list='down.html',
+                           prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 
 
 @app.route('/down/<file>', methods=['GET', 'POST'])
@@ -695,7 +700,8 @@ def Download(file):
             return send_from_directory('down', 'Alex.exe')
         else:
             return render_template(
-                name=name, template_name_or_list='ADown.html')
+                name=name, template_name_or_list='ADown.html',
+                prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
     elif file in [name[:name.rfind('.')] for name in os.listdir('down')]:
         return send_from_directory('down', name)
     else:
@@ -730,7 +736,8 @@ def trains():
                "X-Requested-With": "XMLHttpRequest"}
     if request.method != 'POST':
         return render_template(
-            name=name, template_name_or_list='TChoice.html', stations=stations)
+            name=name, template_name_or_list='TChoice.html', stations=stations,
+            prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
     else:
         data = {'stationDepartureId': stations[request.form['stationDepartureId']],
                 'stationArrivalId': stations[request.form['stationArrivalId']],
@@ -741,7 +748,8 @@ def trains():
         with open('output.json', 'w') as f:
             json.dump(response.json(), f)
         return render_template(
-            name=name, template_name_or_list='TSee.html', trains=response.json()['trains'])
+            name=name, template_name_or_list='TSee.html', trains=response.json()['trains'],
+            prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 
 
 @app.before_request
@@ -833,13 +841,10 @@ def e_code_from_root():
 @app.route('/lets')
 def lets():
     names = json.load(open('lets.json', encoding='utf-8'))
-    if 'user' in session:
-        prompt = session.get('user')
-    else:
-        prompt = 'Вход/Регистрация'
     let = {names[file] if file in names.keys(
     ) else file: file for file in os.listdir('lets')}
-    return render_template('all_lets.html', let=let, prompt=prompt)
+    return render_template('all_lets.html', let=let,
+                           prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 
 
 @app.route('/lets/<letter>')
@@ -932,11 +937,8 @@ def am_checker(q):
 
 @app.route('/about')
 def about():
-    if 'user' in session:
-        prompt = session.get('user')
-    else:
-        prompt = 'Вход/Регистрация'
-    return render_template('about.html', prompt=prompt)
+    return render_template('about.html',
+                           prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 
 
 @app.route('/SOVR')
@@ -999,7 +1001,8 @@ def qrcoder():
 def test():
     if request.method == 'GET':
         if session.get('user'):
-            return render_template('test.html', session=session)
+            return render_template('test.html', session=session,
+                                   prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
         else:
             return redirect('lk')
     if request.method == 'POST':
@@ -1020,7 +1023,8 @@ def test_result():
 def mbti_test():
     if request.method == 'GET':
         if session.get('user'):
-            return render_template('mbti test.html', session=session)
+            return render_template('mbti test.html', session=session,
+                                   prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
         else:
             return redirect('/lk')
     if request.method == 'POST':
@@ -1042,7 +1046,9 @@ def mbti_test_result():
 
 
 @app.route('/class')
-def clas(): return render_template('class.html')
+def clas():
+    return render_template('class.html',
+                           prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 
 
 @app.route('/favicon.ico')

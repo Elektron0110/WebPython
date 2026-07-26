@@ -1,45 +1,6 @@
-{% extends "Bases/FormBase.html" %}
+{% extends "Bases/MainBase.html" %}
 {% block title %}Alexis{% endblock title %}
-{% block menu %}
-<ul>
-	<li><a href="/lk">{{prompt}}</a></li>
-	<li><a href="/flight">Сервис для отслеживания самолётов.</a></li>
-	<li><a href="/train">Сервис для отслеживания поездов.</a></li>
-	<li><a href="/Ums">Сервис для наблюдения за погодой.</a></li>
-	<li><a href="/sun">Сервис для наблюдения за уровнем солнечной активности.</a></li>
-	{% if session.get('user') %}
-	<hr>
-	<li><a href="/down">Сервис для скачивания последних версий приложений наших парнёров.</a></li>
-	<li><a href="/lets">Сервис для чтения литературных произведений наших партнёров.</a></li>
-	{% endif %}
-	<hr>
-	<li><a href="/about">О нас.</a></li>
-</ul>
-{% endblock menu %}
 {% block body %}
 	<div>
-		<center>
-			<div>
-				<h3>Анкета</h3>
-				Пройдите <a href="/test">анкету</a>.
-				<br> 
-				Это действительно важно.
-				<br>
-				<small><b>P.S. Пишите, пожалуйста, ответы с большой буквы.</b></small>
-				<br>
-				<small><small><b>P.P.S. Для прохождения необходима регистрация</b></small></small>
-			</div>
-			<div>
-				<h3>Маленький тест</h3>
-				Пройдите также и <a href="/test/ьиеш">маленький социальный тест</a>, пожалуйста.
-				<br>
-				<small><b>P.S. Для прохождения необходима регистрация</b></small>
-			</div >
-			<!-- <div>
-				<p><iframe id="score-iframe" width="100%" height="90%"
-					src="https://musescore.com/user/1752886/scores/27591778/embed" frameborder="0"
-					allowfullscreen allow="autoplay; fullscreen"></iframe></p>
-			</div> -->
-		</center>
 	</div>
 {% endblock body %}

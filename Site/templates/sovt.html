@@ -1,20 +1,6 @@
-{% extends "Bases/FormBase.html" %}
+{% extends "Bases/MainBase.html" %}
 {% block title %}СОВР{% endblock title %}
 {% block add %}<img src="{{ url_for('static', filename='img/sovr.png') }}">{% endblock add %}
-{% block menu %}
-<ul>
-    <li><a href="/lk">{{prompt}}</a></li>
-    <li><a href="/flight">Сервис для отслеживания самолётов.</a></li>
-    <li><a href="/train">Сервис для отслеживания поездов.</a></li>
-    <li><a href="/Ums">Сервис для наблюдения за погодой.</a></li>
-    <li><a href="/sun">Сервис для наблюдения за уровнем солнечной активности.</a></li>
-    <hr>
-    <li><a href="/down">Сервис для скачивания последних версий приложений наших парнёров.</a></li>
-    <li><a href="/lets">Сервис для чтения литературных произведений наших партнёров.</a></li>
-    <hr>
-    <li><a href="/about">О нас.</a></li>
-</ul>
-{% endblock menu %}
 {% block body %}
 <link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet" type="text/css" />
 <p>

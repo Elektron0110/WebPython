@@ -1,4 +1,4 @@
-{% extends "Bases/FormBase.html" %}
+{% extends "Bases/ALINBase.html" %}
 {% block title %}Личный кабинет{% endblock title %}
 {% block menu %}
 	<ul>
@@ -14,11 +14,4 @@
 	</ul>
 {% endblock menu %}
 {% block body %}
-	<script>
-		function func () {
-			var menu = document.getElementById("menu");
-			var menu_button = document.getElementById("menu_button");
-			see_user(menu_button, menu);
-		}
-	</script>
 {% endblock body %}
