@@ -25,8 +25,9 @@ wlogging = Log('WebDav.log')
 start = int(open('start.helpfile', 'r').read())
 
 app = Flask(__name__)
-app.config["DEBUG"] = True
 app.config["EXPLAIN_TEMPLATE_LOADING"] = True
+app.config['SESSION_COOKIE_SECURE'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.register_blueprint(new_broker.app)
 
 if not os.path.isdir('Site'):
@@ -237,10 +238,6 @@ def get_out_messages(t=True):
 
 new_user(email='example@mail.ru', password='', s='', f='System', t='',
          tel='+0 (000) 00-00-00', b_day='00-00-00', id=-1)
-new_user(email='s762672@ya.ru', password='Alex', s='Шульган', f='Алексей', t='Владимирович',
-         tel='+7 (904) 333-55-37', b_day='2011-10-01')
-new_user(email='test@test', password='Bug', s='Тестов', f='Тест', t='Тестович',
-         tel='+0 (123) 456-78-90', b_day='0000-00-00')
 
 # -------------------------------------------------------------------------------------------------------------
 
@@ -334,7 +331,7 @@ def login():
 
 
 @app.route('/logout')
-@check_auth
+@check_auth()
 def logout():
     authorized[session['email']] -= 1
     session.pop('user')
@@ -342,14 +339,6 @@ def logout():
     session.pop('birthday')
     session.pop('email')
     return redirect('/')
-
-
-@app.route('/hidden/<thing>')
-def session_data(thing):
-    things = {'session': str(session).replace('<', '').replace('>', '')}
-    for k in session:
-        things[k] = session[k]
-    return f"{things[thing]}"
 
 
 @app.route('/update', methods=['GET', 'POST'])
