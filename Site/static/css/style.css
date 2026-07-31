@@ -25,13 +25,13 @@ body {
 	color: rgb(240, 240, 240);
 }
 .name {
-	font: caption;
+	font-family: AlexisOne;
 	font-size: xxx-large;
 	font-style: italic;
 	font-weight: bold;
-   	height: 100px;
-   	display: flex;
-   	align-items: center;
+	height: 100px;
+	display: flex;
+	align-items: center;
 }
 .navbar_div {
    	display: flex;
@@ -45,4 +45,10 @@ img {
     border-radius: 5px;
     outline-color: blueviolet;
     outline-offset: 10px;
+}
+@font-face {
+    font-family: "AlexisOne";
+    src: url("/static/font/Alexis-One.ttf") format("truetype");
+    font-style: normal;
+    font-weight: normal;
 }
