@@ -663,7 +663,7 @@ try:
             return render_template(name=name, template_name_or_list='Fly.html',
                                    prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 except Exception as e:
-    print(e)
+    print('INF')
 
 
 @app.route('/down', methods=['GET', 'POST'])
