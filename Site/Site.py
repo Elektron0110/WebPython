@@ -267,7 +267,7 @@ def check_auth(admin=False, link='/lk'):
                 else:
                     return func(*args, **kwargs)
             else:
-                return redirect(link, 401)
+                return redirect(link)
         return my_wrapper
     return my_decorator
 
