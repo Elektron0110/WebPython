@@ -508,7 +508,7 @@ def admin(comm):
             r += f'<a href="IP/{f}">{f}</a><br>'
         return r
     else:
-        return redirect('/lk')
+        return abort(404)
 
 
 mname = 'Почта'
@@ -578,7 +578,7 @@ def see(id):
 <a href="../del/{id}" onclick="alert('Сообщение удалилось у всех связанных с ним пользователей.')">Удалить сообщение</a>'''
         return str(mess)
     else:
-        return redirect('/mail')
+        return abort(404)
 
 
 @app.route('/mail/new/', methods=['GET', 'POST'])
@@ -611,23 +611,21 @@ def moutmess():
 
 
 @app.route('/mail/answer/<id>')
+@check_auth(link='/mail')
 def answer(id):
     id = int(id)
-    if 'user' in session:
-        mms = get_messages(False) + get_out_messages(False)
-        ids = [mm[0] for mm in mms]
-        if int(id) in ids:
-            mess = MMess.query.filter_by(id=id).first()
-            rid = mess.sender
-            topic = mess.topic
-            mus = MUsers.query.filter_by(id=int(rid)).first()
-            email = mus.email  # str(mus).split(' | ')[1]
-            return render_template(
-                name=mname, template_name_or_list='Mwriter.html', rec=email, top=topic)
-        else:
-            return redirect('/mail')
+    mms = get_messages(False) + get_out_messages(False)
+    ids = [mm[0] for mm in mms]
+    if int(id) in ids:
+        mess = MMess.query.filter_by(id=id).first()
+        rid = mess.sender
+        topic = mess.topic
+        mus = MUsers.query.filter_by(id=int(rid)).first()
+        email = mus.email  # str(mus).split(' | ')[1]
+        return render_template(
+            name=mname, template_name_or_list='Mwriter.html', rec=email, top=topic)
     else:
-        return redirect('/mail')
+        return abort(404)
 
 
 @app.route('/mail/del/<id>')
@@ -647,7 +645,7 @@ def dmail(id):
             db.session.commit()
         return redirect('/mail')
     else:
-        return redirect('/mail')
+        return abort(404)
 
 
 try:
@@ -674,26 +672,27 @@ def Down():
 
 @app.route('/down/<file>', methods=['GET', 'POST'])
 def Download(file):
-    name = os.listdir('down')[[name[:name.rfind('.')]
-                               for name in os.listdir('down')].index(file)]
-    if file == 'Alex':
-        if request.method == 'POST':
-            with app.app_context():
-                if AUsers.query.filter_by(
-                        Username=request.form['name']).first() is None:
-                    au = AUsers(
-                        Username=request.form['name'], Password=request.form['pass'], Rating=0)
-                    db.session.add(au)
-                    db.session.commit()
-            return send_from_directory('down', 'Alex.exe')
+    if True in [file in f for f in os.listdir('down')]:
+        name = os.listdir('down')[[name[:name.rfind('.')]
+                                for name in os.listdir('down')].index(file)]
+        if file == 'Alex':
+            if request.method == 'POST':
+                with app.app_context():
+                    if AUsers.query.filter_by(
+                            Username=request.form['name']).first() is None:
+                        au = AUsers(
+                            Username=request.form['name'], Password=request.form['pass'], Rating=0)
+                        db.session.add(au)
+                        db.session.commit()
+                return send_from_directory('down', 'Alex.exe')
+            else:
+                return render_template(
+                    name=name, template_name_or_list='ADown.html',
+                    prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
         else:
-            return render_template(
-                name=name, template_name_or_list='ADown.html',
-                prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
-    elif file in [name[:name.rfind('.')] for name in os.listdir('down')]:
-        return send_from_directory('down', name)
+            return send_from_directory('down', name)
     else:
-        return 'Файл не найден.'
+        return ('Файл не найден.', 404)
 
 
 @app.route('/train', methods=['GET', 'POST'])
@@ -837,10 +836,8 @@ def lets():
 
 @app.route('/lets/<letter>')
 def let(letter: str):
-    if 'user' in session:
-        prompt = session.get('user')
-    else:
-        prompt = 'Вход/Регистрация'
+    prompt = session.get('user') if 'user' in session else 'Вход/Регистрация'
+    if letter not in os.listdir('lets'): return abort(404)
     try:
         names = json.load(open('lets.json', encoding='utf-8'))
         let = [p.split('&') for p in open(
