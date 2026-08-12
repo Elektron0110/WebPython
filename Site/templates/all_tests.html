@@ -1,0 +1,29 @@
+{% extends "Bases/MainBase.html" %}
+{% block title %}Мои тесты.{% endblock title %}
+{% block body %}
+    <link href="{{ url_for('static', filename='css/down.css') }}" rel="stylesheet" type="text/css" />
+    <center style="color:gainsboro">
+        <h1>Мои тесты.</h1>
+        <p>
+            {% for name in tests %}
+            <button type="button" class="dnld_u" id="{{tests[name]}}">
+                <a href="/test/{{tests[name]}}" style="height: 180px; width: 180px;">{{name}}</a>
+            </button>
+            {% endfor %}
+        </p>
+    </center>
+    <script>
+        {% for name in tests %}
+        let {{tests[name]}} = document.getElementById("{{tests[name]}}")
+        {{tests[name]}}.addEventListener('click', () => {
+			if ({{tests[name]}}.className == "dnld_u") {
+				{{tests[name]}}.className = "dnld_d";
+			}
+			else {
+				{{tests[name]}}.className = "dnld_u";
+			}
+        })
+
+        {% endfor %}
+    </script>
+{% endblock body %}

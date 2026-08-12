@@ -265,7 +265,7 @@ def check_auth(admin=False, link='/lk'):
                     else:
                         return abort(403, 'This page only for administrators.')
                 else:
-                    return func()
+                    return func(*args, **kwargs)
             else:
                 return redirect(link, 401)
         return my_wrapper
@@ -985,51 +985,40 @@ def qrcoder():
         return send_from_directory(app.static_folder, 'qr.png')
 
 
-@app.route('/test', methods=['GET', 'POST'])
-def test():
+@app.route('/tests')
+@check_auth()
+def tests():
+    return render_template('all_tests.html', tests={'MBTI-тест': 'mbti', 'Про меня': 'meaning'},
+                           prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
+
+
+@app.route('/test/<test>', methods=['GET', 'POST'])
+@check_auth()
+def test(test: str):
     if request.method == 'GET':
-        if session.get('user'):
-            return render_template('test.html', session=session,
-                                   prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
-        else:
-            return redirect('lk')
-    if request.method == 'POST':
-        open('test.txt', 'a', encoding='utf-8').write(str(request.form) + '\n')
+        return render_template(f'test_{test}.html', session=session, prompt=session.get('user'))
+    else:
+        res: list[dict[str, str]] = json.load(open(f'tests/{test}.txt', 'rb'))
+        res.append({key: request.form['key'] for key in request.form})
+        
+        json.dump(res, open(f'tests/{test}.txt', 'a', encoding='utf-8'), ensure_ascii=False)
+
+        if test == 'mbti':
+            with app.app_context():
+                print(request.form['result'])
+                UserInfo.query.filter(UserInfo.email == session['email']).update({
+                    UserInfo.MBTI: request.form['result']})
+                db.session.commit()
         return redirect('lk')
 
 
-@app.route('/test/result')
-def test_result():
-    f = open('test.txt', encoding='utf-8').read().replace('ImmutableMultiDict([', '').replace('])', '') \
+@app.route('/test/<test>/result')
+@check_auth()
+def test_result(test: str):
+    f = open(f'tests/{test}.txt', encoding='utf-8').read().replace('ImmutableMultiDict([', '').replace('])', '') \
         .replace('), ', '|').replace('(', '').replace(')', '').replace("'", '').replace('attitude', '') \
         .replace('advice', '').replace('mood', '').replace('verb', '').replace('adjective', '') \
         .replace('verdict', '').replace('name', '').replace(', ', '').replace(',', '')
-    return render_template('log.html', name=name, session=session, f=f)
-
-
-@app.route('/test/ьиеш', methods=['GET', 'POST'])
-def mbti_test():
-    if request.method == 'GET':
-        if session.get('user'):
-            return render_template('mbti test.html', session=session,
-                                   prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
-        else:
-            return redirect('/lk')
-    if request.method == 'POST':
-        with app.app_context():
-            print(request.form['result'])
-            UserInfo.query.filter(UserInfo.email == session['email']).update({
-                UserInfo.MBTI: request.form['result']})
-            db.session.commit()
-        open('mbti test.txt', 'a', encoding='utf-8').write(str(request.form) + '\n')
-        return redirect('/lk')
-
-
-@app.route('/test/ьиеш/result')
-def mbti_test_result():
-    f = open('mbti test.txt', encoding='utf-8').read().replace('ImmutableMultiDict([', '').replace('])', '') \
-        .replace('), ', '|').replace('(', '').replace(')', '').replace("'", '').replace('result', '') \
-        .replace('time', '').replace('name', '').replace(', ', '').replace(',', '')
     return render_template('log.html', name=name, session=session, f=f)
 
 
