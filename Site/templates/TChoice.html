@@ -11,6 +11,11 @@
 				<span class="required" title="Обязательное заполнение.">*</span>
 				<input required name="stationArrivalId" class="in" placeholder="Станция прибытия" list="stations">
 				<br>
+				<span class="required" title="Обязательное заполнение.">*</span>
+				<input required type="date" name="date" class="in" min="{{min}}" value="{{today}}" max="{{max}}">
+				<br>
+				<!--input name="departure" class="in" type="checkbox">
+				<br-->
 			</div>
 			<center>
 				<input type="submit" value="Поиск" class="in submit" id="submit">

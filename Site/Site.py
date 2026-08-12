@@ -724,16 +724,19 @@ def trains():
     if request.method != 'POST':
         return render_template(
             name=name, template_name_or_list='TChoice.html', stations=stations,
+            min=(datetime.now()-timedelta(days=7)).strftime("%Y-%m-%d"),
+            today=datetime.now().strftime("%Y-%m-%d"),
+            max=(datetime.now()+timedelta(days=6)).strftime("%Y-%m-%d"),
             prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
     else:
         data = {'stationDepartureId': stations[request.form['stationDepartureId']],
                 'stationArrivalId': stations[request.form['stationArrivalId']],
-                'departure': request.form.get('departure', True),
-                'date': datetime.today().strftime("%d.%m.%Y")}
+                'departure': True, # bool(request.form.get('departure', False)),
+                'date': datetime.strptime(request.form.get('date'), "%Y-%m-%d").strftime("%d.%m.%Y")}
         response = post('https://www.rzd.ru/tt/train/schedule',
                         json=data, headers=headers, timeout=10)
         with open('output.json', 'w') as f:
-            json.dump(response.json(), f)
+            json.dump(response.json(), f, ensure_ascii=False)
         return render_template(
             name=name, template_name_or_list='TSee.html', trains=response.json()['trains'],
             prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
