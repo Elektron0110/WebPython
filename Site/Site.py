@@ -16,6 +16,7 @@ from wsgidav.wsgidav_app import WsgiDAVApp
 import import_threading
 from IPs import IP_Seeker as IP  # type: ignore
 from functools import wraps
+import urllib.parse
 
 slicer = r'\|/'
 name = 'Alexis'
@@ -40,7 +41,6 @@ if not os.path.isdir('Site/applications'):
 class WsgiDAVMiddleware:
     def __init__(self, flask_app, dav_app,
                  dav_path=("/webdav", "/:dir_browser")):
-        import urllib.parse
         self.decode = urllib.parse.unquote
         self.flask_app = flask_app
         self.dav_app = dav_app
@@ -50,8 +50,8 @@ class WsgiDAVMiddleware:
         # Если путь начинается с /webdav, передаём запрос в WsgiDAV
         # open('env', 'w', encoding='utf-8').write(str(environ))
         if environ.get("PATH_INFO", "").startswith(self.dav_path):
-            wlogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {
-                environ.get("HTTP_X_REAL_IP")}  "{environ["REQUEST_METHOD"]} {self.decode(environ["REQUEST_URI"])}"')
+            wlogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {environ.get("HTTP_X_REAL_IP")}  "{
+                environ["REQUEST_METHOD"]} {self.decode(environ["REQUEST_URI"])}"')
             return self.dav_app(environ, start_response)
         # Иначе — в Flask
         return self.flask_app(environ, start_response)
@@ -925,7 +925,6 @@ def am_checker(q):
 
 @app.route('/about')
 def about():
-    import urllib.parse
     m = urllib.parse.quote
     email = 's762672@ya.ru'
     topic = m(f'Предоложение по сайту {name}.')
