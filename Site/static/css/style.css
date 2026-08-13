@@ -3,7 +3,7 @@ html {
 }
 body {
     margin: 0px;
-    background-color: gray;
+    background-color: var(--bg);
 }
 .menu {
 	background-color: var(--menu);
@@ -25,7 +25,8 @@ body {
 }
 .pressed {
 	background-color: var(--nav-button-pressed);
-	color: var(--color240);
+	color: var(--nav-button-pressed-text);
+	border-color: var(--nav-button-pressed-border);
 }
 .name {
 	font-family: AlexisOne;
