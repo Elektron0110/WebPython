@@ -1,0 +1,9 @@
+:root {
+    --nav: rgb(140, 140, 140);
+    --nav-text: rgb(195, 195, 195);
+    --nav-button-pressed: rgb(215, 215, 215);
+	--menu: rgb(19, 226, 0);
+	--form-bg: lightsteelblue;
+	--form-nav: rgb(140, 140, 255);
+    --form-nav-text: rgb(240, 240, 240);
+}

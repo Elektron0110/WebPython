@@ -5,13 +5,16 @@ body {
     margin: 0px;
     background-color: gray;
 }
+.menu {
+	background-color: var(--menu);
+}
 .navbar {
-	background-color: rgb(140, 140, 140);
-	color: rgb(195, 195, 195);
+	background-color: var(--nav);
+	color: var(--nav-text);
 	height: 100px;
 }
 .navbar-button {
-	color: rgb(140, 140, 140);
+	color: var(--nav);
 	height: 100px;
 	width: 100px;
 	border-radius: 5px;
@@ -21,8 +24,8 @@ body {
     align-items: center;
 }
 .pressed {
-	background-color: rgb(215, 215, 215);
-	color: rgb(240, 240, 240);
+	background-color: var(--nav-button-pressed);
+	color: var(--color240);
 }
 .name {
 	font-family: AlexisOne;
