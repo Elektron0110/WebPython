@@ -1,8 +1,6 @@
-{% extends "Bases/MainBase.html" %}
-{% block page %}form{% endblock page %}
+{% extends "Bases/BaseBase.html" %}
 {% block title %}Найти поезд{% endblock title %}
 {% block body %}
-	<link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet" type="text/css" />
 	<div class="form">
 		<form method="post" action="/train">
 			<div style=" display: grid; justify-content: center;">

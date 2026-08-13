@@ -1,4 +1,5 @@
 {% extends "Bases/ALINBase.html" %}
+{% block page %}form{% endblock page %}
 {% block title %}Личный кабинет{% endblock title %}
 {% block menu %}
 	<ul>
@@ -9,7 +10,6 @@
 	</ul>
 {% endblock menu %}
 {% block body %}
-	<link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet" type="text/css" />
 	<div class="adm_main" style="margin: 50px;">
 		<div class="adm_main">
 			<ul>

@@ -1,7 +1,7 @@
-{% extends "Bases/MainBase.html" %}
+{% extends "Bases/BaseBase.html" %}
+{% block page %}form{% endblock page %}
 {% block title %}Личный кабинет{% endblock title %}
 {% block body %}
-	<link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet" type="text/css" />
 	<div class="form">
 		<form method="post" action="/lk">
 			<div style=" display: grid; justify-content: center;">
