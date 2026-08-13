@@ -925,7 +925,13 @@ def am_checker(q):
 
 @app.route('/about')
 def about():
-    return render_template('about.html',
+    import urllib.parse
+    m = urllib.parse.quote
+    email = 's762672@ya.ru'
+    topic = m(f'Предоложение по сайту {name}.')
+    lbody = m('Опишите своё предложение и подпишитесь.')
+    href=f"mailto:{email}?subject={topic}&body={lbody}"
+    return render_template('about.html', email=href,
                            prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 
 
