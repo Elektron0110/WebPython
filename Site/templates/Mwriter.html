@@ -1,4 +1,5 @@
 {% extends "Bases/MailBase.html" %}
+{% block page %}form{% endblock page %}
 {% block title %}Написать сообщение{% endblock title %}
 {% block body %}
 	<link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet" type="text/css" />
