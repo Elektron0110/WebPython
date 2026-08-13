@@ -1,7 +1,7 @@
 {% extends "Bases/ALINBase.html" %}
-{% block page %}form{% endblock page %}
 {% block title %}Заявка на обработку чего-либо{% endblock title %}
 {% block body %}
+	<link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet" type="text/css" />
 	<div class="form">
 		<form method="post" action="/new" enctype="multipart/form-data">
 			<div style=" display: grid; justify-content: center;">

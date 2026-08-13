@@ -1,8 +1,8 @@
-{% extends "Bases/BaseBase.html" %}
-{% block page %}form{% endblock page %}
+{% extends "Bases/MainBase.html" %}
 {% block title %}СОВР{% endblock title %}
 {% block add %}<img src="{{ url_for('static', filename='img/sovr.png') }}">{% endblock add %}
 {% block body %}
+<link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet" type="text/css" />
 <p>
     <center>
         <strong>Дорогие члены собрания общества взаимных рукопожатий (СОВР)</strong>,
