@@ -1137,14 +1137,15 @@ if os.path.isdir('C:'):
     # """Функция, запускающая работу сервера."""
     # import webbrowser
 
+    host = '0.0.0.0'
     date = 9999  # datetime.now().strftime("%H%M")
     # #webbrowser.open_new_tab('http://127.0.0.1:{}/'.format(date))
-    # app.run(port=date)
+    # app.run(host=host, port=date)
 
     dir = ftl('links.helpfile', sort=False)[1]
 
     dav_config = {
-        "host": "127.0.0.1",
+        "host": host,
         "port": date,
         "provider_mapping": {
                 "/webdav": dir,
@@ -1169,7 +1170,7 @@ if os.path.isdir('C:'):
 
     # Запускаем сервер Cheroot, который обслуживает и Flask, и WsgiDAV
     server = wsgi.Server(
-        bind_addr=("127.0.0.1", date),
+        bind_addr=(host, date),
         wsgi_app=app.wsgi_app
     )
     print(f"Flask + WsgiDAV запущен: http://127.0.0.1:{date}/")
