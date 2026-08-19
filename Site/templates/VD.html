@@ -1,0 +1,36 @@
+{% extends "Bases/MainBase.html" %}
+{% block title %}{{title}}{% endblock title %}
+{% block body %}
+    <style>
+        .button {
+            background: none;
+            border: none;
+            color: white;
+            font-weight: 900;
+        }
+        .div {
+            display: inline-block;
+            outline: double;
+            border-radius: 5px;
+            outline-color: blueviolet;
+        }
+    </style>
+    <center style="color:gainsboro">
+        <h1>{{title}}</h1>
+        {% for url in urls %}
+        <div class="div">
+            <button type="button" class="button">
+                <a href="/{{title}}/{{url}}" class="button">
+                    <img src="/{{title}}/{{url}}.jpg"  style="height: 180px">
+                    <br>
+                    {{urls[url][:-3]}}
+                    {% if years %}
+                    <br>
+                    <strong><b>[{{years[url]}}]</b></strong>
+                    {% endif %}
+                </a>
+            </button>
+        </div>
+        {% endfor %}
+    </center>
+{% endblock body %}

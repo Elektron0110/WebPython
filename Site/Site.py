@@ -278,7 +278,8 @@ def main():
         prompt = session.get('user')
     else:
         prompt = 'Вход/Регистрация'
-    return render_template('main.html', name=name,
+    news = json.load(open('news.json', 'rb'))
+    return render_template('main.html', name=name, news=news,
                            prompt=prompt, session=session)
 
 
@@ -370,6 +371,7 @@ def update():
 
 
 @app.route('/new', methods=['GET', 'POST'])
+@check_auth()
 def new():
     if request.method == 'GET':
         return render_template(name=name, template_name_or_list='xxx.html',
@@ -820,14 +822,6 @@ def static_from_root():
     return send_from_directory(app.static_folder, request.path[1:])
 
 
-@app.route('/Жизнь.mp4')
-@app.route('/ДНК.mp4')
-@app.route('/ЧД.mp4')
-@app.route('/ФМ.mp4')
-def e_code_from_root():
-    return send_from_directory(app.static_folder, 'E-Code' + request.path)
-
-
 @app.route('/lets')
 def lets():
     names = json.load(open('lets.json', encoding='utf-8'))
@@ -1132,6 +1126,36 @@ def ping():
     return str(datetime.now())
 
 
+@app.route('/VertDider')
+@app.route('/VertDider/<url>')
+def Vert_Dider(url=''):
+    urls = {'IQ': 'Что измеряют IQ тесты [Veritasium].mp4',
+            'PI': 'Как считали число пи [Veritasium].mp4',
+            'Imaginary': 'Мнимые числа реальны 1-13 [Welch Labs].mp4',
+            'AE': 'AE.png',
+            'GG': 'GG.png'}
+    if '.' in url: return send_from_directory(ftl('links.helpfile', sort=False)[0]+'/Vert Dider/PNG', url)
+    if url: return send_from_directory(ftl('links.helpfile', sort=False)[0]+'/Vert Dider', urls[url])
+    return render_template('VD.html', urls=urls, title='VertDider',
+                           prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
+
+
+@app.route('/E-Code')
+@app.route('/E-Code/<url>')
+def E_Code(url=''):
+    urls = {'DNA': 'Что показывают генетические тесты.mp4',
+            'Life': 'Поиски жизни и разума во вселенной.m3u8',
+            'Phusic': 'Математика физика и музыка.mp4',
+            'BH': 'Чёрные дыры кротовые норы и путешествия во времени.mp4'}
+    years = {'DNA': 2025,
+            'Life': 2024,
+            'Phusic': 2024,
+            'BH': 2025}
+
+    if '.' in url: return send_from_directory(app.static_folder, f'E-Code/PNG/{url}')
+    if url: return send_from_directory(app.static_folder, f'E-Code/{urls[url]}')
+    return render_template('VD.html', urls=urls, title='E-Code', years=years,
+                            prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 
 if os.path.isdir('C:'):
     # """Функция, запускающая работу сервера."""

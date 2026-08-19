@@ -1,8 +1,77 @@
 {% extends "Bases/MainBase.html" %}
 {% block title %}Alexis{% endblock title %}
 {% block body %}
+	<style>
+		.dnld_u {
+			background: #FFAF00;
+			color: #FFF200;
+			height: 180px;
+			width: 180px;
+			border-color: coral;
+			font-size: 25px;
+		}
+		div.swiper-slide img{
+			height: 200px;
+		}
+		div.swiper-slide a{
+			color: var(--nav-text);
+			font-family: AlexisOne;
+		}
+		div.swiper-wrapper{
+			height: auto;
+		}
+
+	</style>
 	<div>
 		<center>
+			{% if news %}
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+			<div class="swiper my-slider">
+				<div class="swiper-wrapper">
+					{% for i in range(news['count']) %}
+					<div class="swiper-slide">
+						<a href="{{news['links'][i]}}">
+							<small><small>{{news['texts'][i]}}</small></small>
+							<br>
+							<img src="{{news['images'][i]}}" alt="{{news['texts'][i]}}">
+						</a>
+					</div>
+					{% endfor %}
+				</div>
+
+				<div class="swiper-pagination"></div>
+				<div class="swiper-button-prev"></div>
+				<div class="swiper-button-next"></div>
+			</div>
+
+			<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+			<script>
+				const swiper = new Swiper('.my-slider', {
+					loop: true,
+					pagination: { el: '.swiper-pagination', clickable: true },
+					navigation: {
+						nextEl: '.swiper-button-next',
+						prevEl: '.swiper-button-prev',
+					},
+					autoplay: {
+						delay: 3000,                 // задержка в мс (3 секунды)
+						disableOnInteraction: false, // автопрокрутка возобновляется после ручного листания
+						pauseOnMouseEnter: true,    // пауза, если мышь над слайдером
+					},
+				});
+			</script>
+			{% endif %}
+            <a href="VertDider" style="height: 180px; width: 180px;">
+				<button type="button" class="dnld_u">
+					<h3>VertDider</h3>
+				</button>
+			</a>
+            <a href="E-Code" style="height: 180px; width: 180px;">
+				<button type="button" class="dnld_u">
+					<h3>E-Code</h3>
+				</button>
+			</a>
 			<div>
 				<h3>Анкета</h3>
 				Пройдите <a href="/test/meaning">анкету</a>.
