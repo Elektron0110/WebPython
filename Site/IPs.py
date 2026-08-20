@@ -10,8 +10,6 @@ class IP_Seeker:
         self.IP = IP
 
     def Seeker_3(self):
-        self.logging.log('===================== 3 =====================')
-
         def get_ip_details(ip_address=None):
             url = 'https://ipinfo.io/json' if ip_address is None else f'https://ipinfo.io/{ip_address}/json'
             try:
@@ -24,13 +22,9 @@ class IP_Seeker:
         # Для конкретного IP (пример)
         details = get_ip_details(self.IP)
         if details:
-            self.logging.log(f"\nИнформация для IP {self.IP}:")
-            for key, value in details.items():
-                self.logging.log(f"{key}: {value}")
+            return [f"\nИнформация для IP {self.IP}:"]+[f"{key}: {value}" for key, value in details.items()]
 
     def Seeker_4(self):
-        self.logging.log('===================== 4 =====================')
-
         def get_ipapi_info(ip):
             try:
                 response = requests.get(f'https://ipapi.co/{ip}/json/')
@@ -38,21 +32,24 @@ class IP_Seeker:
                     data = response.json()
                     return data
                 else:
-                    self.logging.log(str(response.status_code))
+                    return str(response.status_code)
             except Exception as e:
-                self.logging.log(str(e))
-            return None
+                return str(e)
         info = get_ipapi_info(self.IP)
         if info:
-            for k, v in info.items():
-                self.logging.log(f"{k}: {v}")
+            return [f"{k}: {v}" for k, v in info.items()]
 
     def Seek(self):
         if self.IP:
-            self.logging = my_lib.Log(f'IPs/{self.IP}.IP')
-            self.Seeker_3()
-            self.Seeker_4()
-            self.logging.log('=============================================')
+            s3 = self.Seeker_3()
+            s4 = self.Seeker_4()
+            if s3:
+                logging = my_lib.Log(f'IPs/{self.IP}.IP')
+                logging.log('===================== 3 =====================')
+                for l in s3: logging.log(l)
+                logging.log('===================== 4 =====================')
+                for l in s4: logging.log(l)
+                logging.log('=============================================')
 
 
 if __name__ == '__main__':
