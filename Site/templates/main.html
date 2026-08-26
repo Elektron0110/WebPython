@@ -25,7 +25,7 @@
 	<div>
 		<center>
 			{% if news %}
-			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+			<link rel="stylesheet" href="{{ url_for('static', filename='css/swiper-bundle.min.css') }}" />
 
 			<div class="swiper my-slider">
 				<div class="swiper-wrapper">
@@ -45,7 +45,7 @@
 				<div class="swiper-button-next"></div>
 			</div>
 
-			<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+			<script src="{{ url_for('static', filename='js/swiper-bundle.min.js') }}"></script>
 			<script>
 				const swiper = new Swiper('.my-slider', {
 					loop: true,
