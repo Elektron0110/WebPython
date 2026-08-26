@@ -36,8 +36,9 @@ class IP_Seeker:
             except Exception as e:
                 return str(e)
         info = get_ipapi_info(self.IP)
-        if info:
+        if isinstance(info, list):
             return [f"{k}: {v}" for k, v in info.items()]
+        else: return [info]
 
     def Seek(self):
         if self.IP:
