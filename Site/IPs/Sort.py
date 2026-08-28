@@ -15,14 +15,13 @@ def mprint(object: dict[str, list]):
     print(string)
     return string
 
-
-print([f for f in os.listdir('Site/IPs')[1:-1] if len(open(f'Site/IPs/{f}', 'r', encoding='utf-8').readlines()) < 7])
-for f in [f for f in os.listdir('Site/IPs')[1:-1]
+print([f for f in os.listdir('Site/IPs')[1:-2] if len(open(f'Site/IPs/{f}', 'r', encoding='utf-8').readlines()) < 7])
+for f in [f for f in os.listdir('Site/IPs')[1:-2]
      if len(open(f'Site/IPs/{f}', 'r', encoding='utf-8').readlines()) < 7]: os.remove(f'Site/IPs/{f}')
 
 
-print([f for f in os.listdir('Site/IPs')[1:-1] if ('RU' not in open(f'Site/IPs/{f}', 'r', encoding='utf-8').read()) and (f[:-3] not in [f2[:-4] for f2 in os.listdir('Site/IPs/I')])])
-for f in [f for f in os.listdir('Site/IPs')[1:-1]
+print([f for f in os.listdir('Site/IPs')[1:-2] if ('RU' not in open(f'Site/IPs/{f}', 'r', encoding='utf-8').read()) and (f[:-3] not in [f2[:-4] for f2 in os.listdir('Site/IPs/I')])])
+for f in [f for f in os.listdir('Site/IPs')[1:-2]
           if ('RU' not in open(f'Site/IPs/{f}', 'r', encoding='utf-8').read()) and
           (f[:-3] not in [f2[:-4] for f2 in os.listdir('Site/IPs/I')])]: os.system(f'copy Site\\IPs\\{f} Site\\IPs\\I\\{f[:-3]}.txt')
 # datetime.fromtimestamp(os.path.getctime(f"Site\\IPs\\{f}")).strftime("%Y.%m.%d")
