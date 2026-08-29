@@ -2,7 +2,21 @@ from datetime import datetime
 import os
 from time import sleep
 
-if os.path.isdir('Site'):
+try:
+    # Для работы этого блока его необходимо перенести в оновную папку (Site)
+    from IPs import IP_Seeker
+    file = open('Alexis.log', 'r', encoding='utf-8').readlines()
+
+    print([i+1 for i in range(len(file)) if len(file[i]) < 23 and file[i][22]!=file[i][21]])
+
+    a = list({line.split('  ')[1] for line in file
+        if (line[23].isdigit() and line.split('  ')[1] not in [f2[:-4] for f2 in os.listdir('Site/IPs')])})
+    a.sort()
+    print(len(a))
+    for ip in a:
+        IP_Seeker(ip, 'Site').Seek()
+        sleep(10)
+except:
     file = open('Site/Alexis.log', 'r', encoding='utf-8').readlines()
 
 
@@ -21,10 +35,10 @@ if os.path.isdir('Site'):
         print(string)
         return string
 
+
     print([f for f in os.listdir('Site/IPs')[1:-2] if len(open(f'Site/IPs/{f}', 'r', encoding='utf-8').readlines()) < 7])
     for f in [f for f in os.listdir('Site/IPs')[1:-2]
         if len(open(f'Site/IPs/{f}', 'r', encoding='utf-8').readlines()) < 7]: os.remove(f'Site/IPs/{f}')
-
 
     print([f for f in os.listdir('Site/IPs')[1:-2] if ('RU' not in open(f'Site/IPs/{f}', 'r', encoding='utf-8').read()) and (f[:-3] not in [f2[:-4] for f2 in os.listdir('Site/IPs/I')])])
     for f in [f for f in os.listdir('Site/IPs')[1:-2]
@@ -40,17 +54,3 @@ if os.path.isdir('Site'):
         counter[i] += [f'{l.split('  ')[0][1:-1]} | {l.split('  ')[2][l.split('  ')[2].find(' ')+1:-1]}'
                     for l in file if f[:-4] in l]
     open('CS.txt', 'w', encoding='utf-8').write(mprint({k: v for k, v in counter.items() if k}))
-
-if os.path.isdir('IPs'):
-    from IPs import IP_Seeker
-    file = open('Alexis.log', 'r', encoding='utf-8').readlines()
-
-    print([i+1 for i in range(len(file)) if len(file[i]) < 23 and file[i][22]!=file[i][21]])
-
-    a = list({line.split('  ')[1] for line in file
-        if (line[23].isdigit() and line.split('  ')[1] not in [f2[:-4] for f2 in os.listdir('Site/IPs')])})
-    a.sort()
-    print(len(a))
-    for ip in a:
-        IP_Seeker(ip, 'Site').Seek()
-        sleep(10)
