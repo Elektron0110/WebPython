@@ -30,14 +30,14 @@ class IP_Seeker:
             try:
                 response = requests.get(f'https://ipapi.co/{ip}/json/')
                 if response.status_code == 200:
-                    data = response.json()
+                    data: dict = response.json()
                     return data
                 else:
                     return str(response.status_code)
             except Exception as e:
                 return str(e)
         info = get_ipapi_info(self.IP)
-        if isinstance(info, list):
+        if isinstance(info, dict):
             return [f"{k}: {v}" for k, v in info.items()]
         else: return [info]
 
