@@ -53,6 +53,16 @@ class WsgiDAVMiddleware:
             wlogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {environ.get("HTTP_X_REAL_IP")}  "{
                 environ["REQUEST_METHOD"]} {self.decode(environ["REQUEST_URI"])}"')
             return self.dav_app(environ, start_response)
+        if not os.path.isfile('static/not_blocked_ips'):
+            open('static/not_blocked_ips', 'w').write('')
+        not_blocked_ips = open('static/not_blocked_ips', 'r').read().split('\n')
+        if white and request.headers.get('x-real-ip') not in not_blocked_ips:
+            abort(403)  # Forbiden
+        if not os.path.isfile('static/blocked_ips'):
+            open('static/blocked_ips', 'w').write('')
+        blocked_ips = open('static/blocked_ips', 'r').read().split('\n')
+        if request.headers.get('x-real-ip') in blocked_ips:
+            abort(403, 'You can not open this website.')
         # Иначе — в Flask
         return self.flask_app(environ, start_response)
 

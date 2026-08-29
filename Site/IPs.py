@@ -6,8 +6,9 @@ import json
 class IP_Seeker:
     IP = ''
 
-    def __init__(self, IP: str) -> None:
+    def __init__(self, IP: str, BASE: str = '.') -> None:
         self.IP = IP
+        self.base = BASE
 
     def Seeker_3(self):
         def get_ip_details(ip_address=None):
@@ -45,7 +46,7 @@ class IP_Seeker:
             s3 = self.Seeker_3()
             s4 = self.Seeker_4()
             if s3:
-                logging = my_lib.Log(f'IPs/{self.IP}.IP')
+                logging = my_lib.Log(f'{self.base}/IPs/{self.IP}.IP')
                 logging.log('===================== 3 =====================')
                 for l in s3: logging.log(l)
                 logging.log('===================== 4 =====================')
