@@ -9,11 +9,13 @@ if os.path.isdir('Site'):
     def mprint(object: dict[str, list]):
         string = ''
         keys = [key for key in object]
+        keys.sort()
         m_len = max([len(key) for key in keys])
         for key in keys:
             half = (m_len-len(key))//2
             half+0 if (m_len-len(key))%2 else 0
             if object[key] == []: object[key] = ['']
+            object[key].sort()
             string += f'{half*' '}{key}{(half+(1 if (m_len-len(key))%2 else 0))*' '} | {object[key][0]}'+'\n'
             if len(object[key]) > 1: string += '\n'.join([f'{m_len*' '} | {value}' for value in object[key][1:]])+'\n'
         print(string)
