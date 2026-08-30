@@ -1,7 +1,9 @@
 import requests
 import my_lib
 import json
+import geoip2.database
 
+# reader = geoip2.database.Reader("GeoLite2‑City.mmdb")
 
 class IP_Seeker:
     IP = ''
@@ -40,6 +42,22 @@ class IP_Seeker:
         if isinstance(info, dict):
             return [f"{k}: {v}" for k, v in info.items()]
         else: return [info]
+
+    '''def Seeker_L(self):
+        def get_location_string(ip: str):
+            try:
+                response = reader.city(ip)
+                open('res', 'w').write(str(response))
+                country = response.country.name or "-"
+                subdivision = response.subdivision.name or "-"      # регион
+                city = response.city.name or "-"                  # город
+                return f"{country} / {subdivision} / {city}"
+            except geoip2.errors.AddressNotFoundError:
+                return None
+            except Exception:
+                return None
+        info = get_location_string(self.IP)
+        return [info]'''
 
     def Seek(self):
         if self.IP:
