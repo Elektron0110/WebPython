@@ -36,33 +36,42 @@ if not os.path.isdir('Site'):
     open('Site/log', 'w').write('Start.')
 if not os.path.isdir('Site/applications'):
     os.mkdir('Site/applications')
+if not os.path.isfile('static/not_blocked_ips'):
+    open('static/not_blocked_ips', 'w').write('')
+if not os.path.isfile('static/blocked_ips'):
+    open('static/blocked_ips', 'w').write('')
 
+not_blocked_ips = open('static/not_blocked_ips', 'r').read().split('\n')
+blocked_ips = open('static/blocked_ips', 'r').read().split('\n')
 
 class WsgiDAVMiddleware:
-    def __init__(self, flask_app, dav_app,
-                 dav_path=("/webdav", "/:dir_browser")):
+    def __init__(self, flask_app: Flask, dav_app: WsgiDAVApp,
+                 dav_path: tuple[str, ...] = ("/webdav", "/:dir_browser")):
         self.decode = urllib.parse.unquote
         self.flask_app = flask_app
         self.dav_app = dav_app
         self.dav_path = dav_path
 
-    def __call__(self, environ, start_response):
+    @staticmethod
+    def forbidden_response(start_response: Response):
+        status = "403 Forbidden"
+        response_headers = [("Content-Type", "text/plain; charset=utf-8")]
+        start_response(status, response_headers)
+        return [b"Forbidden"]
+
+    def __call__(self, 
+                 environ: dict[str, str], # WSGIEnvironment
+                 start_response: Response):
         # Если путь начинается с /webdav, передаём запрос в WsgiDAV
         # open('env', 'w', encoding='utf-8').write(str(environ))
         if environ.get("PATH_INFO", "").startswith(self.dav_path):
-            wlogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {environ.get("HTTP_X_REAL_IP")}  "{
-                environ["REQUEST_METHOD"]} {self.decode(environ["REQUEST_URI"])}"')
+            if white and environ.get("HTTP_X_REAL_IP") not in not_blocked_ips:
+                self.forbidden_response(start_response)
+            if environ.get("HTTP_X_REAL_IP") in blocked_ips:
+                self.forbidden_response(start_response)
+            wlogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {environ.get("HTTP_X_REAL_IP")}'
+                         f'"{environ["REQUEST_METHOD"]} {self.decode(environ["REQUEST_URI"])}"')
             return self.dav_app(environ, start_response)
-        if not os.path.isfile('static/not_blocked_ips'):
-            open('static/not_blocked_ips', 'w').write('')
-        not_blocked_ips = open('static/not_blocked_ips', 'r').read().split('\n')
-        if white and request.headers.get('x-real-ip') not in not_blocked_ips:
-            abort(403)  # Forbiden
-        if not os.path.isfile('static/blocked_ips'):
-            open('static/blocked_ips', 'w').write('')
-        blocked_ips = open('static/blocked_ips', 'r').read().split('\n')
-        if request.headers.get('x-real-ip') in blocked_ips:
-            abort(403, 'You can not open this website.')
         # Иначе — в Flask
         return self.flask_app(environ, start_response)
 
@@ -770,14 +779,8 @@ def limit_remote_addr():
         authorized[session['email']] = 1
     if authorized != json.load(open('auth.json')):
         json.dump(authorized, open('auth.json', 'w'))
-    if not os.path.isfile('static/not_blocked_ips'):
-        open('static/not_blocked_ips', 'w').write('')
-    not_blocked_ips = open('static/not_blocked_ips', 'r').read().split('\n')
     if white and request.headers.get('x-real-ip') not in not_blocked_ips:
         abort(403)  # Forbiden
-    if not os.path.isfile('static/blocked_ips'):
-        open('static/blocked_ips', 'w').write('')
-    blocked_ips = open('static/blocked_ips', 'r').read().split('\n')
     if request.headers.get('x-real-ip') in blocked_ips:
         abort(403, 'You can not open this website.')
 
