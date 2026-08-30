@@ -2,22 +2,22 @@ from datetime import datetime
 import os
 from time import sleep
 
+file = open('Site/Alexis.log', 'r', encoding='utf-8').readlines()
+
 try:
     # Для работы этого блока его необходимо перенести в оновную папку (Site)
     from IPs import IP_Seeker
-    file = open('Alexis.log', 'r', encoding='utf-8').readlines()
 
     print([i+1 for i in range(len(file)) if len(file[i]) < 23 and file[i][22]!=file[i][21]])
 
     a = list({line.split('  ')[1] for line in file
-        if (line[23].isdigit() and line.split('  ')[1] not in [f2[:-4] for f2 in os.listdir('Site/IPs')])})
+        if (line[23].isdigit() and line.split('  ')[1] not in [f2[:-3] for f2 in os.listdir('Site/IPs')])})
     a.sort()
     print(len(a))
     for ip in a:
         IP_Seeker(ip, 'Site').Seek()
         sleep(10)
 except:
-    file = open('Site/Alexis.log', 'r', encoding='utf-8').readlines()
 
 
     def mprint(object: dict[str, list]):
