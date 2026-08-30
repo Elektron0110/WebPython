@@ -54,6 +54,6 @@ except:
         i = '/'.join([l.split(": ")[1][:-1] for l in open(f'Site/IPs/I/{f}', 'r', encoding='utf-8').readlines()
                     if l.startswith(('city:', 'region:', 'country:'))][:3][::-1])
         if i not in counter: counter[i] = []
-        counter[i] += [f'{l.split('  ')[0][1:-1]} | {l.split('  ')[2][l.split('  ')[2].find(' ')+1:-1]}'
+        counter[i] += [f'{datetime.strptime(l.split('  ')[0][1:-1], '%d.%m.%Y %H:%M:%S').strftime('%Y.%m.%d %H:%M:%S')} | {l.split('  ')[2][l.split('  ')[2].find(' ')+1:-1]}'
                     for l in file if f[:-4] in l]
     open('CS.txt', 'w', encoding='utf-8').write(mprint({k: v for k, v in counter.items() if k}, max=100))
