@@ -835,7 +835,7 @@ def video():
         if os.path.isdir(f'{h}/{f}'):
             r += f'<a href="video/{f}"><b>{f}</b></a><br>'
         else:
-            r += f'<a href="video/{f}">{f}</a><br>'
+            r += f'<a href="video/{f}">{f}</a>    <a href="video/{f}" download>{f}</a><br>'
     return r
 
 
@@ -849,7 +849,7 @@ def videofod(fod):
             if os.path.isdir(f'{h}/{fod}/{f}'):
                 r += f'<a href="{fod}/{f}"><b>{f}</b></a><br>'
             else:
-                r += f'<a href="{fod}/{f}">{f}</a><br>'
+                r += f'<a href="{fod}/{f}">{f}</a>    <a href="video/{f}" download>{f}</a><br>'
         return r
 
 
@@ -868,7 +868,7 @@ def films():
         if os.path.isdir(f'{j}/{f}'):
             r += f'<a href="films/{f}"><b>{f}</b></a><br>'
         else:
-            r += f'<a href="films/{f}">{f}</a><br>'
+            r += f'<a href="films/{f}">{f}</a>    <a href="video/{f}" download>{f}</a><br>'
     return r
 
 
@@ -882,7 +882,7 @@ def filmsfod(fod):
             if os.path.isdir(f'{j}/{fod}/{f}'):
                 r += f'<a href="{fod}/{f}"><b>{f}</b></a><br>'
             else:
-                r += f'<a href="{fod}/{f}">{f}</a><br>'
+                r += f'<a href="{fod}/{f}">{f}</a>    <a href="video/{f}" download>{f}</a><br>'
         return r
 
 
