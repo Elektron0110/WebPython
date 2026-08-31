@@ -31,15 +31,13 @@ app.config['SESSION_COOKIE_SECURE'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.register_blueprint(new_broker.app)
 
-if not os.path.isdir('Site'):
-    os.mkdir('Site')
-    open('Site/log', 'w').write('Start.')
-if not os.path.isdir('Site/applications'):
-    os.mkdir('Site/applications')
-if not os.path.isfile('static/not_blocked_ips'):
-    open('static/not_blocked_ips', 'w').write('')
-if not os.path.isfile('static/blocked_ips'):
-    open('static/blocked_ips', 'w').write('')
+if not os.path.isdir('Site'):                     os.mkdir('Site')
+if not os.path.isdir('Site/applications'):        os.mkdir('Site/applications')
+if not os.path.isfile('static/not_blocked_ips'):  open('static/not_blocked_ips', 'w').write('')
+if not os.path.isfile('static/blocked_ips'):      open('static/blocked_ips', 'w').write('')
+
+if not os.path.isfile('auth.json'):               open('auth.json', 'w').write('')
+if not os.path.isfile('last.json'):               open('last.json', 'w').write('')
 
 not_blocked_ips = open('static/not_blocked_ips', 'r').read().split('\n')
 blocked_ips = open('static/blocked_ips', 'r').read().split('\n')
@@ -261,8 +259,6 @@ new_user(email='example@mail.ru', password='', s='', f='System', t='',
 # -------------------------------------------------------------------------------------------------------------
 
 app.secret_key = open('secret.helpfile', 'r').read()
-open('Site/log',
-     'a').write(f'\nStart at {datetime.now().strftime("%d.%m.%Y %H:%M")}.')
 admins = ['s762672@ya.ru', 'test@test']
 authorized = json.load(open('auth.json'))
 white = False
