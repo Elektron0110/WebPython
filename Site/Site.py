@@ -260,7 +260,7 @@ new_user(email='example@mail.ru', password='', s='', f='System', t='',
 
 # -------------------------------------------------------------------------------------------------------------
 
-app.secret_key = 'YOU-NEVER-KNOW-THIS-I-SURE'  # os.urandom(24)
+app.secret_key = open('secret.helpfile', 'r').read()
 open('Site/log',
      'a').write(f'\nStart at {datetime.now().strftime("%d.%m.%Y %H:%M")}.')
 admins = ['s762672@ya.ru', 'test@test']
