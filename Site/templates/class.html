@@ -1,5 +1,5 @@
 {% extends "Bases/MainBase.html" %}
-{% block title %}Рассада{% endblock title %}
+{% block title %}РассАнДа{% endblock title %}
 {% block body %}
 	<div style="
 				display: flex;
@@ -12,93 +12,93 @@
 				<th>2</th>
 				<th>3</th>
 			</tr>
-			<tr>
+			<tr> <!-- 1 Ряд -->
 				<th>1</th>
 				<td>
 					<center>
-						<button style="height: 35;">ЛН</button> | <button style="height: 35;">ИР</button>
+						<button style="height: 35;">ЛаН</button> | <button style="height: 35;">ИнР</button>
 					</center>
 				</td>
 				<td>
 					<center>
-						<button style="height: 35;">АД</button> | <button style="height: 35;">КВ</button>
+						<button style="height: 35;">АнД</button> | <button style="height: 35;">КлВ</button>
 					</center>
 				</td>
 				<td>
 					<center>
-						<button style="height: 35;">ГР</button> | <button style="height: 35;">ИМ</button>
+						<button style="height: 35;">ГаР</button> | <button style="height: 35;">ИсМ</button>
 					</center>
 				</td>
 			</tr>
-			<tr>
+			<tr> <!-- 2 Ряд -->
 				<th>2</th>
 				<td>
 					<center>
-						<button style="height: 35;">ПС</button> | <button style="height: 35;">КЕ</button>
+						<button style="height: 35;">ПлС</button> | <button style="height: 35;">КиЕ</button>
 					</center>
 				</td>
 				<td>
 					<center>
-						<button style="height: 35;">ХД</button> | <button style="height: 35;">СА</button>
+						<button style="height: 35;">ХоД</button> | <button style="height: 35;">СтА</button>
 					</center>
 				</td>
 				<td>
 					<center>
-						<button style="height: 35;">РМ</button> | <button style="height: 35;">ПМ</button>
+						<button style="height: 35;">РаМ</button> | <button style="height: 35;">ПлМ</button>
 					</center>
 				</td>
 			</tr>
-			<tr>
+			<tr> <!-- 3 Ряд -->
 				<th>3</th>
 				<td>
 					<center>
-						<button style="height: 35;">ЗВ</button> | <button style="height: 35;">ЧД</button>
+						<button style="height: 35;">ЗаВ</button> | <button style="height: 35;">ЧеД</button>
 					</center>
 				</td>
 				<td>
 					<center>
-						<button style="height: 35;">РЮ</button> | <button style="height: 35;">ХТ</button>
+						<button style="height: 35;">РаЮ</button> | <button style="height: 35;">ХаТ</button>
 					</center>
 				</td>
 				<td>
 					<center>
-						<button style="height: 35;">ШГ</button> | <button style="height: 35;">КИ</button>
+						<button style="height: 35;">ШуГ</button> | <button style="height: 35;">КрИ</button>
 					</center>
 				</td>
 			</tr>
-			<tr>
+			<tr> <!-- 4 Ряд -->
 				<th>4</th>
 				<td>
 					<center>
-						<button style="height: 35;">❌</button> | <button style="height: 35;">ДИ</button>
+						<button style="height: 35;">❌</button> | <button style="height: 35;">ДуИ</button>
 					</center>
 				</td>
 				<td>
 					<center>
-						<button style="height: 35;">ША</button> | <button style="height: 35;">❌</button>
+						<button style="height: 35;">ШуА</button> | <button style="height: 35;">❌</button>
 					</center>
 				</td>
 				<td>
 					<center>
-						<button style="height: 35;">БВ</button> | <button style="height: 35;">СМ</button>
+						<button style="height: 35;">БуВ</button> | <button style="height: 35;">СаМ</button>
 					</center>
 				</td>
 			</tr>
-			<tr>
+			<tr> <!-- 5 Ряд -->
 				<th>5</th>
 				<td>
 					<center>
-						<button style="height: 35;">❌</button> | <button style="height: 35;">БА</button>
+						<button style="height: 35;">❌</button> | <button style="height: 35;">БлА</button>
 					</center>
 				</td>
 				<td>
 					<center>
-						<button style="height: 35;">ОК</button> | <button style="height: 35;">ВН</button>
+						<button style="height: 35;">ОвК</button> | <button style="height: 35;">ВыН</button>
 					</center>
 				</td>
 				<td>
 					<center>
-						<button style="height: 35;">ХК</button> | <button style="height: 35;">ММ</button>
+						<button style="height: 35;">ХаК</button> | <button style="height: 35;">МаМ</button>
 					</center>
 				</td>
 			</tr>
@@ -107,28 +107,29 @@
 	<script>
 		var lst = [];
 		var names = {
-			"ЛН": "Ларионов Никита", "ИР": "Инкин Роман", "АД": "Андреева Дарья",
-			"КВ": "Климовская Валерия", "ГР": "Гамзатов Руслан", "ИМ": "Исупов Максим",
-			"ПС": "Плюснин Семён", "КЕ": "Киселёва Елизавета", "ХД": "Хомченко Дарья",
-			"СА": "Студенцов Артём", "РМ": "Ракова Мирослава", "ПМ": "Плакидина Милена",
-			"ЗВ": "Закирова Виктория", "ЧД": "Чечулин Денис", "РЮ": "Радомская Юлия",
-			"ХТ": "Хайиткулов Тимур", "ШГ": "Шутенко Гавриил", "КИ": "Кривицкий Илья",
-			"❌": "❌", "ДИ": "Дунин Иван", "ША": "Шульган Алексей",
-			"БВ": "Буханков Владимир", "СМ": "Сафаров Мехроб", "БА": "Блюм Александр",
-			"ВН": "Выборнов Никита", "ХК": "Хазов Кирилл", "ММ": "Максимов Максим",
-			"ОК": "Овчаренко Кирилл"
+			"ЛаН": "Ларионов Никита", "ИнР": "Инкин Роман", "АнД": "Андреева Дарья",
+			"КлВ": "КлИсМовская Валерия", "ГаР": "Гамзатов Руслан", "ИсМ": "Исупов МаксИсМ",
+			"ПлС": "Плюснин Семён", "КиЕ": "Киселёва Елизавета", "ХоД": "Хомченко Дарья",
+			"СтА": "Студенцов Артём", "РаМ": "Ракова Мирослава", "ПлМ": "Плакидина Милена",
+			"ЗаВ": "Закирова Виктория", "ЧеД": "Чечулин Денис", "РаЮ": "Радомская Юлия",
+			"ХаТ": "Хайиткулов Тимур", "ШуГ": "Шутенко Гавриил", "КрИ": "Кривицкий Илья",
+			"ДуИ": "Дунин Иван", "ШуА": "Шульган Алексей", "ОвК": "Овчаренко Кирилл",
+			"БуВ": "Буханков Владимир", "СаМ": "Сафаров Мехроб", "БлА": "Блюм Александр",
+			"ВыН": "Выборнов Никита", "ХаК": "Хазов Кирилл", "МаМ": "Максимов Максим",
+			"БуА": "Бурда Алеся", "БеВ": "Бережнов Виктор", "НаЕ": "Наливкина Елизавета",
+			"❌": "❌"
 		};
 		var weights = {
-			"ЛН": 1, "ИР": 1, "АД": 1, "КВ": 3, "ГР": 3.2, "ИМ": 1, "ПС": 1, "КЕ": 1, "ХД": 0.7,
-			"СА": 1.1, "РМ": 3, "ПМ": 1, "ЗВ": 1, "ЧД": 2.1, "РЮ": 1, "ХТ": 1, "ШГ": 1, "КИ": 1,
-			"❌": "❌", "ДИ": 1, "ША": "❌", "БВ": 1, "СМ": 0.9, "БА": 1, "ВН": 1.1, "ХК": 1, "ММ": 1,
-			"ОК": 0.9
+			"ЛаН": 1, "ИнР": 1, "АнД": 1, "КлВ": 3, "ГаР": 3.2, "ИсМ": 1, "ПлС": 1, "КиЕ": 1, "ХоД": 0.7,
+			"СтА": 1.1, "РаМ": 3, "ПлМ": 1, "ЗаВ": 1, "ЧеД": 2.1, "РаЮ": 1, "ХаТ": 1, "ШуГ": 1, "КрИ": 1,
+			"ДуИ": 1, "ШуА": "❌", "БуВ": 1, "СаМ": 0.9, "БлА": 1, "ВыН": 1.1, "ХаК": 1, "МаМ": 1, "ОвК": 0.9,
+			"БуА": 1, "БеВ": 1, "НаЕ": 1, "❌": "❌"
 		};
 		var note = {
-			"ЛН": null, "ИР": null, "АД": null, "КВ": "C", "ГР": "C", "ИМ": null, "ПС": null, "КЕ": null, "ХД": null,
-			"СА": null, "РМ": "C", "ПМ": null, "ЗВ": null, "ЧД": null, "РЮ": null, "ХТ": null, "ШГ": null, "КИ": null,
-			"❌": null, "ДИ": null, "ША": null, "БВ": null, "СМ": null, "БА": null, "ВН": null, "ХК": null, "ММ": null,
-			"ОК": null
+			"ЛаН": null, "ИнР": null, "АнД": null, "КлВ": "C",  "ГаР": "C",  "ИсМ": null, "ПлС": null, "КиЕ": null, "ХоД": null,
+			"СтА": null, "РаМ": "C",  "ПлМ": null, "ЗаВ": null, "ЧеД": null, "РаЮ": null, "ХаТ": null, "ШуГ": null, "КрИ": null,
+			"ДуИ": null, "ШуА": null, "БуВ": null, "СаМ": null, "БлА": null, "ВыН": null, "ХаК": null, "МаМ": null, "ОвК": null,
+			"БуА": null, "БеВ": null, "НаЕ": null, "❌":  null
 		};
 		for (let i = 1; i < document.getElementsByTagName('button').length; i++) {
 			document.getElementsByTagName('button')[i].addEventListener('click', () => {
