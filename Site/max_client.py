@@ -1,4 +1,4 @@
-from flask import Blueprint as Flask, jsonify
+from flask import Blueprint as Flask
 import json
 
 TRANPORT_FILE = "max.helpfile"
@@ -11,7 +11,7 @@ app = Flask(__name__, 'new_broker')
 def max():
     max_data: dict[int, list[dict[str, str]]] = json.load(open('max_messages.json', encoding='utf-8'))
     default_chat = max_data[DEFAULT]
-    return jsonify(default_chat)
+    return str(default_chat)
 
 
 @app.route('/max/all')
@@ -27,4 +27,4 @@ def maxx(x):
     while open(TRANPORT_FILE).read() != 'DONE': pass
     max_data: dict[int, list[dict[str, str]]] = json.load(open('max_messages.json', encoding='utf-8'))
     chat = max_data[x]
-    return jsonify(chat)
+    return str(chat)
