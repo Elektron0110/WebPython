@@ -11,6 +11,8 @@ PHONE = "+79990000000"          # Ваш номер в формате +7XXXXXXXX
 WORK_DIR = "instance"
 SESSION_NAME = "Max.db"
 MESSAGES_FILE = "messages.json"
+TRANPORT_FILE = "max.helpfile"
+DEFAULT = open('default.helpfile').readlines()[0][:-1]
 MESSAGES: dict[int, list[dict[str, str]]] = {}
 
 # ========== ИНИЦИАЛИЗАЦИЯ КЛИЕНТА ==========
@@ -178,18 +180,18 @@ async def interactive_menu(client: Client) -> None:
     while True:
         await asyncio.sleep(10)
         i += 10
-        h: list[dict[str, str]] = await show_chat_history(client, open('default.helpfile').readlines()[0][:-1])
-        lh = MESSAGES.get(open('default.helpfile').readlines()[0][:-1], [])
+        h: list[dict[str, str]] = await show_chat_history(client, DEFAULT)
+        lh = MESSAGES.get(DEFAULT, [])
         nh = [m for m in h if h not in lh]
-        MESSAGES[open('default.helpfile').readlines()[0][:-1]] = nh
+        MESSAGES[DEFAULT] = nh
         json.dump(MESSAGES, open('max_messages.json', 'w', encoding='utf-8'), ensure_ascii=False)
-        if 'DONE' != open('HELPFILE').read():
-            h: list[dict[str, str]] = await show_chat_history(client, open('HELPFILE').read())
-            lh = MESSAGES.get(int(open('HELPFILE').read()), [])
+        if 'DONE' != open(TRANPORT_FILE).read():
+            h: list[dict[str, str]] = await show_chat_history(client, open(TRANPORT_FILE).read())
+            lh = MESSAGES.get(int(open(TRANPORT_FILE).read()), [])
             nh = [m for m in h if h not in lh]
-            MESSAGES[int(open('HELPFILE').read())] = nh
+            MESSAGES[int(open(TRANPORT_FILE).read())] = nh
             json.dump(MESSAGES, open('max_messages.json', 'w', encoding='utf-8'), ensure_ascii=False)
-            open('HELPFILE','w').write('DONE')
+            open(TRANPORT_FILE,'w').write('DONE')
         if i == 300:
             c: list[dict[str, str]] = await show_dialogs(client)
             if c:
@@ -281,9 +283,7 @@ async def show_chat_history(client: Client, id: str | int):
                 except Exception:
                     continue
 
-        if messages is None: return
-
-        if not messages: return
+        if messages is None or not messages: return
 
         if len(messages) > 50:
             messages = messages[:50]
