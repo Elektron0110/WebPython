@@ -10,10 +10,12 @@ from pymax import Client, Message
 PHONE = "+79990000000"          # Ваш номер в формате +7XXXXXXXXXX
 WORK_DIR = "instance"
 SESSION_NAME = "Max.db"
+MAX_CHATS = 'max_chats.json'
 MESSAGES_FILE = "messages.json"
 TRANPORT_FILE = "max.helpfile"
+MAX_MESSAGES  = 'max_messages.json'
 DEFAULT = open('default.helpfile').readlines()[0][:-1]
-MESSAGES: dict[int, list[dict[str, str]]] = {}
+MESSAGES: dict[int, list[dict[str, str]]] = json.load(open(MAX_MESSAGES, encoding='utf-8'))
 LIM = 75
 
 # ========== ИНИЦИАЛИЗАЦИЯ КЛИЕНТА ==========
@@ -177,7 +179,7 @@ async def interactive_menu(client: Client) -> None:
     
     c: list[dict[str, str]] = await show_dialogs(client)
     if c:
-        json.dump(c, open('max_chats.json', 'w', encoding='utf-8'), ensure_ascii=False)
+        open(MAX_CHATS, 'w', encoding='utf-8').write(json.dumps(c, ensure_ascii=False).replace('{', '\n\t{'))
     while True:
         await asyncio.sleep(10)
         i += 10
@@ -185,18 +187,18 @@ async def interactive_menu(client: Client) -> None:
         lh = MESSAGES.get(DEFAULT, [])
         nh = [m for m in h if h not in lh]
         MESSAGES[DEFAULT] = nh
-        json.dump(MESSAGES, open('max_messages.json', 'w', encoding='utf-8'), ensure_ascii=False)
+        json.dump(MESSAGES, open(MAX_MESSAGES, 'w', encoding='utf-8'), ensure_ascii=False)
         if 'DONE' != open(TRANPORT_FILE).read():
             h: list[dict[str, str]] = await show_chat_history(client, open(TRANPORT_FILE).read())
             lh = MESSAGES.get(int(open(TRANPORT_FILE).read()), [])
             nh = [m for m in h if h not in lh]
             MESSAGES[int(open(TRANPORT_FILE).read())] = nh
-            json.dump(MESSAGES, open('max_messages.json', 'w', encoding='utf-8'), ensure_ascii=False)
+            json.dump(MESSAGES, open(MAX_MESSAGES, 'w', encoding='utf-8'), ensure_ascii=False)
             open(TRANPORT_FILE,'w').write('DONE')
         if i == 300:
             c: list[dict[str, str]] = await show_dialogs(client)
             if c:
-                json.dump(c, open('max_chats.json', 'w', encoding='utf-8'), ensure_ascii=False)
+                open(MAX_CHATS, 'w', encoding='utf-8').write(json.dumps(c, ensure_ascii=False).replace('{', '\n\t{'))
             i = 0
 
 # ========== ПОКАЗ СПИСКА ЧАТОВ ==========
@@ -362,12 +364,13 @@ async def on_message(message: Message, client: Client) -> None:
 
 # ========== ЗАПУСК ==========
 async def main() -> None:
-    try:
-        await client.start()
-    except KeyboardInterrupt:
-        print("\n🛑 Клиент остановлен пользователем")
-    except Exception as e:
-        print(f"❌ Критическая ошибка: {e}")
+    while True:
+        try:
+            await client.start()
+        except KeyboardInterrupt:
+            print("\n🛑 Клиент остановлен пользователем")
+        except Exception as e:
+            print(f"❌ Критическая ошибка: {e}")
 
 if __name__ == "__main__":
     asyncio.run(main())
