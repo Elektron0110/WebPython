@@ -171,13 +171,17 @@ async def on_start(client: Client) -> None:
 async def interactive_menu(client: Client) -> None:
     await asyncio.sleep(1)
     i = 0
+    
+    c: list[dict[str, str]] = await show_dialogs(client)
+    if c:
+        json.dump(c, open('max_chats.json', 'w', encoding='utf-8'), ensure_ascii=False)
     while True:
         await asyncio.sleep(10)
         i += 10
-        h: list[dict[str, str]] = await show_chat_history(client, open('default.helpfile').readlines()[0])
-        lh = MESSAGES.get(open('default.helpfile').readlines()[0], [])
+        h: list[dict[str, str]] = await show_chat_history(client, open('default.helpfile').readlines()[0][:-1])
+        lh = MESSAGES.get(open('default.helpfile').readlines()[0][:-1], [])
         nh = [m for m in h if h not in lh]
-        MESSAGES[open('default.helpfile').readlines()[0]] = nh
+        MESSAGES[open('default.helpfile').readlines()[0][:-1]] = nh
         json.dump(MESSAGES, open('max_messages.json', 'w', encoding='utf-8'), ensure_ascii=False)
         if 'DONE' != open('HELPFILE').read():
             h: list[dict[str, str]] = await show_chat_history(client, open('HELPFILE').read())
