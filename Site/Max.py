@@ -175,21 +175,21 @@ async def interactive_menu(client: Client) -> None:
         await asyncio.sleep(10)
         i += 10
         h: list[dict[str, str]] = await show_chat_history(client, open('default.helpfile').readlines()[0])
-        lh = MESSAGES[int(open('HELPFILE').read())]
+        lh = MESSAGES.get(open('default.helpfile').readlines()[0], [])
         nh = [m for m in h if h not in lh]
-        MESSAGES[int(open('HELPFILE').read())] = nh
-        json.dump(MESSAGES, open('max_messages.json', 'w'))
+        MESSAGES[open('default.helpfile').readlines()[0]] = nh
+        json.dump(MESSAGES, open('max_messages.json', 'w', encoding='utf-8'), ensure_ascii=False)
         if 'DONE' != open('HELPFILE').read():
             h: list[dict[str, str]] = await show_chat_history(client, open('HELPFILE').read())
-            lh = MESSAGES[int(open('HELPFILE').read())]
+            lh = MESSAGES.get(int(open('HELPFILE').read()), [])
             nh = [m for m in h if h not in lh]
             MESSAGES[int(open('HELPFILE').read())] = nh
-            json.dump(MESSAGES, open('max_messages.json', 'w'))
+            json.dump(MESSAGES, open('max_messages.json', 'w', encoding='utf-8'), ensure_ascii=False)
             open('HELPFILE','w').write('DONE')
         if i == 300:
             c: list[dict[str, str]] = await show_dialogs(client)
             if c:
-                json.dump(c, open('max_chats.json', 'w'))
+                json.dump(c, open('max_chats.json', 'w', encoding='utf-8'), ensure_ascii=False)
             i = 0
 
 # ========== ПОКАЗ СПИСКА ЧАТОВ ==========
