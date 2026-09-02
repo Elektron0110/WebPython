@@ -17,7 +17,7 @@ def max():
 @app.route('/max/all')
 def maxall():
     chats: list[dict[str, str]] = json.load(open('max_chats.json', encoding='utf-8'))
-    fstring = f'<a href="/max/{chats[0]["id"]}">{chats[0]["type"]} | {chats[0]["name"]}</a>'
+    fstring = f'<a href="/max/{chats[0]["id"]}">{chats[0]["type"]} | {chats[0]["name"]}</a>\n<br>\n'
     return fstring+'</a>\n<br>\n'.join([f'<a href="/max/{chat["id"]}">{chat["name"]}' for chat in chats[1:]])
 
 
