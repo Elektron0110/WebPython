@@ -11,6 +11,7 @@ PHONE = "+79990000000"          # Ваш номер в формате +7XXXXXXXX
 WORK_DIR = "instance"
 SESSION_NAME = "Max.db"
 MESSAGES_FILE = "messages.json"
+MESSAGES: dict[int, list[dict[str, str]]] = {}
 
 # ========== ИНИЦИАЛИЗАЦИЯ КЛИЕНТА ==========
 client = Client(
@@ -165,33 +166,36 @@ async def on_start(client: Client) -> None:
     print(f"📁 Сессия сохранена в: {WORK_DIR}/{SESSION_NAME}")
     print(f"📄 Входящие сообщения сохраняются в: {WORK_DIR}/{MESSAGES_FILE}")
     asyncio.create_task(interactive_menu(client))
-    print("⏳ Ожидание входящих сообщений... (для меню используйте консоль)\n")
 
 # ========== ИНТЕРАКТИВНОЕ МЕНЮ ==========
 async def interactive_menu(client: Client) -> None:
     await asyncio.sleep(1)
+    i = 0
     while True:
-        print("\n" + "-" * 40)
-        print("МЕНЮ:")
-        print("  1. Список чатов")
-        print("  2. История сообщений в чате")
-        print("  3. Выйти из меню (продолжить прослушку)")
-        choice = input("Выберите действие (1/2/3): ").strip()
-        if choice == "1":
-            await show_dialogs(client)
-        elif choice == "2":
-            await show_chat_history(client)
-        elif choice == "3":
-            print("⏳ Возврат к прослушке...")
-            break
-        else:
-            print("❌ Неверный выбор. Попробуйте снова.")
+        await asyncio.sleep(10)
+        i += 10
+        h: list[dict[str, str]] = await show_chat_history(client, open('default.helpfile').readlines()[0])
+        lh = MESSAGES[int(open('HELPFILE').read())]
+        nh = [m for m in h if h not in lh]
+        MESSAGES[int(open('HELPFILE').read())] = nh
+        json.dump(MESSAGES, open('max_messages.json', 'w'))
+        if 'DONE' != open('HELPFILE').read():
+            h: list[dict[str, str]] = await show_chat_history(client, open('HELPFILE').read())
+            lh = MESSAGES[int(open('HELPFILE').read())]
+            nh = [m for m in h if h not in lh]
+            MESSAGES[int(open('HELPFILE').read())] = nh
+            json.dump(MESSAGES, open('max_messages.json', 'w'))
+            open('HELPFILE','w').write('DONE')
+        if i == 300:
+            c: list[dict[str, str]] = await show_dialogs(client)
+            if c:
+                json.dump(c, open('max_chats.json', 'w'))
+            i = 0
 
 # ========== ПОКАЗ СПИСКА ЧАТОВ ==========
-async def show_dialogs(client: Client) -> None:
+async def show_dialogs(client: Client):
     try:
         if hasattr(client, 'fetch_chats'):
-            print("📥 Загрузка списка чатов...")
             await client.fetch_chats()
         elif hasattr(client, 'get_chats'):
             dialogs = await client.get_chats()
@@ -205,11 +209,10 @@ async def show_dialogs(client: Client) -> None:
                 if dialogs:
                     client.chats = dialogs
 
-        if not dialogs:
-            print("📭 Чатов не найдено.")
-            return
+        if not dialogs: return
 
-        print("\n--- СПИСОК ЧАТОВ ---")
+        chats = []
+
         for i, dialog in enumerate(dialogs, 1):
             chat_id = getattr(dialog, 'id', None) or getattr(dialog, 'chat_id', None)
             display_name = await get_contact_name(client, dialog)
@@ -217,7 +220,12 @@ async def show_dialogs(client: Client) -> None:
             last_msg = getattr(dialog, 'last_message', None)
             last_text = last_msg.text if last_msg and hasattr(last_msg, 'text') else "Нет сообщений"
             chat_type = "Группа" if (getattr(dialog, 'is_group', False) or getattr(dialog, 'is_channel', False)) else "Личный"
-            print(f"{i}. {display_name} ({chat_type}, ID: {chat_id}) — последнее: {last_text[:20].split('\n')[0]}")
+            chats.append({
+                "name": display_name,
+                "id": chat_id,
+                "type": chat_type
+            })
+        return chats
     except Exception as e:
         print(f"⚠️ Ошибка получения чатов: {e}")
 
@@ -255,12 +263,8 @@ async def call_method_with_limit(obj, method_name, chat_id, limit=20):
             raise
 
 # ========== ПОКАЗ ИСТОРИИ СООБЩЕНИЙ ==========
-async def show_chat_history(client: Client) -> None:
-    chat_id_input = input("Введите ID чата (число): ").strip()
-    if not chat_id_input.isdigit():
-        print("❌ ID должен быть числом.")
-        return
-    chat_id = int(chat_id_input)
+async def show_chat_history(client: Client, id: str | int):
+    chat_id = int(id)
 
     try:
         messages = None
@@ -273,18 +277,15 @@ async def show_chat_history(client: Client) -> None:
                 except Exception:
                     continue
 
-        if messages is None:
-            print("❌ Не удалось получить историю сообщений.")
-            return
+        if messages is None: return
 
-        if not messages:
-            print(f"📭 В чате {chat_id} сообщений нет.")
-            return
+        if not messages: return
 
-        if len(messages) > 20:
-            messages = messages[:20]
+        if len(messages) > 50:
+            messages = messages[:50]
 
-        print(f"\n--- ПОСЛЕДНИЕ {len(messages)} СООБЩЕНИЙ В ЧАТЕ {chat_id} ---")
+        messes = []
+
         for msg in messages:
             # Определяем ID отправителя
             sender_id = None
@@ -308,7 +309,8 @@ async def show_chat_history(client: Client) -> None:
             else:
                 time_str = str(date)
 
-            print(f"[{time_str}] {sender_name}: {text[:100]}")
+            messes.append({"time": time_str, "sender": sender_name, "text": text})
+        return messes
     except Exception as e:
         print(f"⚠️ Ошибка получения истории: {e}")
 
@@ -349,14 +351,6 @@ async def on_message(message: Message, client: Client) -> None:
         print(f"\n📨 Новое сообщение от {sender_name or sender_id}:")
         print(f"   Текст: {message_data['text']}")
         print(f"   Чат ID: {message_data['chat_id']}")
-
-        if message.chat_id is not None and message.text:
-            reply_text = "✅ Ваше сообщение получено и сохранено в JSON!"
-            if hasattr(message, 'answer'):
-                await message.answer(reply_text)
-            else:
-                await client.send_message(chat_id=message.chat_id, text=reply_text)
-            print(f"   ✅ Отправлен ответ: {reply_text}")
 
     except Exception as e:
         print(f"⚠️ Ошибка при обработке сообщения: {e}")
