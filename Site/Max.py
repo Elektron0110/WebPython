@@ -14,6 +14,7 @@ MESSAGES_FILE = "messages.json"
 TRANPORT_FILE = "max.helpfile"
 DEFAULT = open('default.helpfile').readlines()[0][:-1]
 MESSAGES: dict[int, list[dict[str, str]]] = {}
+LIM = 75
 
 # ========== ИНИЦИАЛИЗАЦИЯ КЛИЕНТА ==========
 client = Client(
@@ -236,7 +237,7 @@ async def show_dialogs(client: Client):
         print(f"⚠️ Ошибка получения чатов: {e}")
 
 # ========== УНИВЕРСАЛЬНЫЙ ВЫЗОВ МЕТОДА С АВТОПОДБОРОМ ПАРАМЕТРОВ ==========
-async def call_method_with_limit(obj, method_name, chat_id, limit=20):
+async def call_method_with_limit(obj, method_name, chat_id, limit=LIM):
     method = getattr(obj, method_name, None)
     if method is None:
         return None
@@ -277,7 +278,7 @@ async def show_chat_history(client: Client, id: str | int):
         for method_name in ['get_messages', 'fetch_history', 'get_history']:
             if hasattr(client, method_name):
                 try:
-                    messages = await call_method_with_limit(client, method_name, chat_id, 20)
+                    messages = await call_method_with_limit(client, method_name, chat_id, LIM)
                     if messages is not None:
                         break
                 except Exception:
@@ -285,8 +286,8 @@ async def show_chat_history(client: Client, id: str | int):
 
         if messages is None or not messages: return
 
-        if len(messages) > 50:
-            messages = messages[:50]
+        if len(messages) > LIM:
+            messages = messages[:LIM]
 
         messes = []
 
