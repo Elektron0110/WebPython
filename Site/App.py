@@ -32,6 +32,7 @@ admins = ['s762672@ya.ru', 'test@test']
 logging = Log('Alexis.log')
 llogging = Log('Load.log')
 wlogging = Log('WebDav.log')
+mlogging = Log('MAX.log')
 
 start = int(open('start.helpfile', 'r').read())
 not_blocked_ips = open('static/not_blocked_ips', 'r').read().split('\n')

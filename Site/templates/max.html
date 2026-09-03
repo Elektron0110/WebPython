@@ -1,0 +1,37 @@
+{% extends "Bases/MainBase.html" %}
+{% block title %}Alexis{% endblock title %}
+{% block body %}
+<div class="chat">
+</div>
+<script>
+    //var messages = [];
+
+    //function build() {
+        //const res = fetch('/max/weather');
+        //var messes = res.json();
+        const messes = {{ms}}
+        const chat = document.getElementsByClassName("chat")[0];
+        for (let i = 0; i < messes.length; i++) {
+            const mess = messes[i];
+            //if (!(mess in messages)) {
+                const message = document.createElement("div");
+                message.className = "message";
+                const name = document.createElement("div");
+                name.className = "name";
+                name.textContent = mess["name"];
+                const time = document.createElement("div");
+                time.className = "time";
+                time.textContent = mess["time"];
+                const text = document.createElement("div");
+                text.className = "text";
+                text.innerHTML(mess["text"].replace("\n", "<br>"));
+                message.appendChild(time);
+                message.appendChild(name);
+                message.appendChild(text);
+                chat.appendChild(message);
+                //messages.appendChild(mess);
+            }
+        //}
+    //}
+</script>
+{% endblock body %}

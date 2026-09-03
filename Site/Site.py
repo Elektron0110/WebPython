@@ -575,14 +575,18 @@ def after_request(response: Response):
         IP(ip).Seek()
     if f'{ip}.HEAD' not in os.listdir('HEADs') and request.path == '/':
         open(f'HEADs/{ip}.HEAD', 'w').write(str(request.headers))
-    if not request.path.startswith(('/loader', '/video', '/films')):
-        logging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {ip}  "{
-            request.method} {request.full_path}"  {response.status[:3]}  {request.cookies.get('Name')}',
-            slice=' | ', fw=f'{fsm}MB {fsk}KB {fsb}B')
-    else:
+    if request.path.startswith(('/loader', '/video', '/films')):
         llogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {ip}  "{
             request.method} {request.full_path}"  {response.status[:3]}  {request.cookies.get('Name')}'
         )
+    elif request.path.startswith('/max'):
+        mlogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {ip}  "{
+            request.method} {request.full_path}"  {response.status[:3]}  {request.cookies.get('Name')}',
+            slice=' | ', fw=f'{fsm}MB {fsk}KB {fsb}B')
+    else:
+        logging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {ip}  "{
+            request.method} {request.full_path}"  {response.status[:3]}  {request.cookies.get('Name')}',
+            slice=' | ', fw=f'{fsm}MB {fsk}KB {fsb}B')
     return response
 
 
