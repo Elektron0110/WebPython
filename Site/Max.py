@@ -1,7 +1,7 @@
 import asyncio
 import json
 import inspect
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from pymax import Client, Message
@@ -276,20 +276,8 @@ async def show_chat_history(client: Client, id: str | int):
     chat_id = int(id)
 
     try:
-        messages = None
-        for method_name in ['get_messages', 'fetch_history', 'get_history']:
-            if hasattr(client, method_name):
-                try:
-                    messages = await call_method_with_limit(client, method_name, chat_id, LIM)
-                    if messages is not None:
-                        break
-                except Exception:
-                    continue
-
-        if messages is None or not messages: return
-
-        if len(messages) > LIM:
-            messages = messages[:LIM]
+        messages = await client.fetch_history(chat_id, backward=LIM)
+        if not messages: return
 
         messes = []
 
@@ -308,13 +296,8 @@ async def show_chat_history(client: Client, id: str | int):
             sender_name = await get_user_name_by_id(client, sender_id)
 
             text = getattr(msg, 'text', '') or ''
-            date = getattr(msg, 'date', None)
-            if date is None:
-                date = getattr(msg, 'timestamp', datetime.now())
-            if hasattr(date, 'isoformat'):
-                time_str = date.strftime('%Y.%m.%d %H:%M:%S')
-            else:
-                time_str = str(date)
+            date = msg.time
+            time_str = (datetime(1970, 1, 1)+timedelta(days=date/1000/3600/24)).strftime('%Y.%m.%d %H:%M:%S')
 
             messes.append({"time": time_str, "sender": sender_name, "text": text})
         return messes
