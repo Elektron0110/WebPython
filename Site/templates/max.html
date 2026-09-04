@@ -38,7 +38,7 @@
                 message.appendChild(sender);
                 message.appendChild(text);
                 chat.appendChild(message);
-                messages.appendChild(mess);
+                messages.push(mess);
             }
         }
         chat_el.innerHTML = chat.outerHTML;
