@@ -186,16 +186,12 @@ async def interactive_menu(client: Client) -> None:
         i += 10
         h: list[dict[str, str]] = await show_chat_history(client, DEFAULT)
         if h:
-            lh = MESSAGES.get(DEFAULT, [])
-            nh = [m for m in h if h not in lh]
-            MESSAGES[DEFAULT] = nh
+            MESSAGES[DEFAULT] = h
             json.dump(MESSAGES, open(MAX_MESSAGES, 'w', encoding='utf-8'), ensure_ascii=False)
         if 'DONE' != open(TRANPORT_FILE).read():
             h: list[dict[str, str]] = await show_chat_history(client, open(TRANPORT_FILE).read())
             if h:
-                lh = MESSAGES.get(int(open(TRANPORT_FILE).read()), [])
-                nh = [m for m in h if h not in lh]
-                MESSAGES[int(open(TRANPORT_FILE).read())] = nh
+                MESSAGES[int(open(TRANPORT_FILE).read())] = h
                 json.dump(MESSAGES, open(MAX_MESSAGES, 'w', encoding='utf-8'), ensure_ascii=False)
                 open(TRANPORT_FILE,'w').write('DONE')
         if i == 300:
@@ -272,9 +268,9 @@ async def show_chat_history(client: Client, id: str | int):
                     base_url = attachment.__dict__[[k for k in info if 'url' in k][0]]
                     media_id = attachment.__dict__[[k for k in info if  'id' in k][0]]
                 except:
-                    print(attachment.__dict__)
+                    # print(attachment.__dict__)
                     continue
-                file = f'{msg.id}|{media_id}'
+                file = f'{msg.id}_{media_id}'
                 if file not in [f[:-5] for f in os.listdir('static/max')]:
                     open(f'static/max/{file}.file', 'wb').write(get(base_url).content)
             time_str = (datetime(1970, 1, 1)+timedelta(days=date/1000/3600/24)+timedelta(hours=3)).strftime('%Y.%m.%d %H:%M:%S')

@@ -38,5 +38,7 @@ def maxx(x):
 def data(id):
     id = int(id)
     if not id: id = DEFAULT
+    open(TRANPORT_FILE,'w').write(str(id))
+    while open(TRANPORT_FILE).read() != 'DONE': pass
     max_data: dict[int, list[dict[str, str]]] = json.load(open('max_messages.json', encoding='utf-8'))
     return jsonify(max_data[id])
