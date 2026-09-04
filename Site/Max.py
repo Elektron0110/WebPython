@@ -1,9 +1,10 @@
 import asyncio
 import json
 import inspect
+import os
 from datetime import datetime, timedelta
 from pathlib import Path
-
+from requests import get
 from pymax import Client, Message
 
 # ========== КОНФИГУРАЦИЯ ==========
@@ -184,17 +185,19 @@ async def interactive_menu(client: Client) -> None:
         await asyncio.sleep(10)
         i += 10
         h: list[dict[str, str]] = await show_chat_history(client, DEFAULT)
-        lh = MESSAGES.get(DEFAULT, [])
-        nh = [m for m in h if h not in lh]
-        MESSAGES[DEFAULT] = nh
-        json.dump(MESSAGES, open(MAX_MESSAGES, 'w', encoding='utf-8'), ensure_ascii=False)
+        if h:
+            lh = MESSAGES.get(DEFAULT, [])
+            nh = [m for m in h if h not in lh]
+            MESSAGES[DEFAULT] = nh
+            json.dump(MESSAGES, open(MAX_MESSAGES, 'w', encoding='utf-8'), ensure_ascii=False)
         if 'DONE' != open(TRANPORT_FILE).read():
             h: list[dict[str, str]] = await show_chat_history(client, open(TRANPORT_FILE).read())
-            lh = MESSAGES.get(int(open(TRANPORT_FILE).read()), [])
-            nh = [m for m in h if h not in lh]
-            MESSAGES[int(open(TRANPORT_FILE).read())] = nh
-            json.dump(MESSAGES, open(MAX_MESSAGES, 'w', encoding='utf-8'), ensure_ascii=False)
-            open(TRANPORT_FILE,'w').write('DONE')
+            if h:
+                lh = MESSAGES.get(int(open(TRANPORT_FILE).read()), [])
+                nh = [m for m in h if h not in lh]
+                MESSAGES[int(open(TRANPORT_FILE).read())] = nh
+                json.dump(MESSAGES, open(MAX_MESSAGES, 'w', encoding='utf-8'), ensure_ascii=False)
+                open(TRANPORT_FILE,'w').write('DONE')
         if i == 300:
             c: list[dict[str, str]] = await show_dialogs(client)
             if c:
@@ -222,12 +225,11 @@ async def show_dialogs(client: Client):
 
         chats = []
 
-        for i, dialog in enumerate(dialogs, 1):
+        for dialog in dialogs:
             chat_id = getattr(dialog, 'id', None) or getattr(dialog, 'chat_id', None)
             display_name = await get_contact_name(client, dialog)
 
             last_msg = getattr(dialog, 'last_message', None)
-            last_text = last_msg.text if last_msg and hasattr(last_msg, 'text') else "Нет сообщений"
             chat_type = "Группа" if (getattr(dialog, 'is_group', False) or getattr(dialog, 'is_channel', False)) else "Личный"
             chats.append({
                 "name": display_name,
@@ -238,44 +240,10 @@ async def show_dialogs(client: Client):
     except Exception as e:
         print(f"⚠️ Ошибка получения чатов: {e}")
 
-# ========== УНИВЕРСАЛЬНЫЙ ВЫЗОВ МЕТОДА С АВТОПОДБОРОМ ПАРАМЕТРОВ ==========
-async def call_method_with_limit(obj, method_name, chat_id, limit=LIM):
-    method = getattr(obj, method_name, None)
-    if method is None:
-        return None
-    sig = inspect.signature(method)
-    params = sig.parameters
-    kwargs = {}
-    if 'limit' in params:
-        kwargs['limit'] = limit
-    elif 'count' in params:
-        kwargs['count'] = limit
-    elif 'num' in params:
-        kwargs['num'] = limit
-    elif 'size' in params:
-        kwargs['size'] = limit
-    try:
-        if kwargs:
-            return await method(chat_id, **kwargs)
-        else:
-            # пробуем вызвать с chat_id
-            try:
-                return await method(chat_id)
-            except TypeError:
-                # если не принимает chat_id, вызываем без аргументов
-                return await method()
-    except TypeError as e:
-        # пробуем без аргументов
-        try:
-            return await method()
-        except:
-            raise
-
 # ========== ПОКАЗ ИСТОРИИ СООБЩЕНИЙ ==========
 async def show_chat_history(client: Client, id: str | int):
-    chat_id = int(id)
+        chat_id = int(id)
 
-    try:
         messages = await client.fetch_history(chat_id, backward=LIM)
         if not messages: return
 
@@ -297,12 +265,20 @@ async def show_chat_history(client: Client, id: str | int):
 
             text = getattr(msg, 'text', '') or ''
             date = msg.time
+            for attachment in msg.attaches:
+                info = [k for k in attachment.__dict__]
+                try:
+                    base_url = attachment.__dict__[[k for k in info if 'url' in k][0]]
+                    media_id = attachment.__dict__[[k for k in info if  'id' in k][0]]
+                except:
+                    print(attachment.__dict__)
+                    continue
+                if f'{msg.id}|{media_id}' not in [f[:-5] for f in os.listdir('static/max')]:
+                    open(f'static/max/{msg.id}_{media_id}.file', 'wb').write(get(base_url).content)
             time_str = (datetime(1970, 1, 1)+timedelta(days=date/1000/3600/24)+timedelta(hours=3)).strftime('%Y.%m.%d %H:%M:%S')
 
             messes.append({"time": time_str, "sender": sender_name, "text": text})
         return messes
-    except Exception as e:
-        print(f"⚠️ Ошибка получения истории: {e}")
 
 # ========== ОБРАБОТЧИК ВХОДЯЩИХ СООБЩЕНИЙ ==========
 @client.on_message()
