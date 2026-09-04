@@ -34,9 +34,12 @@
                 const text = document.createElement("div");
                 text.className = "text";
                 text.innerHTML = mess["text"].replaceAll("\n", "<br>");
+                const image = document.createElement("img");
+                image.src = `/static/max/${mess["file"]}`;
                 message.appendChild(time);
                 message.appendChild(sender);
                 message.appendChild(text);
+                message.appendChild(image);
                 chat.appendChild(message);
                 chat.appendChild(document.createElement("hr"));
                 messages.push(mess);
