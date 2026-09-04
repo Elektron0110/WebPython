@@ -40,13 +40,32 @@
                 const text = document.createElement("div");
                 text.className = "text";
                 text.innerHTML = mess["text"].replaceAll("\n", "<br>");
-                const image = document.createElement("img");
-                image.src = `/static/max/${mess["file"]}.file`;
-                image.className = "file";
                 message.appendChild(time);
                 message.appendChild(sender);
                 message.appendChild(text);
-                if (mess["file"]) {message.appendChild(image)}
+                if (mess["file"]) {
+                    const fileUrl = `/static/max/${mess["file"]}.file`;
+                    const fileName = mess["file"].toLowerCase();
+                    let fileElement;
+                    if (fileName.match(/\.(jpg|jpeg|png|gif|bmp|webp|svg)$/)) {
+                        fileElement = document.createElement("img");
+                        fileElement.src = fileUrl;
+                        fileElement.className = "file";
+                    } else if (fileName.match(/\.(mp3|wav|ogg|flac|m4a)$/)) {
+                        fileElement = document.createElement("audio");
+                        fileElement.src = fileUrl;
+                        fileElement.className = "file";
+                        fileElement.controls = true;
+                    } else if (fileName.match(/\.(mp4|webm|ogg|avi|mov|wmv)$/)) {
+                        fileElement = document.createElement("video");
+                        fileElement.src = fileUrl;
+                        fileElement.className = "file";
+                        fileElement.controls = true;
+                    }
+                    if (fileElement) {
+                        message.appendChild(fileElement);
+                    }
+                }
                 chat.appendChild(message);
                 chat.appendChild(document.createElement("hr"));
                 messages.push(mess);

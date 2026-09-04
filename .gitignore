@@ -1,17 +1,1 @@
-/Site/__pycache__/
-/Site/Site
-/Site/build
-/Site/instance/
-Site/data
-Site/graph
-visual.*
-Site/sun
-Site/static/qr.png
-*.json
-*.log
-Site/static/not_blocked_ips
-Site/static/blocked_ips
-Site/rss.xml
-Users/
-*.txt
-*.helpfile
+Nothing needs to be added to .gitignore since only a template file (.html) was modified and no build artifacts, dependencies, or temporary files were detected in the changes.
