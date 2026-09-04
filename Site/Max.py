@@ -297,7 +297,7 @@ async def show_chat_history(client: Client, id: str | int):
 
             text = getattr(msg, 'text', '') or ''
             date = msg.time
-            time_str = (datetime(1970, 1, 1)+timedelta(days=date/1000/3600/24)).strftime('%Y.%m.%d %H:%M:%S')
+            time_str = (datetime(1970, 1, 1)+timedelta(days=date/1000/3600/24)+timedelta(hours=3)).strftime('%Y.%m.%d %H:%M:%S')
 
             messes.append({"time": time_str, "sender": sender_name, "text": text})
         return messes
