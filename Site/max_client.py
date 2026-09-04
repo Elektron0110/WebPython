@@ -1,4 +1,4 @@
-from flask import Blueprint as Flask, render_template, session
+from flask import Blueprint as Flask, render_template, session, jsonify
 import json
 
 TRANPORT_FILE = "max.helpfile"
@@ -13,10 +13,7 @@ def max():
         prompt = session.get('user')
     else:
         prompt = 'Вход/Регистрация'
-    max_data: dict[int, list[dict[str, str]]] = json.load(open('max_messages.json', encoding='utf-8'))
-    default_chat = max_data[DEFAULT]
-    return render_template("max.html", ms=json.dumps(default_chat, ensure_ascii=False), name="Alexis",
-                           prompt=prompt, session=session)
+    return render_template("max.html", name="Alexis", prompt=prompt, session=session)
 
 
 @app.route('/max/all')
@@ -34,7 +31,12 @@ def maxx(x):
         prompt = 'Вход/Регистрация'
     open(TRANPORT_FILE,'w').write(x)
     while open(TRANPORT_FILE).read() != 'DONE': pass
+    return render_template("max.html", name="Alexis", prompt=prompt, session=session)
+
+
+@app.route('/max/data/<id>')
+def data(id):
+    id = int(id)
+    if not id: id = DEFAULT
     max_data: dict[int, list[dict[str, str]]] = json.load(open('max_messages.json', encoding='utf-8'))
-    chat = max_data[x]
-    return render_template("max.html", ms=json.dumps(chat, ensure_ascii=False), name="Alexis",
-                           prompt=prompt, session=session)
+    return jsonify(max_data[id])

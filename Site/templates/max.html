@@ -4,34 +4,44 @@
 <div class="chat">
 </div>
 <script>
-    //var messages = [];
+    var messages = [];
+    try {
+        build();
+    } catch (e) {
+        alert(e);
+    }
+    setInterval(build, 20000);
 
-    //function build() {
-        //const res = fetch('/max/weather');
-        //var messes = res.json();
-        const messes = {{ms}}
-        const chat = document.getElementsByClassName("chat")[0];
+    async function build() {
+        const URI = document.baseURI.split("/");
+        const res = await fetch(`/max/data${(URI[URI.length-1] == "max") ? "/0" : "/"+URI[URI.length-1]}`);
+        const messes = await res.json();
+        //const messes = {{ms | safe}}
+        const chat_el = document.getElementsByClassName("chat")[0];
+        const chat = document.createElement("div");
+        chat.className = "chat"
         for (let i = 0; i < messes.length; i++) {
             const mess = messes[i];
-            //if (!(mess in messages)) {
+            if (!(mess in messages)) {
                 const message = document.createElement("div");
                 message.className = "message";
-                const name = document.createElement("div");
-                name.className = "name";
-                name.textContent = mess["name"];
+                const sender = document.createElement("div");
+                sender.className = "sender";
+                sender.textContent = mess["sender"];
                 const time = document.createElement("div");
                 time.className = "time";
                 time.textContent = mess["time"];
                 const text = document.createElement("div");
                 text.className = "text";
-                text.innerHTML(mess["text"].replace("\n", "<br>"));
+                text.innerHTML = mess["text"].replaceAll("\n", "<br>");
                 message.appendChild(time);
-                message.appendChild(name);
+                message.appendChild(sender);
                 message.appendChild(text);
                 chat.appendChild(message);
-                //messages.appendChild(mess);
+                messages.appendChild(mess);
             }
-        //}
-    //}
+        }
+        chat_el.innerHTML = chat.outerHTML;
+    }
 </script>
 {% endblock body %}
