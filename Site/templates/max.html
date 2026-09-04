@@ -22,7 +22,7 @@
         chat.className = "chat"
         for (let i = 0; i < messes.length; i++) {
             const mess = messes[i];
-            if (!(mess in messages)) {
+            if (!(mess in messages) && mess["text"]) {
                 const message = document.createElement("div");
                 message.className = "message";
                 const sender = document.createElement("div");
