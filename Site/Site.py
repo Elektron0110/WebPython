@@ -579,7 +579,7 @@ def after_request(response: Response):
         llogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {ip}  "{
             request.method} {request.full_path}"  {response.status[:3]}  {request.cookies.get('Name')}'
         )
-    elif request.path.startswith('/max'):
+    elif request.path.startswith(('/max', '/static/max')):
         mlogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {ip}  "{
             request.method} {request.full_path}"  {response.status[:3]}  {request.cookies.get('Name')}',
             slice=' | ', fw=f'{fsm}MB {fsk}KB {fsb}B')
