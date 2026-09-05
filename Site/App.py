@@ -3,6 +3,7 @@ import new_broker
 import max_client
 import urllib.parse
 from my_lib import Log
+from decorators import *
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, Response, session
@@ -19,6 +20,7 @@ app.config['SQLALCHEMY_BINDS'] = {
     'AM':    'sqlite:///AlexMess.db'
 }
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config["admins"] = ['s762672@ya.ru', 'test@test']
 app.secret_key = open('secret.helpfile', 'r').read()
 app.register_blueprint(new_broker.app)
 app.register_blueprint(max_client.app)
@@ -27,7 +29,6 @@ app.register_blueprint(max_client.app)
 slicer = r'\|/'
 name = 'Alexis'
 white = False
-admins = ['s762672@ya.ru', 'test@test']
 
 logging = Log('Alexis.log')
 llogging = Log('Load.log')

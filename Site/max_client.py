@@ -1,4 +1,5 @@
 from flask import Blueprint as Flask, render_template, session, jsonify
+from decorators import *
 import json
 
 TRANPORT_FILE = "max.helpfile"
@@ -17,6 +18,7 @@ def max():
 
 
 @app.route('/max/all')
+@check_auth(True)
 def maxall():
     chats: list[dict[str, str]] = json.load(open('max_chats.json', encoding='utf-8'))
     fstring = f'<a href="/max/{chats[0]["id"]}">{chats[0]["type"]} | {chats[0]["name"]}</a>\n<br>\n'
@@ -35,6 +37,7 @@ def maxx(x):
 
 
 @app.route('/max/data/<id>')
+@check_auth(True)
 def data(id):
     id = int(id)
     if not id: id = DEFAULT

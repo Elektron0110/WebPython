@@ -30,23 +30,6 @@ if not os.path.isfile('last.json'):               open('last.json', 'w').write('
 # def to():
 # 	return 'Сайт на тех.обслуживании.'
 
-def check_auth(admin=False, link='/lk'):
-    def my_decorator(func):
-        @wraps(func)
-        def my_wrapper(*args, **kwargs):
-            if 'user' in session:
-                if admin:
-                    if session['email'] in admins:
-                        return func(*args, **kwargs)
-                    else:
-                        return abort(403, 'This page only for administrators.')
-                else:
-                    return func(*args, **kwargs)
-            else:
-                return redirect(link)
-        return my_wrapper
-    return my_decorator
-
 
 @app.route('/')
 def main():
@@ -63,7 +46,7 @@ def main():
 def login():
     if request.method == 'GET':
         if 'user' in session:
-            if session['email'] in admins:
+            if session['email'] in app.config["admins"]:
                 return render_template('LK.html', name=name, session=session, add={
                                        '/adm/see': 'Административная панель'})
             return render_template('LK.html', name=name, session=session)
@@ -622,7 +605,7 @@ def let(letter: str):
         return render_template(
             'lets.html', name=names[name], let=let, prompt=prompt)
     except BaseException:
-        if session.get('email') in admins:
+        if session.get('email') in app.config["admins"]:
             prompt = session.get('user')
             let = [p.split('&') for p in open(
                 'lets/' + letter, encoding='utf-8').read().replace('\n', '').split('%')]
@@ -715,7 +698,7 @@ def sovt():
     if not meetings[-1]:
         meetings = meetings[:-1]
     if 'user' in session:
-        if session['email'] in sovrers + admins + ['sovr@sovr']:
+        if session['email'] in sovrers + app.config["admins"] + ['sovr@sovr']:
             nsovrers = []
             with app.app_context():
                 for sovrer in sovrers:
