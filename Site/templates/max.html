@@ -23,12 +23,10 @@
         const messes = await res.json();
         messes.reverse();
         //const messes = {{ms | safe}}
-        const chat_el = document.getElementsByClassName("chat")[0];
-        const chat = document.createElement("div");
-        chat.className = "chat"
+        const chat = document.getElementsByClassName("chat")[0];
         for (let i = 0; i < messes.length; i++) {
             const mess = messes[i];
-            if (!(mess in messages) && (mess["text"] || (mess["file"] && mess["type"]))) {
+            if (!messages.some(m => JSON.stringify(m) === JSON.stringify(mess)) && (mess["text"] || mess["file"])) {
                 const message = document.createElement("div");
                 message.className = "message";
                 const sender = document.createElement("div");
@@ -53,7 +51,6 @@
                 messages.push(mess);
             }
         }
-        chat_el.innerHTML = chat.innerHTML;
     }
 </script>
 {% endblock body %}
