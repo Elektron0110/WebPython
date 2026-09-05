@@ -1,5 +1,5 @@
 
-from flask import abort, session, redirect, wraps, current_app
+from flask import abort, session, redirect, current_app
 from functools import wraps
 
 
