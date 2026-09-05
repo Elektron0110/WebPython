@@ -27,7 +27,7 @@ def maxall():
 
 @app.route('/max/<x>')
 def maxx(x):
-    if not x[1:].isdigit(): return abort(400)
+    if not (x+'0')[1:].isdigit(): return abort(400)
     if 'user' in session:
         prompt = session.get('user')
     else:
@@ -40,7 +40,7 @@ def maxx(x):
 @app.route('/max/data/<id>')
 @check_auth(True)
 def data(id: str):
-    if not id[1:].isdigit(): return abort(400)
+    if not (id+'0')[1:].isdigit(): return abort(400)
     if not int(id): id = DEFAULT
     max_data: dict[str, list[dict[str, str]]] = json.load(open('max_messages.json', encoding='utf-8'))
     return jsonify(max_data[id])
