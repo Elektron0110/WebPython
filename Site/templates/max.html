@@ -24,7 +24,7 @@
         //const messes = {{ms | safe}}
         const chat = document.getElementsByClassName("chat")[0];
         for (let i = 0; i < messes.length; i++) {
-            const last = chat.firstChild();
+            const last = chat.firstChild;
             const mess = messes[i];
             if (!messages.some(m => JSON.stringify(m) === JSON.stringify(mess)) && (mess["text"] || mess["file"])) {
                 const message = document.createElement("div");
