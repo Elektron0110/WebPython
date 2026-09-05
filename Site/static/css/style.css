@@ -30,7 +30,7 @@ body {
 }
 .name {
 	font-family: AlexisOne;
-	font-size: xxx-large;
+	font-size: clamp(1rem, 5vw, 3rem);
 	font-style: italic;
 	font-weight: bold;
 	height: 100px;

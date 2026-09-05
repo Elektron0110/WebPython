@@ -6,7 +6,7 @@
 <style>
     img.file {
         height: auto;
-        max-width: stretch;
+        width: 100vw;
     }
     div.text {
         overflow-wrap: anywhere;
@@ -30,7 +30,7 @@
         for (let i = 0; i < messes.length; i++) {
             const last = chat.firstChild;
             const mess = messes[i];
-            if (!messages.some(m => JSON.stringify(m) === JSON.stringify(mess)) && (mess["text"] || mess["file"])) {
+            if (!messages.some(m => JSON.stringify(m) === JSON.stringify(mess)) && (mess["text"] || mess["files"].length > 0)) {
                 const message = document.createElement("div");
                 message.className = "message";
                 const sender = document.createElement("div");
@@ -42,14 +42,21 @@
                 const text = document.createElement("div");
                 text.className = "text";
                 text.innerHTML = mess["text"].replaceAll("\n", "<br>");
-                const file = document.createElement(mess["type"]);
-                file.src = `/static/max/${mess["file"]}.file`;
-                file.className = "file";
-                file.setAttribute("controls", "");
+                const files = document.createElement("div")
+                files.className = "files";
+                for (let j = 0; j < mess["files"].length; j++) {
+                    const file_object = mess["files"][j];
+                    const file = document.createElement(file_object["type"]);
+                    file.src = `/static/max/${file_object["file"]}.file`;
+                    file.className = "file";
+                    file.setAttribute("controls", "");
+                    files.appendChild(file);
+                    //if (j%2==1) {files.appendChild(document.createElement("br"))};
+                }
                 message.appendChild(time);
                 message.appendChild(sender);
                 message.appendChild(text);
-                if (mess["file"]) {message.appendChild(file)}
+                if (mess["files"].length > 0) {message.appendChild(files)}
                 chat.insertBefore(message, last);
                 chat.insertBefore(document.createElement("hr"), last);
                 messages.push(mess);
