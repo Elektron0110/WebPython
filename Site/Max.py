@@ -187,12 +187,12 @@ async def interactive_menu(client: Client) -> None:
         h: list[dict[str, str]] = await show_chat_history(client, DEFAULT)
         if h:
             MESSAGES[DEFAULT] = h
-            json.dump(MESSAGES, open(MAX_MESSAGES, 'w', encoding='utf-8'), ensure_ascii=False)
+            json.dump(MESSAGES.copy(), open(MAX_MESSAGES, 'w', encoding='utf-8'), ensure_ascii=False)
         if 'DONE' != open(TRANPORT_FILE).read():
             h: list[dict[str, str]] = await show_chat_history(client, open(TRANPORT_FILE).read())
             if h:
                 MESSAGES[int(open(TRANPORT_FILE).read())] = h
-                json.dump(MESSAGES, open(MAX_MESSAGES, 'w', encoding='utf-8'), ensure_ascii=False)
+                json.dump(MESSAGES.copy(), open(MAX_MESSAGES, 'w', encoding='utf-8'), ensure_ascii=False)
                 open(TRANPORT_FILE,'w').write('DONE')
         if i == 300:
             c: list[dict[str, str]] = await show_dialogs(client)

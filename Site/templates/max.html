@@ -43,6 +43,7 @@
                 const file = document.createElement(mess["type"]);
                 file.src = `/static/max/${mess["file"]}.file`;
                 file.className = "file";
+                file.setAttribute("controls", "");
                 message.appendChild(time);
                 message.appendChild(sender);
                 message.appendChild(text);
