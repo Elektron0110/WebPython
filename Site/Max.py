@@ -16,7 +16,7 @@ MESSAGES_FILE = "messages.json"
 TRANPORT_FILE = "max.helpfile"
 MAX_MESSAGES  = 'max_messages.json'
 DEFAULT = open('default.helpfile').readlines()[0][:-1]
-MESSAGES: dict[int, list[dict[str, str]]] = json.load(open(MAX_MESSAGES, encoding='utf-8'))
+MESSAGES: dict[str, list[dict[str, str]]] = json.load(open(MAX_MESSAGES, encoding='utf-8'))
 LIM = 75
 
 # ========== ИНИЦИАЛИЗАЦИЯ КЛИЕНТА ==========
@@ -187,12 +187,12 @@ async def interactive_menu(client: Client) -> None:
         h: list[dict[str, str]] = await show_chat_history(client, DEFAULT)
         if h:
             MESSAGES[DEFAULT] = h
-            json.dump(MESSAGES.copy(), open(MAX_MESSAGES, 'w', encoding='utf-8'), ensure_ascii=False)
+            json.dump(MESSAGES, open(MAX_MESSAGES, 'w', encoding='utf-8'), ensure_ascii=False)
         if 'DONE' != open(TRANPORT_FILE).read():
             h: list[dict[str, str]] = await show_chat_history(client, open(TRANPORT_FILE).read())
             if h:
-                MESSAGES[int(open(TRANPORT_FILE).read())] = h
-                json.dump(MESSAGES.copy(), open(MAX_MESSAGES, 'w', encoding='utf-8'), ensure_ascii=False)
+                MESSAGES[open(TRANPORT_FILE).read()] = h
+                json.dump(MESSAGES, open(MAX_MESSAGES, 'w', encoding='utf-8'), ensure_ascii=False)
                 open(TRANPORT_FILE,'w').write('DONE')
         if i == 300:
             c: list[dict[str, str]] = await show_dialogs(client)
