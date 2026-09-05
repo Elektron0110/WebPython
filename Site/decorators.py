@@ -1,5 +1,6 @@
 
 from flask import abort, session, redirect, wraps, current_app
+from functools import wraps
 
 
 def check_auth(admin=False, link='/lk'):
