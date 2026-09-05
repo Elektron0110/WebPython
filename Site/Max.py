@@ -262,6 +262,7 @@ async def show_chat_history(client: Client, id: str | int):
             text = getattr(msg, 'text', '') or ''
             date = msg.time
             file = None
+            type = None
             for attachment in msg.attaches:
                 info = [k for k in attachment.__dict__]
                 try:
@@ -271,11 +272,15 @@ async def show_chat_history(client: Client, id: str | int):
                     # print(attachment.__dict__)
                     continue
                 file = f'{msg.id}_{media_id}'
+                type = str(attachment.type).lower()
+                type = type[type.find('.')+1:]
+                type = 'img' if type[type.find('.')+1:] in ('photo', 'sticker') else type
+                # print(type)
                 if file not in [f[:-5] for f in os.listdir('static/max')]:
                     open(f'static/max/{file}.file', 'wb').write(get(base_url).content)
             time_str = (datetime(1970, 1, 1)+timedelta(days=date/1000/3600/24)+timedelta(hours=3)).strftime('%Y.%m.%d %H:%M:%S')
 
-            messes.append({"time": time_str, "sender": sender_name, "text": text, "file": file})
+            messes.append({"time": time_str, "sender": sender_name, "text": text, "file": file, "type": type})
         return messes
 
 # ========== ОБРАБОТЧИК ВХОДЯЩИХ СООБЩЕНИЙ ==========

@@ -15,7 +15,7 @@
     } catch (e) {
         alert(e);
     }
-    setInterval(build, 20000);
+    setInterval(build, 60000);
 
     async function build() {
         const URI = document.baseURI.split("/");
@@ -28,7 +28,7 @@
         chat.className = "chat"
         for (let i = 0; i < messes.length; i++) {
             const mess = messes[i];
-            if (!(mess in messages) && (mess["text"] || mess["file"])) {
+            if (!(mess in messages) && (mess["text"] || (mess["file"] && mess["type"]))) {
                 const message = document.createElement("div");
                 message.className = "message";
                 const sender = document.createElement("div");
@@ -40,19 +40,19 @@
                 const text = document.createElement("div");
                 text.className = "text";
                 text.innerHTML = mess["text"].replaceAll("\n", "<br>");
-                const image = document.createElement("img");
-                image.src = `/static/max/${mess["file"]}.file`;
-                image.className = "file";
+                const file = document.createElement(mess["type"]);
+                file.src = `/static/max/${mess["file"]}.file`;
+                file.className = "file";
                 message.appendChild(time);
                 message.appendChild(sender);
                 message.appendChild(text);
-                if (mess["file"]) {message.appendChild(image)}
+                if (mess["file"]) {message.appendChild(file)}
                 chat.appendChild(message);
                 chat.appendChild(document.createElement("hr"));
                 messages.push(mess);
             }
         }
-        chat_el.innerHTML = chat.outerHTML;
+        chat_el.innerHTML = chat.innerHTML;
     }
 </script>
 {% endblock body %}
