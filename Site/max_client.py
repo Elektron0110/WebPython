@@ -38,9 +38,7 @@ def maxx(x):
 
 @app.route('/max/data/<id>')
 @check_auth(True)
-def data(id):
-    if not id: id = DEFAULT
-    open(TRANPORT_FILE,'w').write(str(id))
-    while open(TRANPORT_FILE).read() != 'DONE': pass
+def data(id: str):
+    if not int(id): id = DEFAULT
     max_data: dict[str, list[dict[str, str]]] = json.load(open('max_messages.json', encoding='utf-8'))
     return jsonify(max_data[id])
