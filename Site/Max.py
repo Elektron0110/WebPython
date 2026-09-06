@@ -266,7 +266,24 @@ async def show_chat_history(client: Client, id: str | int):
             date = msg.time
             files: list[dict[str, str]] = []
             type = None
-            for attachment in msg.attaches:
+            f_info = {"sender": '', "text": ''}
+            f_attaches = []
+            if hasattr(message, 'link') and message.link is not None:
+                from pymax.types.domain.message import ForwardLink
+                f_msg = message.link
+                f_attaches = msg.attaches
+                
+                if hasattr(f_msg, 'sender_id'):
+                    f_sender_id = msg.sender_id
+                elif hasattr(f_msg, 'sender'):
+                    if isinstance(f_msg.sender, int):
+                        f_sender_id = f_msg.sender
+                    elif hasattr(f_msg.sender, 'id'):
+                        f_sender_id = f_msg.sender.id
+
+                f_info['sender'] = f'<br>\t{await get_user_name_by_id(client, f_sender_id)}'
+                f_info['text'] = f'\n\t{getattr(f_msg, 'text', '') or ''}'
+            for attachment in msg.attaches + f_attaches:
                 file = None
                 ext = None
                 type = str(attachment.type).lower()
@@ -298,7 +315,8 @@ async def show_chat_history(client: Client, id: str | int):
                     open(f'static/max/{file}', 'wb').write(get(base_url).content)
             time_str = (datetime(1970, 1, 1)+timedelta(days=date/1000/3600/24)+timedelta(hours=3)).strftime('%Y.%m.%d %H:%M:%S')
 
-            messes.append({"time": time_str, "sender": sender_name, "text": text, "files": files})
+            messes.append({"time": time_str, "sender": sender_name+f_info['sender'],
+                           "text": text+f_info['text'], "files": files})
         return messes
 
 # ========== ОБРАБОТЧИК ВХОДЯЩИХ СООБЩЕНИЙ ==========

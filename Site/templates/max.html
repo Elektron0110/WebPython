@@ -35,7 +35,7 @@
                 message.className = "message";
                 const sender = document.createElement("div");
                 sender.className = "sender";
-                sender.textContent = mess["sender"];
+                sender.innerHTML = mess["sender"];
                 const time = document.createElement("div");
                 time.className = "time";
                 time.textContent = mess["time"];
