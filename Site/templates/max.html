@@ -47,7 +47,12 @@
                 for (let j = 0; j < mess["files"].length; j++) {
                     const file_object = mess["files"][j];
                     const file = document.createElement(file_object["type"]);
-                    file.src = `/static/max/${file_object["file"]}.file`;
+                    if (file_object["type"] == "a") {
+                        file.href = `/static/max/${file_object["file"]}`;
+                        file.innerHTML = file_object["file"];
+                    } else {
+                        file.src = `/static/max/${file_object["file"]}`;
+                    }
                     file.className = "file";
                     file.setAttribute("controls", "");
                     files.appendChild(file);

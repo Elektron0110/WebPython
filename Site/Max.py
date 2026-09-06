@@ -1,6 +1,7 @@
 import asyncio
 import json
 import inspect
+import logging
 import os
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -18,6 +19,8 @@ MAX_MESSAGES  = 'max_messages.json'
 DEFAULT = open('default.helpfile').readlines()[0][:-1]
 MESSAGES: dict[str, list[dict[str, str]]] = json.load(open(MAX_MESSAGES, encoding='utf-8'))
 LIM = 75
+
+logging.disable()
 
 # ========== ИНИЦИАЛИЗАЦИЯ КЛИЕНТА ==========
 client = Client(
@@ -264,21 +267,35 @@ async def show_chat_history(client: Client, id: str | int):
             files: list[dict[str, str]] = []
             type = None
             for attachment in msg.attaches:
+                file = None
+                ext = None
+                type = str(attachment.type).lower()
+                type = type[type.find('.')+1:]
+                type = 'img' if type[type.find('.')+1:] == 'photo' else type
                 info = [k for k in attachment.__dict__]
                 try:
                     base_url = attachment.__dict__[[k for k in info if 'url' in k][0]]
                     media_id = attachment.__dict__[[k for k in info if  'id' in k][0]]
                 except:
                     # print(attachment.__dict__)
-                    continue
-                file = f'{msg.id}_{media_id}'
-                type = str(attachment.type).lower()
-                type = type[type.find('.')+1:]
-                type = 'img' if type[type.find('.')+1:] in ('photo', 'sticker') else type
+                    if type == 'file':
+                        media_id = attachment.file_id
+                        base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
+                        file = attachment.name
+                        type = 'a'
+                        # ext = file[file.rfind('.')+1:]
+                        # file = file[:-len(ext)]
+                    elif type == 'video':
+                        media_id = attachment.video_id
+                        base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
+                    else:
+                        continue
+                ext = ('png' if type == 'img' else ('mp4' if type == 'video' else ('ogg' if type == 'audio' else 'file'))) if ext == None else ext
+                file = f'{msg.id}_{media_id}.{ext}' if not file else file
                 files.append({"file": file, "type": type})
                 # print(type)
-                if file not in [f[:-5] for f in os.listdir('static/max')]:
-                    open(f'static/max/{file}.file', 'wb').write(get(base_url).content)
+                if file not in [f for f in os.listdir('static/max')]:
+                    open(f'static/max/{file}', 'wb').write(get(base_url).content)
             time_str = (datetime(1970, 1, 1)+timedelta(days=date/1000/3600/24)+timedelta(hours=3)).strftime('%Y.%m.%d %H:%M:%S')
 
             messes.append({"time": time_str, "sender": sender_name, "text": text, "files": files})
