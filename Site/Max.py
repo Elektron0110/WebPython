@@ -340,18 +340,20 @@ async def show_chat_history(client: Client, id: str | int):
                     media_id = attachment.__dict__[[k for k in info if  'id' in k][0]]
                 except:
                     # print(attachment.__dict__)
-                    if type == 'file':
-                        media_id = attachment.file_id
-                        base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
-                        file = attachment.name
-                        type = 'a'
-                        # ext = file[file.rfind('.')+1:]
-                        # file = file[:-len(ext)]
-                    elif type == 'video':
-                        media_id = attachment.video_id
-                        base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
-                    else:
-                        continue
+                    try:
+                        if type == 'file':
+                            media_id = attachment.file_id
+                            base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
+                            file = attachment.name
+                            type = 'a'
+                            # ext = file[file.rfind('.')+1:]
+                            # file = file[:-len(ext)]
+                        elif type == 'video':
+                            media_id = attachment.video_id
+                            base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
+                        else:
+                            continue
+                    except: continue
                 ext = ('png' if type == 'img' else ('mp4' if type == 'video' else ('ogg' if type == 'audio' else 'file'))) if ext == None else ext
                 file = f'{msg.id}_{media_id}.{ext}' if not file else file
                 files.append({"file": file, "type": type})
@@ -377,7 +379,7 @@ async def show_chat_history(client: Client, id: str | int):
                 f_info['sender'] = f" (от {original_sender_name})"
                 # Сохраняем текст пересланного сообщения в f_info['text']
                 if original_text:
-                    f_info['text'] = f"↪️ Переслано из {forwarded_info['original_chat_name']}\n{original_text}\n"
+                    f_info['text'] = f"<i>↪️ Переслано из {forwarded_info['original_chat_name']}\n{original_text}</i>\n"
                 elif forwarded_info.get('original_chat_name'):
                     f_info['text'] = f"↪️ Переслано из {forwarded_info['original_chat_name']}\n"
 
