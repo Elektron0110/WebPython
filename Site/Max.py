@@ -379,12 +379,13 @@ async def show_chat_history(client: Client, id: str | int):
                 f_info['sender'] = f" (от {original_sender_name})"
                 # Сохраняем текст пересланного сообщения в f_info['text']
                 if original_text:
-                    f_info['text'] = f"<i>↪️ Переслано из {forwarded_info['original_chat_name']}\n{original_text}</i>\n"
+                    f_info['text'] = f"↪️ Переслано из {forwarded_info['original_chat_name']}\n{original_text}\n"
                 elif forwarded_info.get('original_chat_name'):
                     f_info['text'] = f"↪️ Переслано из {forwarded_info['original_chat_name']}\n"
 
             all_files = files + original_files if forwarded_info else files
-            messes.append({"time": time_str, "sender": sender_name + f_info["sender"], "text": f'<i>{f_info["text"]}</i>' + text, "files": all_files})
+            if f_info["text"]: f_info["text"]='<i>'+f_info["text"]+'</i>'
+            messes.append({"time": time_str, "sender": sender_name + f_info["sender"], "text": f_info["text"] + text, "files": all_files})
         return messes
 
 # ========== ОБРАБОТЧИК ВХОДЯЩИХ СООБЩЕНИЙ ==========

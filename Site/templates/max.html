@@ -4,12 +4,35 @@
 <div class="chat">
 </div>
 <style>
+    :root {
+        --radius: 10px;
+        --space: 5px;
+    }
+    .files {
+        justify-self: center;
+    }
+    .time, .sender {
+        font: caption;
+    }
+    .time {
+        font-family: 'AlexisOne';
+        font-size: 14px;
+    }
+    .sender {}
     .file {
         height: auto;
-        width: 100vw;
+        width: 90vw;
+        border-radius: var(--radius);
     }
     div.message {
+        margin: var(--space);
+        padding: var(--space);
+        border: double;
+        border-width: var(--space);
+        border-radius: var(--radius);
+        border-color: var(--nav-button-pressed-border);
         overflow-wrap: anywhere;
+        background-color: var(--nav-text);
     }
 </style>
 <script>
