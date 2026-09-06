@@ -183,24 +183,24 @@ async def interactive_menu(client: Client) -> None:
     
     c: list[dict[str, str]] = await show_dialogs(client)
     if c:
-        open(MAX_CHATS, 'w', encoding='utf-8').write(json.dumps(c, ensure_ascii=False).replace('{', '\n\t{'))
+        open(MAX_CHATS, 'w', encoding='utf-8').write(json.dumps(c, ensure_ascii=False, indent=4).replace('{', '\n\t{'))
     while True:
         await asyncio.sleep(10)
         i += 10
         h: list[dict[str, str]] = await show_chat_history(client, DEFAULT)
         if h:
             MESSAGES[DEFAULT] = h
-            json.dump(MESSAGES, open(MAX_MESSAGES, 'w', encoding='utf-8'), ensure_ascii=False)
+            json.dump(MESSAGES, open(MAX_MESSAGES, 'w', encoding='utf-8'), ensure_ascii=False, indent=4)
         if 'DONE' != open(TRANPORT_FILE).read():
             h: list[dict[str, str]] = await show_chat_history(client, open(TRANPORT_FILE).read())
             if h:
                 MESSAGES[open(TRANPORT_FILE).read()] = h
-                json.dump(MESSAGES, open(MAX_MESSAGES, 'w', encoding='utf-8'), ensure_ascii=False)
+                json.dump(MESSAGES, open(MAX_MESSAGES, 'w', encoding='utf-8'), ensure_ascii=False, indent=4)
                 open(TRANPORT_FILE,'w').write('DONE')
         if i == 300:
             c: list[dict[str, str]] = await show_dialogs(client)
             if c:
-                open(MAX_CHATS, 'w', encoding='utf-8').write(json.dumps(c, ensure_ascii=False).replace('{', '\n\t{'))
+                open(MAX_CHATS, 'w', encoding='utf-8').write(json.dumps(c, ensure_ascii=False, indent=4).replace('{', '\n\t{'))
             i = 0
 
 # ========== ПОКАЗ СПИСКА ЧАТОВ ==========
