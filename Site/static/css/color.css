@@ -1,20 +1,19 @@
 :root {
-	--bg: gray;
-    --nav: rgb(140, 140, 140);
-    --nav-text: rgb(195, 195, 195);
-    --nav-button-pressed: rgb(215, 215, 215);
-    --nav-button-pressed-text: rgb(120, 120, 120);
-    --nav-button-pressed-border: rgb(240, 240, 240);
-	--menu: rgb(100, 190, 100);
+	--bg: #ff5c00cf;
+	--nav: rgb(255 27 27);
+	--nav-text: rgb(0 255 187 / 90%);
+	--nav-button-pressed: rgb(0 156 255);
+	--nav-button-pressed-text: rgb(160 228 52);
+	--nav-button-pressed-border: rgb(255 140 0);
+	--menu: rgb(190 153 100);
 }
 
 [page="form"] {
-	--bg: lightsteelblue;
-	--nav: rgb(140, 140, 255);
-    --nav-text: rgb(240, 240, 240);
-	
-    --nav-button-pressed: rgb(215, 215, 215);
-    --nav-button-pressed-text: rgb(240, 240, 240);
-    --nav-button-pressed-border: rgb(240, 240, 240);
-	--menu: rgb(100, 190, 100);
+	--bg: #d44b0abd;
+	--nav: rgb(255 158 126);
+	--nav-text: rgb(126 126 126);
+	--nav-button-pressed: rgb(255 111 111);
+	--nav-button-pressed-text: rgb(153 0 0);
+	--nav-button-pressed-border: rgb(201 0 0);
+	--menu: rgb(255 140 0 / 71%);
 }
