@@ -1,6 +1,12 @@
 {% extends "Bases/MainBase.html" %}
 {% block title %}РассАнДа{% endblock title %}
 {% block body %}
+	<style>
+		button.person {
+			height: 50px;
+			width: 50px;
+		}
+	</style>
 	<div style="
 				display: flex;
 				justify-content: center;
@@ -16,17 +22,17 @@
 				<th>1</th>
 				<td>
 					<center>
-						<button style="height: 35;">ЛаН</button> | <button style="height: 35;">ИнР</button>
+						<button class="person">ЛаН</button> | <button class="person">ИнР</button>
 					</center>
 				</td>
 				<td>
 					<center>
-						<button style="height: 35;">АнД</button> | <button style="height: 35;">КлВ</button>
+						<button class="person">АнД</button> | <button class="person">КлВ</button>
 					</center>
 				</td>
 				<td>
 					<center>
-						<button style="height: 35;">ГаР</button> | <button style="height: 35;">ИсМ</button>
+						<button class="person">ГаР</button> | <button class="person">ИсМ</button>
 					</center>
 				</td>
 			</tr>
@@ -34,17 +40,17 @@
 				<th>2</th>
 				<td>
 					<center>
-						<button style="height: 35;">ПлС</button> | <button style="height: 35;">КиЕ</button>
+						<button class="person">ПлС</button> | <button class="person">КиЕ</button>
 					</center>
 				</td>
 				<td>
 					<center>
-						<button style="height: 35;">ХоД</button> | <button style="height: 35;">СтА</button>
+						<button class="person">ХоД</button> | <button class="person">СтА</button>
 					</center>
 				</td>
 				<td>
 					<center>
-						<button style="height: 35;">РаМ</button> | <button style="height: 35;">ПлМ</button>
+						<button class="person">РаМ</button> | <button class="person">ПлМ</button>
 					</center>
 				</td>
 			</tr>
@@ -52,17 +58,17 @@
 				<th>3</th>
 				<td>
 					<center>
-						<button style="height: 35;">ЗаВ</button> | <button style="height: 35;">ЧеД</button>
+						<button class="person">ЗаВ</button> | <button class="person">ЧеД</button>
 					</center>
 				</td>
 				<td>
 					<center>
-						<button style="height: 35;">РаЮ</button> | <button style="height: 35;">ХаТ</button>
+						<button class="person">РаЮ</button> | <button class="person">ХаТ</button>
 					</center>
 				</td>
 				<td>
 					<center>
-						<button style="height: 35;">ШуГ</button> | <button style="height: 35;">КрИ</button>
+						<button class="person">ШуГ</button> | <button class="person">КрИ</button>
 					</center>
 				</td>
 			</tr>
@@ -70,17 +76,17 @@
 				<th>4</th>
 				<td>
 					<center>
-						<button style="height: 35;">❌</button> | <button style="height: 35;">ДуИ</button>
+						<button class="person">❌</button> | <button class="person">ДуИ</button>
 					</center>
 				</td>
 				<td>
 					<center>
-						<button style="height: 35;">ШуА</button> | <button style="height: 35;">❌</button>
+						<button class="person">ШуА</button> | <button class="person">❌</button>
 					</center>
 				</td>
 				<td>
 					<center>
-						<button style="height: 35;">БуВ</button> | <button style="height: 35;">СаМ</button>
+						<button class="person">БуВ</button> | <button class="person">СаМ</button>
 					</center>
 				</td>
 			</tr>
@@ -88,21 +94,26 @@
 				<th>5</th>
 				<td>
 					<center>
-						<button style="height: 35;">❌</button> | <button style="height: 35;">БлА</button>
+						<button class="person">❌</button> | <button class="person">БлА</button>
 					</center>
 				</td>
 				<td>
 					<center>
-						<button style="height: 35;">ОвК</button> | <button style="height: 35;">ВыН</button>
+						<button class="person">ОвК</button> | <button class="person">ВыН</button>
 					</center>
 				</td>
 				<td>
 					<center>
-						<button style="height: 35;">ХаК</button> | <button style="height: 35;">МаМ</button>
+						<button class="person">ХаК</button> | <button class="person">МаМ</button>
 					</center>
 				</td>
 			</tr>
 		</table>
+	</div>
+	<div style="display: flex; justify-content: space-evenly;">
+		<button class="person">БуА</button>
+		<button class="person">БеВ</button>
+		<button class="person">НаЕ</button>
 	</div>
 	<script>
 		var lst = [];
@@ -121,15 +132,15 @@
 		};
 		var weights = {
 			"ЛаН": 1, "ИнР": 1, "АнД": 1, "КлВ": 3, "ГаР": 3.2, "ИсМ": 1, "ПлС": 1, "КиЕ": 1, "ХоД": 0.7,
-			"СтА": 1.1, "РаМ": 3, "ПлМ": 1, "ЗаВ": 1, "ЧеД": 2.1, "РаЮ": 1, "ХаТ": 1, "ШуГ": 1, "КрИ": 1,
+			"СтА": 1.1, "РаМ": 3.2, "ПлМ": 1, "ЗаВ": 1, "ЧеД": 2.1, "РаЮ": 1, "ХаТ": 1, "ШуГ": 1, "КрИ": 1,
 			"ДуИ": 1, "ШуА": "❌", "БуВ": 1, "СаМ": 0.9, "БлА": 1, "ВыН": 1.1, "ХаК": 1, "МаМ": 1, "ОвК": 0.9,
-			"БуА": 1, "БеВ": 1, "НаЕ": 1, "❌": "❌"
+			"БуА": 2, "БеВ": 1, "НаЕ": 1, "❌": "❌"
 		};
 		var note = {
-			"ЛаН": null, "ИнР": null, "АнД": null, "КлВ": "C",  "ГаР": "C",  "ИсМ": null, "ПлС": null, "КиЕ": null, "ХоД": null,
+			"ЛаН": null, "ИнР": null, "АнД": null, "КлВ": "C Д",  "ГаР": "C",  "ИсМ": null, "ПлС": null, "КиЕ": null, "ХоД": null,
 			"СтА": null, "РаМ": "C",  "ПлМ": null, "ЗаВ": null, "ЧеД": null, "РаЮ": null, "ХаТ": null, "ШуГ": null, "КрИ": null,
 			"ДуИ": null, "ШуА": null, "БуВ": null, "СаМ": null, "БлА": null, "ВыН": null, "ХаК": null, "МаМ": null, "ОвК": null,
-			"БуА": null, "БеВ": null, "НаЕ": null, "❌":  null
+			"БуА": "Д", "БеВ": null, "НаЕ": null, "❌":  null
 		};
 		for (let i = 1; i < document.getElementsByTagName('button').length; i++) {
 			document.getElementsByTagName('button')[i].addEventListener('click', () => {
