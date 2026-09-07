@@ -12,7 +12,7 @@ from wsgidav.wsgidav_app import WsgiDAVApp
 
 app = Flask(__name__)
 app.config["EXPLAIN_TEMPLATE_LOADING"] = True
-app.config['SESSION_COOKIE_SECURE'] = True
+# app.config['SESSION_COOKIE_SECURE'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Site.db'
 app.config['SQLALCHEMY_BINDS'] = {
