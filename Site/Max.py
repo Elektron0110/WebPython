@@ -1,10 +1,8 @@
 import asyncio
 import json
-import inspect
 import logging
 import os
 from datetime import datetime, timedelta
-from pathlib import Path
 from requests import get
 from pymax import Client, Message
 
@@ -13,7 +11,6 @@ PHONE = "+79990000000"          # Ваш номер в формате +7XXXXXXXX
 WORK_DIR = "instance"
 SESSION_NAME = "Max.db"
 MAX_CHATS = 'max_chats.json'
-MESSAGES_FILE = "messages.json"
 TRANPORT_FILE = "max.helpfile"
 MAX_MESSAGES  = 'max_messages.json'
 DEFAULT = open('default.helpfile').readlines()[0][:-1]
@@ -28,22 +25,6 @@ client = Client(
     work_dir=WORK_DIR,
     session_name=SESSION_NAME,
 )
-
-# ========== РАБОТА С JSON (сохранение входящих) ==========
-def load_messages() -> list:
-    file_path = Path(WORK_DIR) / MESSAGES_FILE
-    if file_path.exists():
-        with open(file_path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
-
-def save_messages(messages: list) -> None:
-    file_path = Path(WORK_DIR) / MESSAGES_FILE
-    file_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(file_path, "w", encoding="utf-8") as f:
-        json.dump(messages, f, ensure_ascii=False, indent=2)
-
-saved_messages = load_messages()
 
 # ========== КЕШ ИМЁН ==========
 _name_cache = {}
@@ -173,7 +154,6 @@ async def on_start(client: Client) -> None:
         print(f"👤 Ваш ID: {client.me.contact.id}")
         print(f"📱 Ваш номер: {client.me.contact.phone}")
     print(f"📁 Сессия сохранена в: {WORK_DIR}/{SESSION_NAME}")
-    print(f"📄 Входящие сообщения сохраняются в: {WORK_DIR}/{MESSAGES_FILE}")
     asyncio.create_task(interactive_menu(client))
 
 # ========== ИНТЕРАКТИВНОЕ МЕНЮ ==========
@@ -276,58 +256,45 @@ async def show_chat_history(client: Client, id: str | int):
             forwarded_info = None
             original_text = None
             original_files = []
-            if hasattr(msg, 'link') and msg.link is not None:
-                from pymax.types.domain.message import ForwardLink
-                if isinstance(msg.link, ForwardLink):
-                    original_message = msg.link.message
-                    forwarded_info = {
-                        "original_chat_id": msg.link.chat_id,
-                        "original_chat_name": msg.link.chat_name,
-                        "original_message_id": original_message.id if hasattr(original_message, 'id') else None,
-                    }
-                    # Получаем текст из пересланного сообщения
-                    if hasattr(original_message, 'text'):
-                        original_text = getattr(original_message, 'text', '') or ''
+            if hasattr(msg, 'link'):
+                original_message = msg.link.message
+                forwarded_info = {
+                    "original_chat_id": msg.link.chat_id,
+                    "original_chat_name": msg.link.chat_name,
+                    "original_message_id": original_message.id if hasattr(original_message, 'id') else None,
+                }
+                # Получаем текст из пересланного сообщения
+                original_text = getattr(original_message, 'text', '') or ''
 
-                    # Добавляем информацию о пересылке к тексту
-                    if forwarded_info.get('original_chat_name'):
-                        if original_text:
-                            text = f"↪️ Переслано из {forwarded_info['original_chat_name']}\n{original_text}"
+                for attachment in original_message.attaches:
+                    file = None
+                    ext = None
+                    type = str(attachment.type).lower()
+                    type = type[type.find('.')+1:]
+                    type = 'img' if type[type.find('.')+1:] == 'photo' else type
+                    info = [k for k in attachment.__dict__]
+                    try:
+                        base_url = attachment.__dict__[[k for k in info if 'url' in k][0]]
+                        media_id = attachment.__dict__[[k for k in info if  'id' in k][0]]
+                    except:
+                        if type == 'file':
+                            media_id = attachment.file_id
+                            base_url = (await client.get_file_by_id(msg.link.chat_id, original_message.id, media_id)).url
+                            file = attachment.name
+                            type = 'a'
+                        elif type == 'video':
+                            media_id = attachment.video_id
+                            base_url = (await client.get_video_by_id(msg.link.chat_id, original_message.id, media_id)).url
                         else:
-                            text = f"↪️ Переслано из {forwarded_info['original_chat_name']}"
-
-                    # Обрабатываем файлы из пересланного сообщения
-                    if hasattr(original_message, 'attaches') and original_message.attaches:
-                        for attachment in original_message.attaches:
-                            file = None
-                            ext = None
-                            type = str(attachment.type).lower()
-                            type = type[type.find('.')+1:]
-                            type = 'img' if type[type.find('.')+1:] == 'photo' else type
-                            info = [k for k in attachment.__dict__]
-                            try:
-                                base_url = attachment.__dict__[[k for k in info if 'url' in k][0]]
-                                media_id = attachment.__dict__[[k for k in info if  'id' in k][0]]
-                            except:
-                                if type == 'file':
-                                    media_id = attachment.file_id
-                                    base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
-                                    file = attachment.name
-                                    type = 'a'
-                                elif type == 'video':
-                                    media_id = attachment.video_id
-                                    base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
-                                else:
-                                    continue
-                            ext = ('png' if type == 'img' else ('mp4' if type == 'video' else ('ogg' if type == 'audio' else 'file'))) if ext == None else ext
-                            file = f'{msg.id}_{media_id}.{ext}' if not file else file
-                            original_files.append({"file": file, "type": type})
-                            if file not in [f for f in os.listdir('static/max')]:
-                                open(f'static/max/{file}', 'wb').write(get(base_url).content)
+                            continue
+                    ext = ('png' if type == 'img' else ('mp4' if type == 'video' else ('ogg' if type == 'audio' else 'file'))) if ext == None else ext
+                    file = f'{msg.id}_{media_id}.{ext}' if not file else file
+                    original_files.append({"file": file, "type": type})
+                    if file not in [f for f in os.listdir('static/max')]:
+                        open(f'static/max/{file}', 'wb').write(get(base_url).content)
 
             date = msg.time
             files: list[dict[str, str]] = []
-            type = None
             for attachment in msg.attaches:
                 file = None
                 ext = None
@@ -339,33 +306,25 @@ async def show_chat_history(client: Client, id: str | int):
                     base_url = attachment.__dict__[[k for k in info if 'url' in k][0]]
                     media_id = attachment.__dict__[[k for k in info if  'id' in k][0]]
                 except:
-                    # print(attachment.__dict__)
-                    try:
-                        if type == 'file':
-                            media_id = attachment.file_id
-                            base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
-                            file = attachment.name
-                            type = 'a'
-                            # ext = file[file.rfind('.')+1:]
-                            # file = file[:-len(ext)]
-                        elif type == 'video':
-                            media_id = attachment.video_id
-                            base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
-                        else:
-                            continue
-                    except: continue
+                    if type == 'file':
+                        media_id = attachment.file_id
+                        base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
+                        file = attachment.name
+                        type = 'a'
+                    elif type == 'video':
+                        media_id = attachment.video_id
+                        base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
+                    else:
+                        continue
                 ext = ('png' if type == 'img' else ('mp4' if type == 'video' else ('ogg' if type == 'audio' else 'file'))) if ext == None else ext
                 file = f'{msg.id}_{media_id}.{ext}' if not file else file
                 files.append({"file": file, "type": type})
-                # print(type)
                 if file not in [f for f in os.listdir('static/max')]:
                     open(f'static/max/{file}', 'wb').write(get(base_url).content)
             time_str = (datetime(1970, 1, 1)+timedelta(days=date/1000/3600/24)+timedelta(hours=3)).strftime('%Y.%m.%d %H:%M:%S')
 
-            # Формируем f_info для совместимости с требуемым форматом
             f_info = {'sender': '', 'text': ''}
             if forwarded_info:
-                # Получаем имя отправителя оригинального сообщения
                 original_sender_id = None
                 if hasattr(original_message, 'sender_id'):
                     original_sender_id = original_message.sender_id
@@ -377,7 +336,6 @@ async def show_chat_history(client: Client, id: str | int):
 
                 original_sender_name = await get_user_name_by_id(client, original_sender_id) if original_sender_id else "Неизвестный"
                 f_info['sender'] = f" (от {original_sender_name})"
-                # Сохраняем текст пересланного сообщения в f_info['text']
                 if original_text:
                     f_info['text'] = f"↪️ Переслано из {forwarded_info['original_chat_name']}\n{original_text}\n"
                 elif forwarded_info.get('original_chat_name'):
@@ -440,14 +398,13 @@ async def on_message(message: Message, client: Client) -> None:
             "timestamp": datetime.now().strftime('%Y.%m.%d %H:%M:%S'),
             "forwarded_from": forwarded_info
         }
-        saved_messages.append(message_data)
-        save_messages(saved_messages)
 
         print(f"\n📨 Новое сообщение от {sender_name or sender_id}:")
         print(f"   Текст: {message_data['text']}")
         print(f"   Чат ID: {message_data['chat_id']}")
         if forwarded_info:
             print(f"   ↪️ Переслано из: {forwarded_info.get('original_chat_name', 'Unknown')} (ID: {forwarded_info.get('original_chat_id')})")
+            print(f'   ↪️ Переслано из: {forwarded_info["original_text"]}')
 
     except Exception as e:
         print(f"⚠️ Ошибка при обработке сообщения: {e}")
