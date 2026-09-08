@@ -229,13 +229,6 @@ async def show_chat_history(client: Client, id: str | int):
         messes = []
 
         for msg in messages:
-            # Проверка на ответ (reply) в том же чате - игнорируем такие сообщения
-            if hasattr(msg, 'reply_to') and msg.reply_to is not None:
-                continue  # Пропускаем ответы на сообщения в том же чате
-
-            # Дополнительная проверка для reply_to_message_id
-            if hasattr(msg, 'reply_to_message_id') and msg.reply_to_message_id is not None:
-                continue  # Пропускаем ответы на сообщения в том же чате
 
             # Определяем ID отправителя
             sender_id = None
@@ -256,7 +249,7 @@ async def show_chat_history(client: Client, id: str | int):
             forwarded_info = None
             original_text = None
             original_files = []
-            if hasattr(msg, 'link'):
+            if hasattr(msg, 'link') and msg.link and hasattr(msg.link, 'chat_name'):
                 original_message = msg.link.message
                 forwarded_info = {
                     "original_chat_id": msg.link.chat_id,
@@ -279,12 +272,12 @@ async def show_chat_history(client: Client, id: str | int):
                     except:
                         if type == 'file':
                             media_id = attachment.file_id
-                            base_url = (await client.get_file_by_id(msg.link.chat_id, original_message.id, media_id)).url
+                            base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
                             file = attachment.name
                             type = 'a'
                         elif type == 'video':
                             media_id = attachment.video_id
-                            base_url = (await client.get_video_by_id(msg.link.chat_id, original_message.id, media_id)).url
+                            base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
                         else:
                             continue
                     ext = ('png' if type == 'img' else ('mp4' if type == 'video' else ('ogg' if type == 'audio' else 'file'))) if ext == None else ext
