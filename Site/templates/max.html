@@ -8,8 +8,9 @@
         --radius: 10px;
         --space: 5px;
     }
-    .files {
-        justify-self: center;
+     .files {
+        display: flex;
+        justify-content: center;
     }
     .time, .sender {
         font: caption;
@@ -22,6 +23,9 @@
         height: auto;
         width: 90vw;
         border-radius: var(--radius);
+    }
+    audio {
+        height: revert;
     }
     div.message {
         margin: var(--space);
