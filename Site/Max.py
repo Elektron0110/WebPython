@@ -14,7 +14,7 @@ MAX_CHATS = 'max_chats.json'
 TRANPORT_FILE = "max.helpfile"
 MAX_MESSAGES  = 'max_messages.json'
 DEFAULT = open('default.helpfile').readlines()[0][:-1]
-MESSAGES: dict[str, list[dict[str, str]]] = json.load(open(MAX_MESSAGES, encoding='utf-8'))
+MESSAGES: dict[str, list[dict[str, str | int]]] = json.load(open(MAX_MESSAGES, encoding='utf-8'))
 LIM = 75
 
 logging.disable()
@@ -163,24 +163,26 @@ async def interactive_menu(client: Client) -> None:
 
     c: list[dict[str, str]] = await show_dialogs(client)
     if c:
-        open(MAX_CHATS, 'w', encoding='utf-8').write(json.dumps(c, ensure_ascii=False, indent=4).replace('{', '\n\t{'))
+        open(MAX_CHATS, 'w', encoding='utf-8').write(json.dumps(c, ensure_ascii=False, indent=4))
     while True:
-        await asyncio.sleep(10)
-        i += 10
+        await asyncio.sleep(30)
+        i += 30
+        if DEFAULT not in MESSAGES: MESSAGES[DEFAULT] = []
         h: list[dict[str, str]] = await show_chat_history(client, DEFAULT)
         if h:
-            MESSAGES[DEFAULT] = h
+            for m in h: MESSAGES[DEFAULT].append(m)
             json.dump(MESSAGES, open(MAX_MESSAGES, 'w', encoding='utf-8'), ensure_ascii=False, indent=4)
         if 'DONE' != open(TRANPORT_FILE).read():
+            if open(TRANPORT_FILE).read() not in MESSAGES: MESSAGES[open(TRANPORT_FILE).read()] = []
             h: list[dict[str, str]] = await show_chat_history(client, open(TRANPORT_FILE).read())
             if h:
-                MESSAGES[open(TRANPORT_FILE).read()] = h
+                for m in h: MESSAGES[open(TRANPORT_FILE).read()].append(m)
                 json.dump(MESSAGES, open(MAX_MESSAGES, 'w', encoding='utf-8'), ensure_ascii=False, indent=4)
                 open(TRANPORT_FILE,'w').write('DONE')
-        if i == 300:
+        if i == 1800:
             c: list[dict[str, str]] = await show_dialogs(client)
             if c:
-                open(MAX_CHATS, 'w', encoding='utf-8').write(json.dumps(c, ensure_ascii=False, indent=4).replace('{', '\n\t{'))
+                open(MAX_CHATS, 'w', encoding='utf-8').write(json.dumps(c, ensure_ascii=False, indent=4))
             i = 0
 
 # ========== ПОКАЗ СПИСКА ЧАТОВ ==========
@@ -226,40 +228,72 @@ async def show_chat_history(client: Client, id: str | int):
         messages = await client.fetch_history(chat_id, backward=LIM)
         if not messages: return
 
-        messes = []
+        messes: list[dict[str, str]] = []
 
         for msg in messages:
+            if msg.id not in [m['id'] for m in MESSAGES[str(id)]]: 
+                # Определяем ID отправителя
+                sender_id = None
+                if hasattr(msg, 'sender_id'):
+                    sender_id = msg.sender_id
+                elif hasattr(msg, 'sender'):
+                    if isinstance(msg.sender, int):
+                        sender_id = msg.sender
+                    elif hasattr(msg.sender, 'id'):
+                        sender_id = msg.sender.id
 
-            # Определяем ID отправителя
-            sender_id = None
-            if hasattr(msg, 'sender_id'):
-                sender_id = msg.sender_id
-            elif hasattr(msg, 'sender'):
-                if isinstance(msg.sender, int):
-                    sender_id = msg.sender
-                elif hasattr(msg.sender, 'id'):
-                    sender_id = msg.sender.id
+                # Получаем имя отправителя
+                sender_name = await get_user_name_by_id(client, sender_id)
 
-            # Получаем имя отправителя
-            sender_name = await get_user_name_by_id(client, sender_id)
+                text = getattr(msg, 'text', '') or ''
 
-            text = getattr(msg, 'text', '') or ''
+                # Проверка на пересланное сообщение
+                forwarded_info = None
+                original_text = None
+                original_files = []
+                if hasattr(msg, 'link') and msg.link and hasattr(msg.link, 'chat_name'):
+                    original_message = msg.link.message
+                    forwarded_info = {
+                        "original_chat_id": msg.link.chat_id,
+                        "original_chat_name": msg.link.chat_name,
+                        "original_message_id": original_message.id if hasattr(original_message, 'id') else None,
+                    }
+                    # Получаем текст из пересланного сообщения
+                    original_text = getattr(original_message, 'text', '') or ''
 
-            # Проверка на пересланное сообщение
-            forwarded_info = None
-            original_text = None
-            original_files = []
-            if hasattr(msg, 'link') and msg.link and hasattr(msg.link, 'chat_name'):
-                original_message = msg.link.message
-                forwarded_info = {
-                    "original_chat_id": msg.link.chat_id,
-                    "original_chat_name": msg.link.chat_name,
-                    "original_message_id": original_message.id if hasattr(original_message, 'id') else None,
-                }
-                # Получаем текст из пересланного сообщения
-                original_text = getattr(original_message, 'text', '') or ''
+                    for attachment in original_message.attaches:
+                        file = None
+                        ext = None
+                        type = str(attachment.type).lower()
+                        type = type[type.find('.')+1:]
+                        type = 'img' if type[type.find('.')+1:] == 'photo' else type
+                        info = [k for k in attachment.__dict__]
+                        try:
+                            base_url = attachment.__dict__[[k for k in info if 'url' in k][0]]
+                            media_id = attachment.__dict__[[k for k in info if  'id' in k][0]]
+                        except:
+                            try:
+                                if type == 'file':
+                                    media_id = attachment.file_id
+                                    base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
+                                    file = attachment.name
+                                    type = 'a'
+                                elif type == 'video':
+                                    media_id = attachment.video_id
+                                    base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
+                                else:
+                                    continue
+                            except:
+                                continue
+                        ext = ('png' if type == 'img' else ('mp4' if type == 'video' else ('ogg' if type == 'audio' else 'file'))) if ext == None else ext
+                        file = f'{msg.id}_{media_id}.{ext}' if not file else file
+                        original_files.append({"file": file, "type": type})
+                        if file not in [f for f in os.listdir('static/max')]:
+                            open(f'static/max/{file}', 'wb').write(get(base_url).content)
 
-                for attachment in original_message.attaches:
+                date = msg.time
+                files: list[dict[str, str]] = []
+                for attachment in msg.attaches:
                     file = None
                     ext = None
                     type = str(attachment.type).lower()
@@ -282,61 +316,34 @@ async def show_chat_history(client: Client, id: str | int):
                             continue
                     ext = ('png' if type == 'img' else ('mp4' if type == 'video' else ('ogg' if type == 'audio' else 'file'))) if ext == None else ext
                     file = f'{msg.id}_{media_id}.{ext}' if not file else file
-                    original_files.append({"file": file, "type": type})
+                    files.append({"file": file, "type": type})
                     if file not in [f for f in os.listdir('static/max')]:
                         open(f'static/max/{file}', 'wb').write(get(base_url).content)
+                time_str = (datetime(1970, 1, 1)+timedelta(days=date/1000/3600/24)+timedelta(hours=3)).strftime('%Y.%m.%d %H:%M:%S')
 
-            date = msg.time
-            files: list[dict[str, str]] = []
-            for attachment in msg.attaches:
-                file = None
-                ext = None
-                type = str(attachment.type).lower()
-                type = type[type.find('.')+1:]
-                type = 'img' if type[type.find('.')+1:] == 'photo' else type
-                info = [k for k in attachment.__dict__]
-                try:
-                    base_url = attachment.__dict__[[k for k in info if 'url' in k][0]]
-                    media_id = attachment.__dict__[[k for k in info if  'id' in k][0]]
-                except:
-                    if type == 'file':
-                        media_id = attachment.file_id
-                        base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
-                        file = attachment.name
-                        type = 'a'
-                    elif type == 'video':
-                        media_id = attachment.video_id
-                        base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
-                    else:
-                        continue
-                ext = ('png' if type == 'img' else ('mp4' if type == 'video' else ('ogg' if type == 'audio' else 'file'))) if ext == None else ext
-                file = f'{msg.id}_{media_id}.{ext}' if not file else file
-                files.append({"file": file, "type": type})
-                if file not in [f for f in os.listdir('static/max')]:
-                    open(f'static/max/{file}', 'wb').write(get(base_url).content)
-            time_str = (datetime(1970, 1, 1)+timedelta(days=date/1000/3600/24)+timedelta(hours=3)).strftime('%Y.%m.%d %H:%M:%S')
+                f_info = {'sender': '', 'text': ''}
+                if forwarded_info:
+                    original_sender_id = None
+                    if hasattr(original_message, 'sender_id'):
+                        original_sender_id = original_message.sender_id
+                    elif hasattr(original_message, 'sender'):
+                        if isinstance(original_message.sender, int):
+                            original_sender_id = original_message.sender
+                        elif hasattr(original_message.sender, 'id'):
+                            original_sender_id = original_message.sender.id
 
-            f_info = {'sender': '', 'text': ''}
-            if forwarded_info:
-                original_sender_id = None
-                if hasattr(original_message, 'sender_id'):
-                    original_sender_id = original_message.sender_id
-                elif hasattr(original_message, 'sender'):
-                    if isinstance(original_message.sender, int):
-                        original_sender_id = original_message.sender
-                    elif hasattr(original_message.sender, 'id'):
-                        original_sender_id = original_message.sender.id
+                    original_sender_name = await get_user_name_by_id(client, original_sender_id) if original_sender_id else "Неизвестный"
+                    f_info['sender'] = f" (от {original_sender_name})"
+                    if original_text:
+                        f_info['text'] = f"↪️ Переслано из {forwarded_info['original_chat_name']}\n{original_text}\n"
+                    elif forwarded_info.get('original_chat_name'):
+                        f_info['text'] = f"↪️ Переслано из {forwarded_info['original_chat_name']}\n"
 
-                original_sender_name = await get_user_name_by_id(client, original_sender_id) if original_sender_id else "Неизвестный"
-                f_info['sender'] = f" (от {original_sender_name})"
-                if original_text:
-                    f_info['text'] = f"↪️ Переслано из {forwarded_info['original_chat_name']}\n{original_text}\n"
-                elif forwarded_info.get('original_chat_name'):
-                    f_info['text'] = f"↪️ Переслано из {forwarded_info['original_chat_name']}\n"
-
-            all_files = files + original_files if forwarded_info else files
-            if f_info["text"]: f_info["text"]='<i>'+f_info["text"]+'</i>'
-            messes.append({"time": time_str, "sender": sender_name + f_info["sender"], "text": f_info["text"] + text, "files": all_files})
+                all_files = files + original_files if forwarded_info else files
+                if f_info["text"]: f_info["text"]='<i>'+f_info["text"]+'</i>'
+                mess: dict[str, str] = {"time": time_str, "sender": sender_name + f_info["sender"],
+                                        "text": f_info["text"] + text, "files": all_files, "id": msg.id}
+                messes.append(mess)
         return messes
 
 # ========== ОБРАБОТЧИК ВХОДЯЩИХ СООБЩЕНИЙ ==========
