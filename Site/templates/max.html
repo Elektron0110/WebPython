@@ -4,13 +4,13 @@
 <div class="chat">
 </div>
 <style>
+
     :root {
         --radius: 10px;
         --space: 5px;
     }
-     .files {
-        display: flex;
-        justify-content: center;
+    .files {
+        justify-self: center;
     }
     .time, .sender {
         font: caption;
@@ -19,13 +19,14 @@
         font-family: 'AlexisOne';
         font-size: 14px;
     }
-    .file {
+    img.file, video.file {
         height: auto;
         width: 90vw;
         border-radius: var(--radius);
     }
-    audio {
-        height: revert;
+    audio.file {
+        width: 90vw;
+        border-radius: var(--radius);
     }
     div.message {
         margin: var(--space);
