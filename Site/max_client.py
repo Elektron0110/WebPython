@@ -37,6 +37,16 @@ def maxx(x):
     return render_template("max.html", name="Alexis", prompt=prompt, session=session)
 
 
+@app.route('/max/<x>/of')
+def maxxoof(x):
+    if not (x+'0')[1:].isdigit(): return abort(400)
+    if 'user' in session:
+        prompt = session.get('user')
+    else:
+        prompt = 'Вход/Регистрация'
+    return render_template("max.html", name="Alexis", prompt=prompt, session=session)
+
+
 @app.route('/max/data/<id>')
 @check_auth(True)
 def data(id: str):

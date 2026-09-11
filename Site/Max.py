@@ -225,6 +225,8 @@ async def show_dialogs(client: Client):
 async def show_chat_history(client: Client, id: str | int):
         chat_id = int(id)
 
+        if not os.path.isdir(f'static/max/{chat_id}'): os.mkdir(f'static/max/{chat_id}')
+
         messages = await client.fetch_history(chat_id, backward=LIM)
         if not messages: return
 
@@ -275,18 +277,23 @@ async def show_chat_history(client: Client, id: str | int):
                             try:
                                 if type == 'file':
                                     media_id = attachment.file_id
-                                    base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
                                     file = attachment.name
                                     type = 'a'
+                                    ext = 'file'
+                                    if file not in [f for f in os.listdir('static/max')]:
+                                        base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
                                 elif type == 'video':
                                     media_id = attachment.video_id
-                                    base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
+                                    ext = 'mp4'
+                                    file = f'{chat_id}/{msg.id}_{media_id}.{ext}' if not file else file
+                                    if file not in [f for f in os.listdir('static/max')]:
+                                        base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
                                 else:
                                     continue
                             except:
                                 continue
                         ext = ('png' if type == 'img' else ('mp4' if type == 'video' else ('ogg' if type == 'audio' else 'file'))) if ext == None else ext
-                        file = f'{msg.id}_{media_id}.{ext}' if not file else file
+                        file = f'{chat_id}/{msg.id}_{media_id}.{ext}' if not file else file
                         original_files.append({"file": file, "type": type})
                         if file not in [f for f in os.listdir('static/max')]:
                             open(f'static/max/{file}', 'wb').write(get(base_url).content)
@@ -306,16 +313,21 @@ async def show_chat_history(client: Client, id: str | int):
                     except:
                         if type == 'file':
                             media_id = attachment.file_id
-                            base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
                             file = attachment.name
                             type = 'a'
+                            ext = 'file'
+                            if file not in [f for f in os.listdir('static/max')]:
+                                base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
                         elif type == 'video':
                             media_id = attachment.video_id
-                            base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
+                            ext = 'mp4'
+                            file = f'{chat_id}/{msg.id}_{media_id}.{ext}' if not file else file
+                            if file not in [f for f in os.listdir('static/max')]:
+                                base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
                         else:
                             continue
                     ext = ('png' if type == 'img' else ('mp4' if type == 'video' else ('ogg' if type == 'audio' else 'file'))) if ext == None else ext
-                    file = f'{msg.id}_{media_id}.{ext}' if not file else file
+                    file = f'{chat_id}/{msg.id}_{media_id}.{ext}' if not file else file
                     files.append({"file": file, "type": type})
                     if file not in [f for f in os.listdir('static/max')]:
                         open(f'static/max/{file}', 'wb').write(get(base_url).content)
