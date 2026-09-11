@@ -1,5 +1,6 @@
 from flask import Blueprint as Flask, render_template, session, jsonify
 from decorators import *
+import requests
 import json
 
 TRANPORT_FILE = "max.helpfile"
@@ -21,8 +22,11 @@ def max():
 @check_auth(True)
 def maxall():
     chats: list[dict[str, str]] = json.load(open('max_chats.json', encoding='utf-8'))
-    fstring = f'<a href="/max/{chats[0]["id"]}">{chats[0]["type"]} | {chats[0]["name"]}</a>\n<br>\n'
-    return fstring+'</a>\n<br>\n'.join([f'<a href="/max/{chat["id"]}">{chat["name"]}' for chat in chats[1:]])
+    of = False
+    try: os.get('https://ya.ru')
+    except: of = True
+    fstring = f'<a href="/max{'/of' if of else ''}/{chats[0]["id"]}">{chats[0]["type"]} | {chats[0]["name"]}</a>\n<br>\n'
+    return fstring+'</a>\n<br>\n'.join([f'<a href="/max{'/of' if of else ''}/{chat["id"]}">{chat["name"]}' for chat in chats[1:]])
 
 
 @app.route('/max/<x>')
@@ -37,7 +41,7 @@ def maxx(x):
     return render_template("max.html", name="Alexis", prompt=prompt, session=session)
 
 
-@app.route('/max/<x>/of')
+@app.route('/max/of/<x>')
 def maxxoof(x):
     if not (x+'0')[1:].isdigit(): return abort(400)
     if 'user' in session:
