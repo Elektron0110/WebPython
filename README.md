@@ -124,8 +124,8 @@
 
 1. Клонируйте репозиторий:
 ```bash
-git clone <repository-url>
-cd <project-directory>
+git clone https://github.com/Elektron0110/WebPython.git
+cd WebPython
 ```
 
 2. Установите зависимости:
