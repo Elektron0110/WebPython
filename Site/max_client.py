@@ -23,7 +23,7 @@ def max():
 def maxall():
     chats: list[dict[str, str]] = json.load(open('max_chats.json', encoding='utf-8'))
     of = False
-    try: os.get('https://ya.ru')
+    try: requests.get('https://ya.ru')
     except: of = True
     fstring = f'<a href="/max{'/of' if of else ''}/{chats[0]["id"]}">{chats[0]["type"]} | {chats[0]["name"]}</a>\n<br>\n'
     return fstring+'</a>\n<br>\n'.join([f'<a href="/max{'/of' if of else ''}/{chat["id"]}">{chat["name"]}' for chat in chats[1:]])
