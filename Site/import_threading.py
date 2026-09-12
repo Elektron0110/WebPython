@@ -1,4 +1,5 @@
 import threading
+import requests
 import yt_dlp
 import logging
 import random
@@ -9,6 +10,8 @@ from my_lib import Log, file_to_list
 
 logging = Log('Down.log')
 folder = file_to_list('links.helpfile', sort=False)[0]
+
+future = []
 
 
 def load(video_url: tuple[str]):
@@ -55,6 +58,13 @@ def load(video_url: tuple[str]):
             logging.log(f'[{datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  "[{v_url}] Ошибка: {e}"')
 
 
-    t = threading.Thread(target=download_video, args=(vurl,))
-    t.daemon = True
-    t.start()
+    future.append(vurl)
+    try:
+        requests.get('https://ya.ru')
+        for url in future:
+            t = threading.Thread(target=download_video, args=(url,))
+            t.daemon = True
+            t.start()
+        future = []
+    except:
+        pass
