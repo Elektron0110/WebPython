@@ -57,8 +57,8 @@ class WsgiDAVMiddleware:
         start_response(status, response_headers)
         return [b"Forbidden"]
 
-    def __call__(self, 
-                 environ: dict[str, str], # WSGIEnvironment
+    def __call__(self,
+                 environ: dict[str, str],  # WSGIEnvironment
                  start_response: Response):
         # Если путь начинается с /webdav, передаём запрос в WsgiDAV
         # open('env', 'w', encoding='utf-8').write(str(environ))
@@ -74,6 +74,7 @@ class WsgiDAVMiddleware:
         return self.flask_app(environ, start_response)
 
 # -------------------------------------------------------------------------------------------------------------
+
 
 db = SQLAlchemy(app)
 

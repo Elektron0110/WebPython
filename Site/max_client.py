@@ -21,29 +21,35 @@ def max():
 @app.route('/max/all')
 @check_auth(True)
 def maxall():
-    chats: list[dict[str, str]] = json.load(open('max_chats.json', encoding='utf-8'))
+    chats: list[dict[str, str]] = json.load(
+        open('max_chats.json', encoding='utf-8'))
     of = False
-    try: requests.get('https://ya.ru')
-    except: of = True
+    try:
+        requests.get('https://ya.ru')
+    except:
+        of = True
     fstring = f'<a href="/max{'/of' if of else ''}/{chats[0]["id"]}">{chats[0]["type"]} | {chats[0]["name"]}</a>\n<br>\n'
     return fstring+'</a>\n<br>\n'.join([f'<a href="/max{'/of' if of else ''}/{chat["id"]}">{chat["name"]}' for chat in chats[1:]])
 
 
 @app.route('/max/<x>')
 def maxx(x):
-    if not (x+'0')[1:].isdigit(): return abort(400)
+    if not (x+'0')[1:].isdigit():
+        return abort(400)
     if 'user' in session:
         prompt = session.get('user')
     else:
         prompt = 'Вход/Регистрация'
-    open(TRANPORT_FILE,'w').write(x)
-    while open(TRANPORT_FILE).read() != 'DONE': pass
+    open(TRANPORT_FILE, 'w').write(x)
+    while open(TRANPORT_FILE).read() != 'DONE':
+        pass
     return render_template("max.html", name="Alexis", prompt=prompt, session=session)
 
 
 @app.route('/max/of/<x>')
 def maxxoof(x):
-    if not (x+'0')[1:].isdigit(): return abort(400)
+    if not (x+'0')[1:].isdigit():
+        return abort(400)
     if 'user' in session:
         prompt = session.get('user')
     else:
@@ -54,7 +60,10 @@ def maxxoof(x):
 @app.route('/max/data/<id>')
 @check_auth(True)
 def data(id: str):
-    if not (id+'0')[1:].isdigit(): return abort(400)
-    if not int(id): id = DEFAULT
-    max_data: dict[str, list[dict[str, str]]] = json.load(open('max_messages.json', encoding='utf-8'))
+    if not (id+'0')[1:].isdigit():
+        return abort(400)
+    if not int(id):
+        id = DEFAULT
+    max_data: dict[str, list[dict[str, str]]] = json.load(
+        open('max_messages.json', encoding='utf-8'))
     return jsonify(max_data[id])

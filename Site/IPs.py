@@ -5,6 +5,7 @@ import geoip2.database
 
 # reader = geoip2.database.Reader("GeoLite2‑City.mmdb")
 
+
 class IP_Seeker:
     IP = ''
 
@@ -41,7 +42,8 @@ class IP_Seeker:
         info = get_ipapi_info(self.IP)
         if isinstance(info, dict):
             return [f"{k}: {v}" for k, v in info.items()]
-        else: return [info]
+        else:
+            return [info]
 
     '''def Seeker_L(self):
         def get_location_string(ip: str):
@@ -66,9 +68,11 @@ class IP_Seeker:
             if s3:
                 logging = my_lib.Log(f'{self.base}/IPs/{self.IP}.IP')
                 logging.log('===================== 3 =====================')
-                for l in s3: logging.log(l)
+                for l in s3:
+                    logging.log(l)
                 logging.log('===================== 4 =====================')
-                for l in s4: logging.log(l)
+                for l in s4:
+                    logging.log(l)
                 logging.log('=============================================')
 
 

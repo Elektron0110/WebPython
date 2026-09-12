@@ -16,13 +16,19 @@ import json
 import os
 
 
-if not os.path.isdir('Site'):                     os.mkdir('Site')
-if not os.path.isdir('Site/applications'):        os.mkdir('Site/applications')
-if not os.path.isfile('static/not_blocked_ips'):  open('static/not_blocked_ips', 'w').write('')
-if not os.path.isfile('static/blocked_ips'):      open('static/blocked_ips', 'w').write('')
+if not os.path.isdir('Site'):
+    os.mkdir('Site')
+if not os.path.isdir('Site/applications'):
+    os.mkdir('Site/applications')
+if not os.path.isfile('static/not_blocked_ips'):
+    open('static/not_blocked_ips', 'w').write('')
+if not os.path.isfile('static/blocked_ips'):
+    open('static/blocked_ips', 'w').write('')
 
-if not os.path.isfile('auth.json'):               open('auth.json', 'w').write('')
-if not os.path.isfile('last.json'):               open('last.json', 'w').write('')
+if not os.path.isfile('auth.json'):
+    open('auth.json', 'w').write('')
+if not os.path.isfile('last.json'):
+    open('last.json', 'w').write('')
 
 # @app.errorhandler(404)
 # @app.route('/')
@@ -85,7 +91,8 @@ def login():
             return render_template(name=name, template_name_or_list='register.html',
                                    email=email,
                                    password=password,
-                                   date=(datetime.today() - timedelta(days=365) * 18).strftime('%Y-%m-%d'),
+                                   date=(datetime.today() - timedelta(days=365)
+                                         * 18).strftime('%Y-%m-%d'),
                                    prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 
 
@@ -213,7 +220,7 @@ def adminlog(comm):
         dt_1 = (datetime.strptime(date, '%d.%m.%Y') + timedelta(1)).strftime('%d.%m.%Y') \
             if datetime.strptime(date, '%d.%m.%Y') < datetime.today() - timedelta(1) else None
         date1 = '[' + (datetime.strptime(date, '%d.%m.%Y') +
-                        timedelta(1)).strftime('%d.%m.%Y')
+                       timedelta(1)).strftime('%d.%m.%Y')
         f = open(f'{comm}.log', encoding='utf-8').read()
         return render_template('log.html', name=name, session=session, f=f[f.find(
             date) - 1:f.find(date1)], dt_0=dt_0, dt_1=dt_1)
@@ -258,7 +265,7 @@ def admin(comm):
         dt_1 = (datetime.strptime(date, '%d.%m.%Y') + timedelta(1)).strftime('%d.%m.%Y') \
             if datetime.strptime(date, '%d.%m.%Y') < datetime.today() - timedelta(1) else None
         date1 = '[' + (datetime.strptime(date, '%d.%m.%Y') +
-                        timedelta(1)).strftime('%d.%m.%Y')
+                       timedelta(1)).strftime('%d.%m.%Y')
         f = open('Alexis.log', encoding='utf-8').read()
         return render_template('log.html', name=name, session=session, f=f[f.find(
             date) - 1:f.find(date1)], dt_0=dt_0, dt_1=dt_1)
@@ -434,7 +441,7 @@ def Down():
 def Download(file):
     if True in [file in f for f in os.listdir('down')]:
         name = os.listdir('down')[[name[:name.rfind('.')]
-                                for name in os.listdir('down')].index(file)]
+                                   for name in os.listdir('down')].index(file)]
         if file == 'Alex':
             if request.method == 'POST':
                 with app.app_context():
@@ -491,7 +498,8 @@ def trains():
     else:
         data = {'stationDepartureId': stations[request.form['stationDepartureId']],
                 'stationArrivalId': stations[request.form['stationArrivalId']],
-                'departure': True, # bool(request.form.get('departure', False)),
+                # bool(request.form.get('departure', False)),
+                'departure': True,
                 'date': datetime.strptime(request.form.get('date'), "%Y-%m-%d").strftime("%d.%m.%Y")}
         response = post('https://www.rzd.ru/tt/train/schedule',
                         json=data, headers=headers, timeout=10)
@@ -590,7 +598,8 @@ def lets():
 @app.route('/lets/<letter>')
 def let(letter: str):
     prompt = session.get('user') if 'user' in session else 'Вход/Регистрация'
-    if letter not in os.listdir('lets'): return abort(404)
+    if letter not in os.listdir('lets'):
+        return abort(404)
     try:
         names = json.load(open('lets.json', encoding='utf-8'))
         let = [p.split('&') for p in open(
@@ -679,7 +688,7 @@ def about():
     email = 's762672@ya.ru'
     topic = m(f'Предоложение по сайту {name}.')
     lbody = m('Опишите своё предложение и подпишитесь.')
-    href=f"mailto:{email}?subject={topic}&body={lbody}"
+    href = f"mailto:{email}?subject={topic}&body={lbody}"
     return render_template('about.html', email=href,
                            prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 
@@ -755,8 +764,9 @@ def test(test: str):
     else:
         res: list[dict[str, str]] = json.load(open(f'tests/{test}.txt', 'rb'))
         res.append({key: request.form['key'] for key in request.form})
-        
-        json.dump(res, open(f'tests/{test}.txt', 'a', encoding='utf-8'), ensure_ascii=False)
+
+        json.dump(res, open(f'tests/{test}.txt', 'a',
+                  encoding='utf-8'), ensure_ascii=False)
 
         if test == 'mbti':
             with app.app_context():
@@ -890,8 +900,10 @@ def Vert_Dider(url=''):
             'Imaginary': 'Мнимые числа реальны 1-13 [Welch Labs].mp4',
             'AE': 'AE.png',
             'GG': 'GG.png'}
-    if '.' in url: return send_from_directory(ftl('links.helpfile', sort=False)[0]+'/Vert Dider/PNG', url)
-    if url: return send_from_directory(ftl('links.helpfile', sort=False)[0]+'/Vert Dider', urls[url])
+    if '.' in url:
+        return send_from_directory(ftl('links.helpfile', sort=False)[0]+'/Vert Dider/PNG', url)
+    if url:
+        return send_from_directory(ftl('links.helpfile', sort=False)[0]+'/Vert Dider', urls[url])
     return render_template('VD.html', urls=urls, title='VertDider',
                            prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 
@@ -904,14 +916,16 @@ def E_Code(url=''):
             'Phusic': 'Математика физика и музыка.mp4',
             'BH': 'Чёрные дыры кротовые норы и путешествия во времени.mp4'}
     years = {'DNA': 2025,
-            'Life': 2024,
-            'Phusic': 2024,
-            'BH': 2025}
+             'Life': 2024,
+             'Phusic': 2024,
+             'BH': 2025}
 
-    if '.' in url: return send_from_directory(app.static_folder, f'E-Code/PNG/{url}')
-    if url: return send_from_directory(app.static_folder, f'E-Code/{urls[url]}')
+    if '.' in url:
+        return send_from_directory(app.static_folder, f'E-Code/PNG/{url}')
+    if url:
+        return send_from_directory(app.static_folder, f'E-Code/{urls[url]}')
     return render_template('VD.html', urls=urls, title='E-Code', years=years,
-                            prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
+                           prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 
 if os.path.isdir('C:'):
     # """Функция, запускающая работу сервера."""
@@ -928,7 +942,7 @@ if os.path.isdir('C:'):
         "host": host,
         "port": date,
         "provider_mapping": {
-                "/webdav": dir,
+            "/webdav": dir,
         },
         "http_authenticator": {
             "domain_controller": None,
