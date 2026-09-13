@@ -1,15 +1,15 @@
 from flask import send_file, render_template, request, jsonify
+from datetime import timedelta as td
 from flask import Blueprint as Flask
+from datetime import datetime as dt
 import matplotlib.pyplot as plt
-import io
-import os
+import plotly.express as px
+from requests import get
+import pandas as pd
 import json
 import math
-from datetime import datetime as dt
-from datetime import timedelta as td
-import plotly.express as px
-import pandas as pd
-from requests import get
+import io
+import os
 
 app = Flask(__name__, 'new_broker')
 

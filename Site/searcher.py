@@ -1,6 +1,6 @@
+from FlightRadar24 import FlightRadar24API
 from json import dumps
 from typing import Any
-from FlightRadar24 import FlightRadar24API
 
 fr_api = FlightRadar24API()
 flight_tracker = fr_api.get_flight_tracker_config()

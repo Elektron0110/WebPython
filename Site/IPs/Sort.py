@@ -1,6 +1,6 @@
 from datetime import datetime
-import os
 from time import sleep
+import os
 
 file = open('Site/Alexis.log', 'r', encoding='utf-8').readlines()
 

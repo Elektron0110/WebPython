@@ -1,7 +1,7 @@
 from flask import Blueprint, request
-import json
-from searcher import fly
 from datetime import datetime
+from searcher import fly
+import json
 
 bp = Blueprint('alice', __name__)
 
