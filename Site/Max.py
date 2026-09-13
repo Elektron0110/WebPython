@@ -195,7 +195,7 @@ async def interactive_menu(client: Client) -> None:
                     MESSAGES[open(TRANPORT_FILE).read()].append(m)
                 json.dump(MESSAGES, open(MAX_MESSAGES, 'w',
                           encoding='utf-8'), ensure_ascii=False, indent=4)
-                open(TRANPORT_FILE, 'w').write('DONE')
+            open(TRANPORT_FILE, 'w').write('DONE')
         if i == 1800:
             c: list[dict[str, str]] = await show_dialogs(client)
             if c:
