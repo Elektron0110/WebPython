@@ -15,6 +15,8 @@ future = []
 
 
 def load(video_url: tuple[str]):
+    global future
+
     vurl = ""
     for s in video_url:
         vurl += s
