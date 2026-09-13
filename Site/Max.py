@@ -5,6 +5,7 @@ import os
 from datetime import datetime, timedelta
 from requests import get
 from pymax import Client, Message
+from PIL import Image
 
 # ========== КОНФИГУРАЦИЯ ==========
 PHONE = "+79990000000"          # Ваш номер в формате +7XXXXXXXXXX
@@ -329,6 +330,9 @@ async def show_chat_history(client: Client, id: str | int):
                     if file not in [f for f in os.listdir('static/max')]:
                         open(f'static/max/{file}',
                              'wb').write(get(base_url).content)
+                        if type=='img' and 'WEBP' in open(f'static/max/{file}', encoding='ANSI').readlines()[0]:
+                            im = Image.open(f'static/max/{file}')
+                            im.save(f'static/max/{file}', 'PNG')
 
             date = msg.time
             files: list[dict[str, str]] = []
@@ -367,6 +371,9 @@ async def show_chat_history(client: Client, id: str | int):
                 if file not in [f for f in os.listdir('static/max')]:
                     open(f'static/max/{file}',
                          'wb').write(get(base_url).content)
+                    if type=='img' and 'WEBP' in open(f'static/max/{file}', encoding='ANSI').readlines()[0]:
+                        im = Image.open(f'static/max/{file}')
+                        im.save(f'static/max/{file}', 'PNG')
             time_str = (datetime(1970, 1, 1)+timedelta(days=date/1000 /
                         3600/24)+timedelta(hours=3)).strftime('%Y.%m.%d %H:%M:%S')
 
