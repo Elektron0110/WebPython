@@ -187,13 +187,27 @@ async def interactive_menu(client: Client) -> None:
                 MESSAGES[DEFAULT].append(m)
             json.dump(MESSAGES, open(MAX_MESSAGES, 'w',
                       encoding='utf-8'), ensure_ascii=False, indent=4)
-        if 'DONE' != open(TRANPORT_FILE).read():
-            if open(TRANPORT_FILE).read() not in MESSAGES:
-                MESSAGES[open(TRANPORT_FILE).read()] = []
-            h: list[dict[str, str]] = await show_chat_history(client, open(TRANPORT_FILE).read())
+
+        # Обработка команд из транспортного файла
+        transport_content = open(TRANPORT_FILE).read()
+        if transport_content.startswith('SEND:'):
+            # Формат: SEND:<chat_id>:<message_text>
+            parts = transport_content.split(':', 2)
+            if len(parts) == 3:
+                chat_id = parts[1]
+                text = parts[2]
+                try:
+                    await client.send_message(int(chat_id), text)
+                except Exception as e:
+                    print(e)
+                open(TRANPORT_FILE, 'w').write('DONE')
+        elif 'DONE' != transport_content:
+            if transport_content not in MESSAGES:
+                MESSAGES[transport_content] = []
+            h: list[dict[str, str]] = await show_chat_history(client, transport_content)
             if h:
                 for m in h:
-                    MESSAGES[open(TRANPORT_FILE).read()].append(m)
+                    MESSAGES[transport_content].append(m)
                 json.dump(MESSAGES, open(MAX_MESSAGES, 'w',
                           encoding='utf-8'), ensure_ascii=False, indent=4)
             open(TRANPORT_FILE, 'w').write('DONE')

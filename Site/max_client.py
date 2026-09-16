@@ -1,4 +1,4 @@
-from flask import Blueprint as Flask, render_template, session, jsonify
+from flask import Blueprint as Flask, render_template, session, jsonify, request, abort
 from decorators import *
 import requests
 import json
@@ -67,3 +67,34 @@ def data(id: str):
     max_data: dict[str, list[dict[str, str]]] = json.load(
         open('max_messages.json', encoding='utf-8'))
     return jsonify(max_data[id])
+
+
+@app.route('/max/send/<id>', methods=['POST'])
+@check_auth(True)
+def send_message(id: str):
+    if not (id+'0')[1:].isdigit():
+        return abort(400)
+
+    data = request.get_json()
+    text = data.get('text', '').strip()
+
+    if not text:
+        return jsonify({'error': 'Сообщение не может быть пустым'}), 400
+
+    # Записываем ID чата и текст сообщения в транспортный файл для обработки Max.py
+    with open(TRANPORT_FILE, 'w') as f:
+        f.write(f'SEND:{id}:{text}')
+
+    # Ждем подтверждения отправки
+    timeout = 30  # таймаут в секундах
+    import time
+    start_time = time.time()
+    while time.time() - start_time < timeout:
+        result = open(TRANPORT_FILE, 'r').read()
+        if result == 'DONE':
+            return jsonify({'status': 'success'})
+        elif result.startswith('ERROR:'):
+            pass
+        time.sleep(0.1)
+
+    return jsonify({'error': 'Таймаут отправки сообщения'}), 500

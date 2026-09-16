@@ -3,6 +3,10 @@
 {% block body %}
 <div class="chat">
 </div>
+<div class="input-area">
+    <textarea id="message-input" placeholder="Введите сообщение..."></textarea>
+    <button id="send-button" onclick="sendMessage()">Отправить</button>
+</div>
 <style>
     :root {
         --radius: 10px;
@@ -40,9 +44,48 @@
         background-color: rgb(220 220 220 / 90%);
         font-family: "Calibri";
     }
+    .input-area {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: var(--space);
+        background-color: rgb(240 240 240 / 95%);
+        display: flex;
+        gap: var(--space);
+    }
+    #message-input {
+        flex: 1;
+        min-height: 40px;
+        max-height: 150px;
+        padding: var(--space);
+        border-radius: var(--radius);
+        border: 1px solid var(--nav-button-pressed-border);
+        font-family: "Calibri";
+        font-size: 16px;
+        resize: vertical;
+    }
+    #send-button {
+        padding: var(--space) 20px;
+        border-radius: var(--radius);
+        border: none;
+        background-color: var(--nav-button-pressed-border);
+        color: white;
+        font-family: "Calibri";
+        font-size: 16px;
+        cursor: pointer;
+    }
+    #send-button:hover {
+        opacity: 0.9;
+    }
+    .chat {
+        padding-bottom: 80px;
+    }
 </style>
 <script>
     var messages = [];
+    const URI = document.baseURI.split("/");
+    const chatId = (URI[URI.length-1] == "max") ? "/0" : "/"+URI[URI.length-1];
     try {
         build();
     } catch (e) {
@@ -50,9 +93,46 @@
     }
     setInterval(build, 60000);
 
+    async function sendMessage() {
+        const input = document.getElementById('message-input');
+        const text = input.value.trim();
+        if (!text) {
+            alert('Введите текст сообщения');
+            return;
+        }
+
+        const button = document.getElementById('send-button');
+        button.disabled = true;
+        button.textContent = 'Отправка...';
+
+        try {
+            const response = await fetch(`/max/send/${chatId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: text })
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.status === 'success') {
+                input.value = '';
+                // Обновляем сообщения сразу после отправки
+                await build();
+            } else {
+                alert('Ошибка отправки: ' + (result.error || 'Неизвестная ошибка'));
+            }
+        } catch (e) {
+            alert('Ошибка отправки: ' + e);
+        } finally {
+            button.disabled = false;
+            button.textContent = 'Отправить';
+        }
+    }
+
     async function build() {
-        const URI = document.baseURI.split("/");
-        const res = await fetch(`/max/data${(URI[URI.length-1] == "max") ? "/0" : "/"+URI[URI.length-1]}`);
+        const res = await fetch(`/max/data${chatId}`);
         const messes = await res.json();
         //const messes = {{ms | safe}}
         const chat = document.getElementsByClassName("chat")[0];
@@ -97,5 +177,12 @@
             }
         }
     }
+
+    // Отправка по Ctrl+Enter
+    document.getElementById('message-input').addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.key === 'Enter') {
+            sendMessage();
+        }
+    });
 </script>
 {% endblock body %}
