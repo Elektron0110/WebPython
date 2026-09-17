@@ -325,13 +325,13 @@ async def show_chat_history(client: Client, id: str | int):
                                 file = attachment.name
                                 type = 'a'
                                 ext = 'file'
-                                if file not in [f for f in os.listdir('static/max')]:
+                                if file not in [f for f in os.listdir(f'static/max/{chat_id}')]:
                                     base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
                             elif type == 'video':
                                 media_id = attachment.video_id
                                 ext = 'mp4'
                                 file = f'{chat_id}/{msg.id}_{media_id}.{ext}' if not file else file
-                                if file not in [f for f in os.listdir('static/max')]:
+                                if file not in [f for f in os.listdir(f'static/max/{chat_id}')]:
                                     base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
                             else:
                                 continue
@@ -341,7 +341,7 @@ async def show_chat_history(client: Client, id: str | int):
                         'ogg' if type == 'audio' else 'file'))) if ext == None else ext
                     file = f'{chat_id}/{msg.id}_{media_id}.{ext}' if not file else file
                     original_files.append({"file": file, "type": type})
-                    if file not in [f for f in os.listdir('static/max')]:
+                    if file not in [f for f in os.listdir(f'static/max/{chat_id}')]:
                         open(f'static/max/{file}',
                              'wb').write(get(base_url).content)
                         if type=='img' and 'WEBP' in open(f'static/max/{file}', encoding='ANSI').readlines()[0]:
@@ -368,13 +368,13 @@ async def show_chat_history(client: Client, id: str | int):
                         file = attachment.name
                         type = 'a'
                         ext = 'file'
-                        if file not in [f for f in os.listdir('static/max')]:
+                        if file not in [f for f in os.listdir(f'static/max/{chat_id}')]:
                             base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
                     elif type == 'video':
                         media_id = attachment.video_id
                         ext = 'mp4'
                         file = f'{chat_id}/{msg.id}_{media_id}.{ext}' if not file else file
-                        if file not in [f for f in os.listdir('static/max')]:
+                        if file not in [f for f in os.listdir(f'static/max/{chat_id}')]:
                             base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
                     else:
                         continue
