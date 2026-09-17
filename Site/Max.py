@@ -188,26 +188,26 @@ async def interactive_menu(client: Client) -> None:
             json.dump(MESSAGES, open(MAX_MESSAGES, 'w',
                       encoding='utf-8'), ensure_ascii=False, indent=4)
 
-        # Обработка команд из транспортного файла
-        transport_content = open(TRANPORT_FILE).read()
-        if transport_content.startswith('SEND:'):
+        TFr = open(TRANPORT_FILE).read()
+        if TFr.startswith('SEND:'):
             # Формат: SEND:<chat_id>:<message_text>
-            parts = transport_content.split(':', 2)
-            if len(parts) == 3:
-                chat_id = parts[1]
-                text = parts[2]
-                try:
-                    await client.send_message(int(chat_id), text)
-                except Exception as e:
-                    print(e)
-                open(TRANPORT_FILE, 'w').write('DONE')
-        elif 'DONE' != transport_content:
-            if transport_content not in MESSAGES:
-                MESSAGES[transport_content] = []
-            h: list[dict[str, str]] = await show_chat_history(client, transport_content)
+            parts = TFr.split(':')
+            chat_id = parts[1]
+            text = parts[2]
+            try:
+                await client.send_message(int(chat_id), text)
+            except Exception as e:
+                print(e)
+            open(TRANPORT_FILE, 'w').write('DONE')
+        elif 'DONE' != TFr:
+            print(TFr)
+            if TFr not in MESSAGES:
+                print('NEW')
+                MESSAGES[TFr] = []
+            h: list[dict[str, str]] = await show_chat_history(client, TFr)
             if h:
                 for m in h:
-                    MESSAGES[transport_content].append(m)
+                    MESSAGES[TFr].append(m)
                 json.dump(MESSAGES, open(MAX_MESSAGES, 'w',
                           encoding='utf-8'), ensure_ascii=False, indent=4)
             open(TRANPORT_FILE, 'w').write('DONE')
