@@ -341,17 +341,20 @@ async def show_chat_history(client: Client, id: str | int):
                     ext = ('png' if type == 'img' else ('ogg' if type == 'audio' else 'file')) if ext == None else ext
                     file = f'{chat_id}/{msg.id}_{media_id}.{ext}' if not file else file
                     original_files.append({"file": file, "type": type})
-                    if base_url and len(file.split('/'))==2 and file.split('/')[1] not in [f for f in os.listdir(f'static/max/{chat_id}')]:
-                        open(f'static/max/{file}',
-                             'wb').write(get(base_url).content)
-                        if type=='img' and 'WEBP' in open(f'static/max/{file}', encoding='ANSI').readlines()[0]:
-                            im = Image.open(f'static/max/{file}')
-                            im.save(f'static/max/{file}', 'PNG')
-                    elif base_url and len(file.split('/'))==1 and file not in [f for f in os.listdir(f'static/max')]:
-                        open(f'static/max/{file}', 'wb').write(get(base_url).content)
-                        if type=='img' and 'WEBP' in open(f'static/max/{file}', encoding='ANSI').readlines()[0]:
-                            im = Image.open(f'static/max/{file}')
-                            im.save(f'static/max/{file}', 'PNG')
+                    try:
+                        if base_url and len(file.split('/'))==2 and file.split('/')[1] not in [f for f in os.listdir(f'static/max/{chat_id}')]:
+                            open(f'static/max/{file}',
+                                'wb').write(get(base_url).content)
+                            if type=='img' and 'WEBP' in open(f'static/max/{file}', encoding='ANSI').readlines()[0]:
+                                im = Image.open(f'static/max/{file}')
+                                im.save(f'static/max/{file}', 'PNG')
+                        elif base_url and len(file.split('/'))==1 and file not in [f for f in os.listdir(f'static/max')]:
+                            open(f'static/max/{file}', 'wb').write(get(base_url).content)
+                            if type=='img' and 'WEBP' in open(f'static/max/{file}', encoding='ANSI').readlines()[0]:
+                                im = Image.open(f'static/max/{file}')
+                                im.save(f'static/max/{file}', 'PNG')
+                    except UnboundLocalError:
+                        pass
 
             date = msg.time
             files: list[dict[str, str]] = []
@@ -386,17 +389,20 @@ async def show_chat_history(client: Client, id: str | int):
                 ext = ('png' if type == 'img' else ('ogg' if type == 'audio' else 'file')) if ext == None else ext
                 file = f'{chat_id}/{msg.id}_{media_id}.{ext}' if not file else file
                 files.append({"file": file, "type": type})
-                if base_url and len(file.split('/'))==2 and file.split('/')[1] not in [f for f in os.listdir(f'static/max/{chat_id}')]:
-                    open(f'static/max/{file}',
-                         'wb').write(get(base_url).content)
-                    if type=='img' and 'WEBP' in open(f'static/max/{file}', encoding='ANSI').readlines()[0]:
-                        im = Image.open(f'static/max/{file}')
-                        im.save(f'static/max/{file}', 'PNG')
-                elif base_url and len(file.split('/'))==1 and file not in [f for f in os.listdir(f'static/max')]:
-                    open(f'static/max/{file}', 'wb').write(get(base_url).content)
-                    if type=='img' and 'WEBP' in open(f'static/max/{file}', encoding='ANSI').readlines()[0]:
-                        im = Image.open(f'static/max/{file}')
-                        im.save(f'static/max/{file}', 'PNG')
+                try:
+                    if base_url and len(file.split('/'))==2 and file.split('/')[1] not in [f for f in os.listdir(f'static/max/{chat_id}')]:
+                        open(f'static/max/{file}',
+                            'wb').write(get(base_url).content)
+                        if type=='img' and 'WEBP' in open(f'static/max/{file}', encoding='ANSI').readlines()[0]:
+                            im = Image.open(f'static/max/{file}')
+                            im.save(f'static/max/{file}', 'PNG')
+                    elif base_url and len(file.split('/'))==1 and file not in [f for f in os.listdir(f'static/max')]:
+                        open(f'static/max/{file}', 'wb').write(get(base_url).content)
+                        if type=='img' and 'WEBP' in open(f'static/max/{file}', encoding='ANSI').readlines()[0]:
+                            im = Image.open(f'static/max/{file}')
+                            im.save(f'static/max/{file}', 'PNG')
+                except UnboundLocalError:
+                    pass
             time_str = (datetime(1970, 1, 1)+timedelta(days=date/1000 /
                         3600/24)+timedelta(hours=3)).strftime('%Y.%m.%d %H:%M:%S')
 
