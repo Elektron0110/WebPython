@@ -328,15 +328,12 @@ async def show_chat_history(client: Client, id: str | int):
                                 ext = 'file'
                                 if file not in [f for f in os.listdir(f'static/max')]:
                                     base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
-                                else:
-                                    continue
                             elif type == 'video':
                                 media_id = attachment.video_id
                                 ext = 'mp4'
                                 file = f'{chat_id}/{msg.id}_{media_id}.{ext}' if not file else file
                                 if file.split('/')[1] not in [f for f in os.listdir(f'static/max/{chat_id}')]:
                                     base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
-                                else: continue
                             else:
                                 continue
                         except:
@@ -344,13 +341,13 @@ async def show_chat_history(client: Client, id: str | int):
                     ext = ('png' if type == 'img' else ('ogg' if type == 'audio' else 'file')) if ext == None else ext
                     file = f'{chat_id}/{msg.id}_{media_id}.{ext}' if not file else file
                     original_files.append({"file": file, "type": type})
-                    if len(file.split('/'))==2 and file.split('/')[1] not in [f for f in os.listdir(f'static/max/{chat_id}')]:
+                    if base_url and len(file.split('/'))==2 and file.split('/')[1] not in [f for f in os.listdir(f'static/max/{chat_id}')]:
                         open(f'static/max/{file}',
                              'wb').write(get(base_url).content)
                         if type=='img' and 'WEBP' in open(f'static/max/{file}', encoding='ANSI').readlines()[0]:
                             im = Image.open(f'static/max/{file}')
                             im.save(f'static/max/{file}', 'PNG')
-                    elif len(file.split('/'))==1 and file not in [f for f in os.listdir(f'static/max')]:
+                    elif base_url and len(file.split('/'))==1 and file not in [f for f in os.listdir(f'static/max')]:
                         open(f'static/max/{file}', 'wb').write(get(base_url).content)
                         if type=='img' and 'WEBP' in open(f'static/max/{file}', encoding='ANSI').readlines()[0]:
                             im = Image.open(f'static/max/{file}')
@@ -378,27 +375,24 @@ async def show_chat_history(client: Client, id: str | int):
                         ext = 'file'
                         if file not in [f for f in os.listdir(f'static/max')]:
                             base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
-                        else:
-                            continue
                     elif type == 'video':
                         media_id = attachment.video_id
                         ext = 'mp4'
                         file = f'{chat_id}/{msg.id}_{media_id}.{ext}' if not file else file
                         if file.split('/')[1] not in [f for f in os.listdir(f'static/max/{chat_id}')]:
                             base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
-                        else: continue
                     else:
                         continue
                 ext = ('png' if type == 'img' else ('ogg' if type == 'audio' else 'file')) if ext == None else ext
                 file = f'{chat_id}/{msg.id}_{media_id}.{ext}' if not file else file
                 files.append({"file": file, "type": type})
-                if len(file.split('/'))==2 and file.split('/')[1] not in [f for f in os.listdir(f'static/max/{chat_id}')]:
+                if base_url and len(file.split('/'))==2 and file.split('/')[1] not in [f for f in os.listdir(f'static/max/{chat_id}')]:
                     open(f'static/max/{file}',
                          'wb').write(get(base_url).content)
                     if type=='img' and 'WEBP' in open(f'static/max/{file}', encoding='ANSI').readlines()[0]:
                         im = Image.open(f'static/max/{file}')
                         im.save(f'static/max/{file}', 'PNG')
-                elif len(file.split('/'))==1 and file not in [f for f in os.listdir(f'static/max')]:
+                elif base_url and len(file.split('/'))==1 and file not in [f for f in os.listdir(f'static/max')]:
                     open(f'static/max/{file}', 'wb').write(get(base_url).content)
                     if type=='img' and 'WEBP' in open(f'static/max/{file}', encoding='ANSI').readlines()[0]:
                         im = Image.open(f'static/max/{file}')
