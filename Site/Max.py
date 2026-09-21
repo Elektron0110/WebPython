@@ -313,6 +313,8 @@ async def show_chat_history(client: Client, id: str | int):
                     type = 'img' if type[type.find(
                         '.')+1:] == 'photo' else type
                     info = [k for k in attachment.__dict__]
+                    base_url = None
+                    media_id = None
                     try:
                         base_url = attachment.__dict__[
                             [k for k in info if 'url' in k][0]]
@@ -325,18 +327,18 @@ async def show_chat_history(client: Client, id: str | int):
                                 file = attachment.name
                                 type = 'a'
                                 ext = 'file'
-                                if file not in [f for f in os.listdir(f'static/max/{chat_id}')]:
-                                    base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
+                                base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
                             elif type == 'video':
                                 media_id = attachment.video_id
                                 ext = 'mp4'
                                 file = f'{chat_id}/{msg.id}_{media_id}.{ext}' if not file else file
-                                if file not in [f for f in os.listdir(f'static/max/{chat_id}')]:
-                                    base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
+                                base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
                             else:
                                 continue
                         except:
                             continue
+                    if base_url is None or media_id is None:
+                        continue
                     ext = ('png' if type == 'img' else ('mp4' if type == 'video' else (
                         'ogg' if type == 'audio' else 'file'))) if ext == None else ext
                     file = f'{chat_id}/{msg.id}_{media_id}.{ext}' if not file else file
@@ -357,6 +359,8 @@ async def show_chat_history(client: Client, id: str | int):
                 type = type[type.find('.')+1:]
                 type = 'img' if type[type.find('.')+1:] == 'photo' else type
                 info = [k for k in attachment.__dict__]
+                base_url = None
+                media_id = None
                 try:
                     base_url = attachment.__dict__[
                         [k for k in info if 'url' in k][0]]
@@ -368,16 +372,16 @@ async def show_chat_history(client: Client, id: str | int):
                         file = attachment.name
                         type = 'a'
                         ext = 'file'
-                        if file not in [f for f in os.listdir(f'static/max/{chat_id}')]:
-                            base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
+                        base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
                     elif type == 'video':
                         media_id = attachment.video_id
                         ext = 'mp4'
                         file = f'{chat_id}/{msg.id}_{media_id}.{ext}' if not file else file
-                        if file not in [f for f in os.listdir(f'static/max/{chat_id}')]:
-                            base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
+                        base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
                     else:
                         continue
+                if base_url is None or media_id is None:
+                    continue
                 ext = ('png' if type == 'img' else ('mp4' if type == 'video' else (
                     'ogg' if type == 'audio' else 'file'))) if ext == None else ext
                 file = f'{chat_id}/{msg.id}_{media_id}.{ext}' if not file else file
