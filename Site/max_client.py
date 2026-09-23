@@ -15,7 +15,7 @@ def max():
         prompt = session.get('user')
     else:
         prompt = 'Вход/Регистрация'
-    return render_template("max.html", name="Alexis", prompt=prompt, session=session)
+    return render_template("max.html", name=app.config['name'], prompt=prompt, session=session)
 
 
 @app.route('/max/all')
@@ -43,7 +43,7 @@ def maxx(x):
     open(TRANPORT_FILE, 'w').write(x)
     while open(TRANPORT_FILE).read() != 'DONE':
         pass
-    return render_template("max.html", name="Alexis", prompt=prompt, session=session)
+    return render_template("max.html", name=app.config['name'], prompt=prompt, session=session)
 
 
 @app.route('/max/of/<x>')
@@ -54,7 +54,7 @@ def maxxoof(x):
         prompt = session.get('user')
     else:
         prompt = 'Вход/Регистрация'
-    return render_template("max.html", name="Alexis", prompt=prompt, session=session)
+    return render_template("max.html", name=app.config['name'], prompt=prompt, session=session)
 
 
 @app.route('/max/data/<id>')

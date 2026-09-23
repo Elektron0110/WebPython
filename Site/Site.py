@@ -1,4 +1,5 @@
 """Модуль, отвечающий за работу сервера."""
+from pathlib import Path
 from flask import render_template, request, session, redirect, send_from_directory, abort, Response
 from wsgidav.wsgidav_app import WsgiDAVApp
 from datetime import datetime, timedelta
@@ -43,7 +44,7 @@ def main():
     else:
         prompt = 'Вход/Регистрация'
     news = json.load(open('news.json', 'rb'))
-    return render_template('main.html', name=name, news=news,
+    return render_template('main.html', name=app.config['name'], news=news,
                            prompt=prompt, session=session)
 
 
@@ -52,12 +53,12 @@ def login():
     if request.method == 'GET':
         if 'user' in session:
             if session['email'] in app.config["admins"]:
-                return render_template('LK.html', name=name, session=session, add={
+                return render_template('LK.html', name=app.config['name'], session=session, add={
                                        '/adm/see': 'Административная панель'})
-            return render_template('LK.html', name=name, session=session)
+            return render_template('LK.html', name=app.config['name'], session=session)
         else:
             return render_template(
-                name=name, template_name_or_list='login.html',
+                name=app.config['name'], template_name_or_list='login.html',
                 prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
     if request.method == 'POST':
         thing = request.form['thing']
@@ -88,7 +89,7 @@ def login():
                 print(password, u.password)
                 return 'Password in invalid.'
         else:
-            return render_template(name=name, template_name_or_list='register.html',
+            return render_template(name=app.config['name'], template_name_or_list='register.html',
                                    email=email,
                                    password=password,
                                    date=(datetime.today() - timedelta(days=365)
@@ -112,7 +113,7 @@ def update():
     if request.method == 'GET':
         return render_template('all.html',
                                session=session,
-                               name=name,
+                               name=app.config['name'],
                                tel=session['telephone'],
                                birthday=session['birthday'],
                                date=(datetime.today() - timedelta(days=365) * 18).strftime('%Y-%m-%d'))
@@ -139,7 +140,7 @@ def update():
 @check_auth()
 def new():
     if request.method == 'GET':
-        return render_template(name=name, template_name_or_list='xxx.html',
+        return render_template(name=app.config['name'], template_name_or_list='xxx.html',
                                session=session,
                                date=(datetime.today() - timedelta(days=365) * 18).strftime('%Y-%m-%d'))
     elif request.method == 'POST':
@@ -156,7 +157,7 @@ def new():
             u = UserInfo.query.filter_by(email=session['email']).first()
             u.s, u.f, u.t, u.tel, u.b_day = sn, fn, tn, tel, b_day
             return render_template(
-                name=name, template_name_or_list='yyy.html', session=session)
+                name=app.config['name'], template_name_or_list='yyy.html', session=session)
         elif request.form['type'] == 'input':
             lines = request.form['lines']
             way = request.form['way']
@@ -222,7 +223,7 @@ def adminlog(comm):
         date1 = '[' + (datetime.strptime(date, '%d.%m.%Y') +
                        timedelta(1)).strftime('%d.%m.%Y')
         f = open(f'{comm}.log', encoding='utf-8').read()
-        return render_template('log.html', name=name, session=session, f=f[f.find(
+        return render_template('log.html', name=app.config['name'], session=session, f=f[f.find(
             date) - 1:f.find(date1)], dt_0=dt_0, dt_1=dt_1)
     else:
         abort(404)
@@ -238,7 +239,7 @@ def adminip(ip):
 @check_auth(True)
 def admin(comm):
     if comm == 'see':
-        return render_template(name=name, template_name_or_list='AdmSee.html',
+        return render_template(name=app.config['name'], template_name_or_list='AdmSee.html',
                                session=session,
                                u=AuthUser.query.all(),
                                d=UserInfo.query.all(),
@@ -267,7 +268,7 @@ def admin(comm):
         date1 = '[' + (datetime.strptime(date, '%d.%m.%Y') +
                        timedelta(1)).strftime('%d.%m.%Y')
         f = open('Alexis.log', encoding='utf-8').read()
-        return render_template('log.html', name=name, session=session, f=f[f.find(
+        return render_template('log.html', name=app.config['name'], session=session, f=f[f.find(
             date) - 1:f.find(date1)], dt_0=dt_0, dt_1=dt_1)
     elif comm == 'IP':
         r = ''
@@ -425,7 +426,7 @@ try:
             print('Fl', request.form['flight'])
             return fly(request.form['flight'])
         else:
-            return render_template(name=name, template_name_or_list='Fly.html',
+            return render_template(name=app.config['name'], template_name_or_list='Fly.html',
                                    prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 except Exception as e:
     print('INF')
@@ -433,7 +434,7 @@ except Exception as e:
 
 @app.route('/down', methods=['GET', 'POST'])
 def Down():
-    return render_template(name=name, template_name_or_list='down.html',
+    return render_template(name=app.config['name'], template_name_or_list='down.html',
                            prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 
 
@@ -454,7 +455,7 @@ def Download(file):
                 return send_from_directory('down', 'Alex.exe')
             else:
                 return render_template(
-                    name=name, template_name_or_list='ADown.html',
+                    name=app.config['name'], template_name_or_list='ADown.html',
                     prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
         else:
             return send_from_directory('down', name)
@@ -490,7 +491,7 @@ def trains():
                "X-Requested-With": "XMLHttpRequest"}
     if request.method != 'POST':
         return render_template(
-            name=name, template_name_or_list='TChoice.html', stations=stations,
+            name=app.config['name'], template_name_or_list='TChoice.html', stations=stations,
             min=(datetime.now()-timedelta(days=7)).strftime("%Y-%m-%d"),
             today=datetime.now().strftime("%Y-%m-%d"),
             max=(datetime.now()+timedelta(days=6)).strftime("%Y-%m-%d"),
@@ -506,7 +507,7 @@ def trains():
         with open('output.json', 'w') as f:
             json.dump(response.json(), f, ensure_ascii=False)
         return render_template(
-            name=name, template_name_or_list='TSee.html', trains=response.json()['trains'],
+            name=app.config['name'], template_name_or_list='TSee.html', trains=response.json()['trains'],
             prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 
 
@@ -591,7 +592,7 @@ def lets():
     names = json.load(open('lets.json', encoding='utf-8'))
     let = {names[file] if file in names.keys(
     ) else file: file for file in os.listdir('lets')}
-    return render_template('all_lets.html', let=let,
+    return render_template('all_lets.html', let=let, name=app.config['name'],
                            prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 
 
@@ -611,7 +612,7 @@ def let(letter: str):
         else:
             name = letter
         return render_template(
-            'lets.html', name=names[name], let=let, prompt=prompt)
+            'lets.html', name=app.config['name'], letter=names[name], let=let, prompt=prompt)
     except BaseException:
         if session.get('email') in app.config["admins"]:
             prompt = session.get('user')
@@ -624,7 +625,7 @@ def let(letter: str):
             else:
                 name = letter
             return render_template(
-                'lets.html', name=name, let=let, prompt=prompt)
+                'lets.html', name=app.config['name'], letter=names[name], let=let, prompt=prompt)
         else:
             return abort(403, 'This page only for administrators.')
 
@@ -686,10 +687,10 @@ def am_checker(q):
 def about():
     m = urllib.parse.quote
     email = 's762672@ya.ru'
-    topic = m(f'Предоложение по сайту {name}.')
+    topic = m(f'Предоложение по сайту {app.config['name']}.')
     lbody = m('Опишите своё предложение и подпишитесь.')
     href = f"mailto:{email}?subject={topic}&body={lbody}"
-    return render_template('about.html', email=href,
+    return render_template('about.html', email=href, name=app.config['name'],
                            prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 
 
@@ -713,7 +714,7 @@ def sovt():
                     ui = UserInfo.query.filter_by(email=sovrer).first()
                     nsovrers.append(f'{ui.s} {ui.f} {ui.t}')
             nsovrers.sort()
-            return render_template('sovt.html', prompt=session.get(
+            return render_template('sovt.html', name=app.config['name'], prompt=session.get(
                 'user'), sovr=nsovrers, list=List, meetings=meetings)
     return abort(403)
 
@@ -752,7 +753,7 @@ def qrcoder():
 @app.route('/tests')
 @check_auth()
 def tests():
-    return render_template('all_tests.html', tests={'MBTI-тест': 'mbti', 'Про меня': 'meaning'},
+    return render_template('all_tests.html', tests={'MBTI-тест': 'mbti', 'Про меня': 'meaning'}, name=app.config['name'],
                            prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 
 
@@ -760,7 +761,7 @@ def tests():
 @check_auth()
 def test(test: str):
     if request.method == 'GET':
-        return render_template(f'test_{test}.html', session=session, prompt=session.get('user'))
+        return render_template(f'test_{test}.html', name=app.config['name'], session=session, prompt=session.get('user'))
     else:
         res: list[dict[str, str]] = json.load(open(f'tests/{test}.txt', 'rb'))
         res.append({key: request.form['key'] for key in request.form})
@@ -784,12 +785,12 @@ def test_result(test: str):
         .replace('), ', '|').replace('(', '').replace(')', '').replace("'", '').replace('attitude', '') \
         .replace('advice', '').replace('mood', '').replace('verb', '').replace('adjective', '') \
         .replace('verdict', '').replace('name', '').replace(', ', '').replace(',', '')
-    return render_template('log.html', name=name, session=session, f=f)
+    return render_template('log.html', name=app.config['name'], session=session, f=f)
 
 
 @app.route('/class')
 def clas():
-    return render_template('class.html',
+    return render_template('class.html', name=app.config['name'],
                            prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 
 
@@ -892,6 +893,12 @@ def ping():
     return str(datetime.now())
 
 
+@app.route('/git/<path:path>')
+def git(path: Path):
+    print (path)
+    return send_from_directory(f'../.git', path)
+
+
 @app.route('/VertDider')
 @app.route('/VertDider/<url>')
 def Vert_Dider(url=''):
@@ -904,7 +911,7 @@ def Vert_Dider(url=''):
         return send_from_directory(ftl('links.helpfile', sort=False)[0]+'/Vert Dider/PNG', url)
     if url:
         return send_from_directory(ftl('links.helpfile', sort=False)[0]+'/Vert Dider', urls[url])
-    return render_template('VD.html', urls=urls, title='VertDider',
+    return render_template('VD.html', urls=urls, title='VertDider', name=app.config['name'],
                            prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 
 
@@ -924,7 +931,7 @@ def E_Code(url=''):
         return send_from_directory(app.static_folder, f'E-Code/PNG/{url}')
     if url:
         return send_from_directory(app.static_folder, f'E-Code/{urls[url]}')
-    return render_template('VD.html', urls=urls, title='E-Code', years=years,
+    return render_template('VD.html', urls=urls, title='E-Code', years=years, name=app.config['name'],
                            prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 
 if os.path.isdir('C:'):

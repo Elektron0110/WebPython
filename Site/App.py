@@ -21,13 +21,13 @@ app.config['SQLALCHEMY_BINDS'] = {
 }
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["admins"] = ['s762672@ya.ru', 'test@test']
+app.config['name'] = 'Alexis'
 app.secret_key = open('secret.helpfile', 'r').read()
 app.register_blueprint(new_broker.app)
 app.register_blueprint(max_client.app)
 
 
 slicer = r'\|/'
-name = 'Alexis'
 white = False
 
 logging = Log('Alexis.log')

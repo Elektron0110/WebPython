@@ -1,7 +1,7 @@
 <html lang="ru" page="{% block page %}{% endblock page %}">
 <head>
 	<meta charset="UTF-8">
-	<title>{% block title %}{% endblock title %}</title>
+	<title>{% block title %}{{name}}{% endblock title %}</title>
 	<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 	<link href="{{ url_for('static', filename='css/color.css') }}" rel="stylesheet" type="text/css" />
 	<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" type="text/css" />
@@ -21,7 +21,7 @@
 				<a href="/" class="navbar name">
 					<img src="{{ url_for('static', filename='img/pr.png') }}">
 					{% block add %}{% endblock add %}
-					Alexis
+					{{name}}
 				</a>
 				<div>
 					<button type="button" class="navbar-button " id="menu_button" onclick="func()">
