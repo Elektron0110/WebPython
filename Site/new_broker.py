@@ -1,4 +1,4 @@
-from flask import send_file, render_template, request, jsonify, curent_app
+from flask import send_file, render_template, request, jsonify, current_app
 from datetime import timedelta as td
 from flask import Blueprint as Flask
 from datetime import datetime as dt
