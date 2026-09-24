@@ -1,4 +1,4 @@
-from flask import send_file, render_template, request, jsonify
+from flask import send_file, render_template, request, jsonify, curent_app
 from datetime import timedelta as td
 from flask import Blueprint as Flask
 from datetime import datetime as dt
@@ -72,7 +72,7 @@ def index():
         fig = px.line(df, 'time', 'value', color="topic", markers=True)
         graph_html = fig.to_html(full_html=False)
 
-        return render_template(f'graph.html', graph=graph_html,
+        return render_template(f'graph.html', graph=graph_html, name=current_app.config['name'],
                                dt_0=dt_0,
                                dt_1=dt_1)
     else:
@@ -110,7 +110,7 @@ def hindex():
         fig = px.line(df, 'time', 'value', color="topic", markers=True)
         graph_html = fig.to_html(full_html=False)
 
-        return render_template(f'graph.html', graph=graph_html,
+        return render_template(f'graph.html', graph=graph_html, name=current_app.config['name'],
                                dt_0=dt_0,
                                dt_1=dt_1)
     else:
@@ -151,7 +151,7 @@ def press():
         fig = px.line(df, 'time', 'value', color="topic", markers=True)
         graph_html = fig.to_html(full_html=False)
 
-        return render_template(f'graph.html', graph=graph_html,
+        return render_template(f'graph.html', graph=graph_html, name=current_app.config['name'],
                                dt_0=dt_0,
                                dt_1=dt_1)
     else:
@@ -190,7 +190,7 @@ def hpress():
         fig = px.line(df, 'time', 'value', color="topic", markers=True)
         graph_html = fig.to_html(full_html=False)
 
-        return render_template(f'graph.html', graph=graph_html,
+        return render_template(f'graph.html', graph=graph_html, name=current_app.config['name'],
                                dt_0=dt_0,
                                dt_1=dt_1)
     else:
@@ -228,7 +228,7 @@ def exindex(days):
     fig = px.line(df, 'time', 'value', color="topic", markers=True)
     graph_html = fig.to_html(full_html=False)
 
-    return render_template(f'graph.html', graph=graph_html)
+    return render_template(f'graph.html', graph=graph_html, name=current_app.config['name'],)
 
 
 @app.route('/Ums/hard/for/<days>')
@@ -255,7 +255,7 @@ def exhindex(days: int):
     fig = px.line(df, 'time', 'value', color="topic", markers=True)
     graph_html = fig.to_html(full_html=False)
 
-    return render_template(f'graph.html', graph=graph_html,)
+    return render_template(f'graph.html', graph=graph_html, name=current_app.config['name'],)
 
 
 @app.route('/sun')
@@ -291,7 +291,7 @@ def sun():
                             td(1), dt.strptime(date + ' 23:59', '%Y.%m.%d %H:%M')])
     graph_html = fig.to_html(full_html=False)
 
-    return render_template(f'sun.html', graph=graph_html,
+    return render_template(f'sun.html', graph=graph_html, name=current_app.config['name'],
                            dt_0=dt_0, dt_1=dt_1, loc=locate())
 
 
@@ -334,7 +334,7 @@ def sunaver():
     fig.update_xaxes(range=[dt.strptime(date, '%Y.%m.%d') -
                             td(1), dt.strptime(date + ' 23:59', '%Y.%m.%d %H:%M')])
     graph_html = fig.to_html(full_html=False)
-    return render_template(f'sun.html', graph=graph_html, dt_0=dt_0, dt_1=dt_1)
+    return render_template(f'sun.html', graph=graph_html, dt_0=dt_0, dt_1=dt_1, name=current_app.config['name'])
 
 
 def locate():
