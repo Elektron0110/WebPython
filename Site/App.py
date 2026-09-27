@@ -1,3 +1,4 @@
+from werkzeug.http import HTTP_STATUS_CODES as codes
 from flask import Flask, Response, session
 from wsgidav.wsgidav_app import WsgiDAVApp
 from flask_sqlalchemy import SQLAlchemy
@@ -21,7 +22,7 @@ app.config['SQLALCHEMY_BINDS'] = {
 }
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["admins"] = ['s762672@ya.ru', 'test@test']
-app.config['name'] = 'Alexis'
+app.config['name'] = 'Richard Castle'
 app.secret_key = open('secret.helpfile', 'r').read()
 app.register_blueprint(new_broker.app)
 app.register_blueprint(max_client.app)
