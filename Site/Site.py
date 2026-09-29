@@ -232,7 +232,7 @@ def adminlog(comm):
 @app.route('/adm/IP/<ip>', methods=['GET'])
 @check_auth(True)
 def adminip(ip):
-    return open(f'IPs/{ip}', 'r').read() if os.isfile(f'IPs/{ip}') else abort(404)
+    return open(f'IPs/{ip}.IP', 'r').read() if os.isfile(f'IPs/{ip}') else abort(404)
 
 
 @app.route('/adm/<comm>', methods=['GET', 'POST'])

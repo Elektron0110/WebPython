@@ -194,6 +194,7 @@ async def interactive_menu(client: Client) -> None:
             parts = TFr.split(':')
             chat_id = parts[1]
             text = parts[2]
+            print(parts)
             try:
                 await client.send_message(int(chat_id), text)
             except Exception as e:
