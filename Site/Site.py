@@ -571,9 +571,10 @@ def after_request(response: Response):
             request.method} {request.full_path}"  {response.status[:3]}  {request.cookies.get('Name')}'
         )
     elif request.path.startswith(('/max', '/static/max')):
-        mlogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {ip}  "{
-            request.method} {request.full_path}"  {response.status[:3]}  {request.cookies.get('Name')}',
-            slice=' | ', fw=f'{fsm}MB {fsk}KB {fsb}B')
+        if 'static' not in request.full_path and 'data' not in request.full_path:
+            mlogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {ip}  "{
+                request.method} {request.full_path}"  {response.status[:3]}  {request.cookies.get('Name')}',
+                slice=' | ', fw=f'{fsm}MB {fsk}KB {fsb}B')
     else:
         logging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {ip}  "{
             request.method} {request.full_path}"  {response.status[:3]}  {request.cookies.get('Name')}',
@@ -905,6 +906,7 @@ def Vert_Dider(url=''):
     urls = {'IQ': 'Что измеряют IQ тесты [Veritasium].mp4',
             'PI': 'Как считали число пи [Veritasium].mp4',
             'Imaginary': 'Мнимые числа реальны 1-13 [Welch Labs].mp4',
+            '37': 'Почему число 37 встречается повсюду [Veritasium].mp4',
             'AE': 'AE.png',
             'GG': 'GG.png'}
     if '.' in url:
