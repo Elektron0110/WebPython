@@ -85,7 +85,7 @@
 <script>
     var messages = [];
     const URI = document.baseURI.split("/");
-    const chatId = (URI[URI.length-1] == "max") ? "/0" : "/"+URI[URI.length-1];
+    const chatId = (URI[URI.length-1] == "max") ? "0" : URI[URI.length-1];
     try {
         build();
     } catch (e) {
@@ -132,7 +132,7 @@
     }
 
     async function build() {
-        const res = await fetch(`/max/data${chatId}`);
+        const res = await fetch(`/max/data/${chatId}`);
         const messes = await res.json();
         //const messes = {{ms | safe}}
         const chat = document.getElementsByClassName("chat")[0];
