@@ -17,9 +17,9 @@ MAX_MESSAGES = 'max_messages.json'
 DEFAULT = open('default.helpfile').readlines()[0][:-1]
 MESSAGES: dict[str, list[dict[str, str | int]]] = json.load(
     open(MAX_MESSAGES, encoding='utf-8'))
-LIM = 75
+LIM = 100
 
-logging.disable()
+# logging.disable()
 
 # ========== ИНИЦИАЛИЗАЦИЯ КЛИЕНТА ==========
 client = Client(
