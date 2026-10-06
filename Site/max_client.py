@@ -74,6 +74,8 @@ def data(id: str):
 def send_message(id: str):
     if not (id+'0')[1:].isdigit():
         return abort(400)
+    if not int(id):
+        id = DEFAULT
 
     data = request.get_json()
     text = data.get('text', '').strip()
