@@ -18,6 +18,8 @@ DEFAULT = open('default.helpfile').readlines()[0][:-1]
 MESSAGES: dict[str, list[dict[str, str | int]]] = json.load(
     open(MAX_MESSAGES, encoding='utf-8'))
 LIM = 100
+POLL_INTERVAL = 60
+TIMEOUT = POLL_INTERVAL*10
 
 # logging.disable()
 
@@ -177,48 +179,52 @@ async def interactive_menu(client: Client) -> None:
         open(MAX_CHATS, 'w', encoding='utf-8').write(json.dumps(c,
                                                                 ensure_ascii=False, indent=4))
     while True:
-        await asyncio.sleep(30)
-        i += 30
+        await asyncio.sleep(POLL_INTERVAL)
+        i += POLL_INTERVAL
         if DEFAULT not in MESSAGES:
             MESSAGES[DEFAULT] = []
-        h: list[dict[str, str]] = await show_chat_history(client, DEFAULT)
-        if h:
-            for m in h:
-                MESSAGES[DEFAULT].append(m)
-            json.dump(MESSAGES, open(MAX_MESSAGES, 'w',
-                      encoding='utf-8'), ensure_ascii=False, indent=4)
-
-        TFr = open(TRANPORT_FILE).read()
-        if TFr.startswith('SEND:'):
-            # Формат: SEND:<chat_id>:<message_text>
-            parts = TFr.split(':')
-            chat_id = parts[1]
-            text = parts[2]
-            print(parts)
-            try:
-                await client.send_message(int(chat_id), text)
-            except Exception as e:
-                print(e)
-            open(TRANPORT_FILE, 'w').write('DONE')
-        elif 'DONE' != TFr:
-            print(TFr)
-            if TFr not in MESSAGES:
-                print('NEW')
-                MESSAGES[TFr] = []
-            h: list[dict[str, str]] = await show_chat_history(client, TFr)
+        try:
+            h: list[dict[str, str]] = await show_chat_history(client, DEFAULT)
             if h:
                 for m in h:
-                    MESSAGES[TFr].append(m)
+                    MESSAGES[DEFAULT].append(m)
                 json.dump(MESSAGES, open(MAX_MESSAGES, 'w',
-                          encoding='utf-8'), ensure_ascii=False, indent=4)
-            open(TRANPORT_FILE, 'w').write('DONE')
-            print('DONE')
-        if i == 1800:
-            c: list[dict[str, str]] = await show_dialogs(client)
-            if c:
-                open(MAX_CHATS, 'w', encoding='utf-8').write(json.dumps(c,
-                                                                        ensure_ascii=False, indent=4))
-            i = 0
+                        encoding='utf-8'), ensure_ascii=False, indent=4)
+
+            TFr = open(TRANPORT_FILE).read()
+            if TFr.startswith('SEND:'):
+                # Формат: SEND:<chat_id>:<message_text>
+                parts = TFr.split(':')
+                chat_id = parts[1]
+                text = parts[2]
+                print(parts)
+                try:
+                    await client.send_message(int(chat_id), text)
+                except Exception as e:
+                    print(e)
+                open(TRANPORT_FILE, 'w').write('DONE')
+            elif 'DONE' != TFr:
+                print(TFr)
+                if TFr not in MESSAGES:
+                    print('NEW')
+                    MESSAGES[TFr] = []
+                h: list[dict[str, str]] = await show_chat_history(client, TFr)
+                if h:
+                    for m in h:
+                        MESSAGES[TFr].append(m)
+                    json.dump(MESSAGES, open(MAX_MESSAGES, 'w',
+                            encoding='utf-8'), ensure_ascii=False, indent=4)
+                open(TRANPORT_FILE, 'w').write('DONE')
+                print('DONE')
+            if i == 1800:
+                c: list[dict[str, str]] = await show_dialogs(client)
+                if c:
+                    open(MAX_CHATS, 'w', encoding='utf-8').write(json.dumps(c,
+                                                                            ensure_ascii=False, indent=4))
+                i = 0
+        except Exception as e:
+            print(e)
+            await asyncio.wait(TIMEOUT)
 
 # ========== ПОКАЗ СПИСКА ЧАТОВ ==========
 

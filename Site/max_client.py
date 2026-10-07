@@ -88,7 +88,7 @@ def send_message(id: str):
         f.write(f'SEND:{id}:{text}')
 
     # Ждем подтверждения отправки
-    timeout = 30  # таймаут в секундах
+    timeout = 90  # таймаут в секундах
     import time
     start_time = time.time()
     while time.time() - start_time < timeout:
