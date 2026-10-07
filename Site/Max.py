@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from pymax import Client, Message
+from pymax.exceptions import ApiError
 from requests import get
 from PIL import Image
 import asyncio
@@ -20,6 +21,47 @@ MESSAGES: dict[str, list[dict[str, str | int]]] = json.load(
 LIM = 100
 POLL_INTERVAL = 60
 TIMEOUT = POLL_INTERVAL*10
+# Пауза после срабатывания rate limit (too.many.requests) сервера Max
+RATE_LIMIT_WAIT = 300
+# Минимальная пауза между сетевыми запросами к API, сек
+REQUEST_SPACING = 0.5
+
+# ========== ОГРАНИЧЕНИЕ ЧАСТОТЫ ЗАПРОСОВ ==========
+_rate_lock = asyncio.Lock()
+_last_request_ts = 0.0
+
+
+async def throttle() -> None:
+    """Не позволяет слать несколько запросов к API одновременно и слишком часто."""
+    global _last_request_ts
+    async with _rate_lock:
+        wait = _last_request_ts + REQUEST_SPACING - asyncio.get_event_loop().time()
+        if wait > 0:
+            await asyncio.sleep(wait)
+        _last_request_ts = asyncio.get_event_loop().time()
+
+
+def is_rate_limit_error(e: Exception) -> bool:
+    """Проверяет, является ли ошибка ответом о превышении лимита запросов."""
+    return (isinstance(e, ApiError) and e.error == 'too.many.requests') or \
+        'too.many.requests' in str(e) or 'Слишком много запросов' in str(e)
+
+
+async def api_call(coro_factory):
+    """Выполняет запрос к API с троттлингом; при too.many.requests ждёт и повторяет."""
+    for attempt in range(3):
+        try:
+            await throttle()
+            return await coro_factory()
+        except Exception as e:
+            if is_rate_limit_error(e):
+                print(f"⏳ Rate limit (попытка {attempt + 1}/3), ждём {RATE_LIMIT_WAIT} сек...")
+                await asyncio.sleep(RATE_LIMIT_WAIT)
+                continue
+            raise
+    # Последняя попытка: если снова лимит — ошибку не глотаем
+    await throttle()
+    return await coro_factory()
 
 # logging.disable()
 
@@ -57,18 +99,18 @@ async def get_user_name_by_id(client: Client, user_id: int) -> str:
             _user_name_cache[user_id] = "Я"
             return "Я"
 
-    # Пытаемся получить пользователя через get_user
+    # Пытаемся получить пользователя через get_user (сначала локальный кеш!)
     user = None
-    if hasattr(client, 'get_user'):
-        try:
-            user = await client.get_user(user_id)
-        except Exception:
-            pass
-    if user is None and hasattr(client, 'get_cached_user'):
+    if hasattr(client, 'get_cached_user'):
         try:
             user = client.get_cached_user(user_id)
         except Exception:
             pass
+    if user is None and hasattr(client, 'get_user'):
+        try:
+            user = await api_call(lambda: client.get_user(user_id))
+        except Exception as e:
+            print(f"⚠️ Не удалось получить имя пользователя {user_id}: {e}")
     if user is None and hasattr(client, 'contacts'):
         contacts = client.contacts
         if isinstance(contacts, dict) and user_id in contacts:
@@ -199,7 +241,7 @@ async def interactive_menu(client: Client) -> None:
                 text = parts[2]
                 print(parts)
                 try:
-                    await client.send_message(int(chat_id), text)
+                    await api_call(lambda: client.send_message(int(chat_id), text))
                 except Exception as e:
                     print(e)
                 open(TRANPORT_FILE, 'w').write('DONE')
@@ -224,7 +266,10 @@ async def interactive_menu(client: Client) -> None:
                 i = 0
         except Exception as e:
             print(e)
-            await asyncio.sleep(TIMEOUT)
+            if is_rate_limit_error(e):
+                await asyncio.sleep(RATE_LIMIT_WAIT)
+            else:
+                await asyncio.sleep(TIMEOUT)
 
 # ========== ПОКАЗ СПИСКА ЧАТОВ ==========
 
@@ -232,16 +277,16 @@ async def interactive_menu(client: Client) -> None:
 async def show_dialogs(client: Client):
     try:
         if hasattr(client, 'fetch_chats'):
-            await client.fetch_chats()
+            await api_call(lambda: client.fetch_chats())
         elif hasattr(client, 'get_chats'):
-            dialogs = await client.get_chats()
+            dialogs = await api_call(lambda: client.get_chats())
             if dialogs:
                 client.chats = dialogs
 
         dialogs = getattr(client, 'chats', None)
         if not dialogs:
             if hasattr(client, 'get_chats'):
-                dialogs = await client.get_chats()
+                dialogs = await api_call(lambda: client.get_chats())
                 if dialogs:
                     client.chats = dialogs
 
@@ -276,7 +321,7 @@ async def show_chat_history(client: Client, id: str | int):
     if not os.path.isdir(f'static/max/{chat_id}'):
         os.mkdir(f'static/max/{chat_id}')
 
-    messages = await client.fetch_history(chat_id, backward=LIM)
+    messages = await api_call(lambda: client.fetch_history(chat_id, backward=LIM))
     if not messages:
         return
 
@@ -334,13 +379,13 @@ async def show_chat_history(client: Client, id: str | int):
                                 type = 'a'
                                 ext = 'file'
                                 if file not in [f for f in os.listdir(f'static/max')]:
-                                    base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
+                                    base_url = (await api_call(lambda: client.get_file_by_id(chat_id, msg.id, media_id))).url
                             elif type == 'video':
                                 media_id = attachment.video_id
                                 ext = 'mp4'
                                 file = f'{chat_id}/{msg.id}_{media_id}.{ext}' if not file else file
                                 if file.split('/')[1] not in [f for f in os.listdir(f'static/max/{chat_id}')]:
-                                    base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
+                                    base_url = (await api_call(lambda: client.get_video_by_id(chat_id, msg.id, media_id))).url
                             else:
                                 continue
                         except:
@@ -384,13 +429,13 @@ async def show_chat_history(client: Client, id: str | int):
                         type = 'a'
                         ext = 'file'
                         if file not in [f for f in os.listdir(f'static/max')]:
-                            base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
+                            base_url = (await api_call(lambda: client.get_file_by_id(chat_id, msg.id, media_id))).url
                     elif type == 'video':
                         media_id = attachment.video_id
                         ext = 'mp4'
                         file = f'{chat_id}/{msg.id}_{media_id}.{ext}' if not file else file
                         if file.split('/')[1] not in [f for f in os.listdir(f'static/max/{chat_id}')]:
-                            base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
+                            base_url = (await api_call(lambda: client.get_video_by_id(chat_id, msg.id, media_id))).url
                     else:
                         continue
                 ext = ('png' if type == 'img' else ('ogg' if type == 'audio' else 'file')) if ext == None else ext
