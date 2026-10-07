@@ -224,7 +224,7 @@ async def interactive_menu(client: Client) -> None:
                 i = 0
         except Exception as e:
             print(e)
-            await asyncio.wait(TIMEOUT)
+            await asyncio.sleep(TIMEOUT)
 
 # ========== ПОКАЗ СПИСКА ЧАТОВ ==========
 
