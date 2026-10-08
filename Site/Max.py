@@ -20,9 +20,8 @@ MESSAGES: dict[str, list[dict[str, str | int]]] = json.load(
     open(MAX_MESSAGES, encoding='utf-8'))
 LIM = 100
 POLL_INTERVAL = 60
+# Пауза после срабатывания rate limit (too.many.requests) от сервера Max
 TIMEOUT = POLL_INTERVAL*10
-# Пауза после срабатывания rate limit (too.many.requests) сервера Max
-RATE_LIMIT_WAIT = 300
 # Минимальная пауза между сетевыми запросами к API, сек
 REQUEST_SPACING = 0.5
 
@@ -55,8 +54,8 @@ async def api_call(coro_factory):
             return await coro_factory()
         except Exception as e:
             if is_rate_limit_error(e):
-                print(f"⏳ Rate limit (попытка {attempt + 1}/3), ждём {RATE_LIMIT_WAIT} сек...")
-                await asyncio.sleep(RATE_LIMIT_WAIT)
+                print(f"⏳ Rate limit (попытка {attempt + 1}/3), ждём {TIMEOUT} сек...")
+                await asyncio.sleep(TIMEOUT)
                 continue
             raise
     # Последняя попытка: если снова лимит — ошибку не глотаем
@@ -267,8 +266,6 @@ async def interactive_menu(client: Client) -> None:
         except Exception as e:
             print(e)
             if is_rate_limit_error(e):
-                await asyncio.sleep(RATE_LIMIT_WAIT)
-            else:
                 await asyncio.sleep(TIMEOUT)
 
 # ========== ПОКАЗ СПИСКА ЧАТОВ ==========
