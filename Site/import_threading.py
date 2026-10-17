@@ -54,8 +54,8 @@ def load(video_url: tuple[str]):
             logging.log(
                 f'[{datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  "[{v_url}] Успешно"')
 
-            f = f'{folder}/{[e for e in os.listdir(folder) if e not in s][0]}'
-            os.rename(f, f.replace(' #', '').replace('#', ''))
+            f = f'{folder}/{filename_base}'
+            os.rename(f, f.replace('# ', ' ').replace(' # ', ' ').replace('#', ''))
 
         except Exception as e:
             logging.log(
