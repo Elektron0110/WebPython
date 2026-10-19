@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
-from pymax import Client, Message
+from pymax.client import Client
+from pymax.types.domain.message import Message
 from pymax.exceptions import ApiError
 from requests import get
 from PIL import Image
@@ -20,47 +21,7 @@ MESSAGES: dict[str, list[dict[str, str | int]]] = json.load(
     open(MAX_MESSAGES, encoding='utf-8'))
 LIM = 100
 POLL_INTERVAL = 60
-# Пауза после срабатывания rate limit (too.many.requests) от сервера Max
 TIMEOUT = POLL_INTERVAL*10
-# Минимальная пауза между сетевыми запросами к API, сек
-REQUEST_SPACING = 0.5
-
-# ========== ОГРАНИЧЕНИЕ ЧАСТОТЫ ЗАПРОСОВ ==========
-_rate_lock = asyncio.Lock()
-_last_request_ts = 0.0
-
-
-async def throttle() -> None:
-    """Не позволяет слать несколько запросов к API одновременно и слишком часто."""
-    global _last_request_ts
-    async with _rate_lock:
-        wait = _last_request_ts + REQUEST_SPACING - asyncio.get_event_loop().time()
-        if wait > 0:
-            await asyncio.sleep(wait)
-        _last_request_ts = asyncio.get_event_loop().time()
-
-
-def is_rate_limit_error(e: Exception) -> bool:
-    """Проверяет, является ли ошибка ответом о превышении лимита запросов."""
-    return (isinstance(e, ApiError) and e.error == 'too.many.requests') or \
-        'too.many.requests' in str(e) or 'Слишком много запросов' in str(e)
-
-
-async def api_call(coro_factory):
-    """Выполняет запрос к API с троттлингом; при too.many.requests ждёт и повторяет."""
-    for attempt in range(3):
-        try:
-            await throttle()
-            return await coro_factory()
-        except Exception as e:
-            if is_rate_limit_error(e):
-                print(f"⏳ Rate limit (попытка {attempt + 1}/3), ждём {TIMEOUT} сек...")
-                await asyncio.sleep(TIMEOUT)
-                continue
-            raise
-    # Последняя попытка: если снова лимит — ошибку не глотаем
-    await throttle()
-    return await coro_factory()
 
 # logging.disable()
 
@@ -107,7 +68,7 @@ async def get_user_name_by_id(client: Client, user_id: int) -> str:
             pass
     if user is None and hasattr(client, 'get_user'):
         try:
-            user = await api_call(lambda: client.get_user(user_id))
+            user = await client.get_user(user_id)
         except Exception as e:
             print(f"⚠️ Не удалось получить имя пользователя {user_id}: {e}")
     if user is None and hasattr(client, 'contacts'):
@@ -225,13 +186,6 @@ async def interactive_menu(client: Client) -> None:
         if DEFAULT not in MESSAGES:
             MESSAGES[DEFAULT] = []
         try:
-            h: list[dict[str, str]] = await show_chat_history(client, DEFAULT)
-            if h:
-                for m in h:
-                    MESSAGES[DEFAULT].append(m)
-                json.dump(MESSAGES, open(MAX_MESSAGES, 'w',
-                        encoding='utf-8'), ensure_ascii=False, indent=4)
-
             TFr = open(TRANPORT_FILE).read()
             if TFr.startswith('SEND:'):
                 # Формат: SEND:<chat_id>:<message_text>
@@ -240,7 +194,7 @@ async def interactive_menu(client: Client) -> None:
                 text = parts[2]
                 print(parts)
                 try:
-                    await api_call(lambda: client.send_message(int(chat_id), text))
+                    await client.send_message(int(chat_id), text)
                 except Exception as e:
                     print(e)
                 open(TRANPORT_FILE, 'w').write('DONE')
@@ -257,16 +211,21 @@ async def interactive_menu(client: Client) -> None:
                             encoding='utf-8'), ensure_ascii=False, indent=4)
                 open(TRANPORT_FILE, 'w').write('DONE')
                 print('DONE')
-            if i == 1800:
+            if not i % 1800:
+                h: list[dict[str, str]] = await show_chat_history(client, DEFAULT)
+                if h:
+                    for m in h:
+                        MESSAGES[DEFAULT].append(m)
+                    json.dump(MESSAGES, open(MAX_MESSAGES, 'w',
+                        encoding='utf-8'), ensure_ascii=False, indent=4)
                 c: list[dict[str, str]] = await show_dialogs(client)
+            if i == 3600:
                 if c:
                     open(MAX_CHATS, 'w', encoding='utf-8').write(json.dumps(c,
                                                                             ensure_ascii=False, indent=4))
                 i = 0
         except Exception as e:
             print(e)
-            if is_rate_limit_error(e):
-                await asyncio.sleep(TIMEOUT)
 
 # ========== ПОКАЗ СПИСКА ЧАТОВ ==========
 
@@ -274,16 +233,16 @@ async def interactive_menu(client: Client) -> None:
 async def show_dialogs(client: Client):
     try:
         if hasattr(client, 'fetch_chats'):
-            await api_call(lambda: client.fetch_chats())
+            await client.fetch_chats()
         elif hasattr(client, 'get_chats'):
-            dialogs = await api_call(lambda: client.get_chats())
+            dialogs = await client.get_chats()
             if dialogs:
                 client.chats = dialogs
 
         dialogs = getattr(client, 'chats', None)
         if not dialogs:
             if hasattr(client, 'get_chats'):
-                dialogs = await api_call(lambda: client.get_chats())
+                dialogs = await client.get_chats()
                 if dialogs:
                     client.chats = dialogs
 
@@ -318,7 +277,7 @@ async def show_chat_history(client: Client, id: str | int):
     if not os.path.isdir(f'static/max/{chat_id}'):
         os.mkdir(f'static/max/{chat_id}')
 
-    messages = await api_call(lambda: client.fetch_history(chat_id, backward=LIM))
+    messages = await client.fetch_history(chat_id, backward=LIM)
     if not messages:
         return
 
@@ -376,13 +335,13 @@ async def show_chat_history(client: Client, id: str | int):
                                 type = 'a'
                                 ext = 'file'
                                 if file not in [f for f in os.listdir(f'static/max')]:
-                                    base_url = (await api_call(lambda: client.get_file_by_id(chat_id, msg.id, media_id))).url
+                                    base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
                             elif type == 'video':
                                 media_id = attachment.video_id
                                 ext = 'mp4'
                                 file = f'{chat_id}/{msg.id}_{media_id}.{ext}' if not file else file
                                 if file.split('/')[1] not in [f for f in os.listdir(f'static/max/{chat_id}')]:
-                                    base_url = (await api_call(lambda: client.get_video_by_id(chat_id, msg.id, media_id))).url
+                                    base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
                             else:
                                 continue
                         except:
@@ -426,13 +385,13 @@ async def show_chat_history(client: Client, id: str | int):
                         type = 'a'
                         ext = 'file'
                         if file not in [f for f in os.listdir(f'static/max')]:
-                            base_url = (await api_call(lambda: client.get_file_by_id(chat_id, msg.id, media_id))).url
+                            base_url = (await client.get_file_by_id(chat_id, msg.id, media_id)).url
                     elif type == 'video':
                         media_id = attachment.video_id
                         ext = 'mp4'
                         file = f'{chat_id}/{msg.id}_{media_id}.{ext}' if not file else file
                         if file.split('/')[1] not in [f for f in os.listdir(f'static/max/{chat_id}')]:
-                            base_url = (await api_call(lambda: client.get_video_by_id(chat_id, msg.id, media_id))).url
+                            base_url = (await client.get_video_by_id(chat_id, msg.id, media_id)).url
                     else:
                         continue
                 ext = ('png' if type == 'img' else ('ogg' if type == 'audio' else 'file')) if ext == None else ext

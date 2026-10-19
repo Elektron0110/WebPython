@@ -9,15 +9,6 @@ DEFAULT = open('default.helpfile').readlines()[0][:-1]
 app = Flask(__name__, 'new_broker')
 
 
-@app.route('/max')
-def max():
-    if 'user' in session:
-        prompt = session.get('user')
-    else:
-        prompt = 'Вход/Регистрация'
-    return render_template("max.html", name=current_app.config['name'], prompt=prompt, session=session)
-
-
 @app.route('/max/all')
 @check_auth(True)
 def maxall():
@@ -32,8 +23,9 @@ def maxall():
     return fstring+'</a>\n<br>\n'.join([f'<a href="/max{'/of' if of else ''}/{chat["id"]}">{chat["name"]}' for chat in chats[1:]])
 
 
+@app.route('/max')
 @app.route('/max/<x>')
-def maxx(x):
+def maxx(x='0'):
     if not (x+'0')[1:].isdigit():
         return abort(400)
     if 'user' in session:
