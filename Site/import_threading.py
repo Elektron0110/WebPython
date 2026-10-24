@@ -33,7 +33,7 @@ def load(video_url: tuple[str]):
             with yt_dlp.YoutubeDL({'quiet': True}) as ydl:
                 info = ydl.extract_info(v_url, download=False)
                 title = info.get('title', 'video').strip().replace(
-                    '/', '_').replace('\\', '_').replace('#', '_')
+                    '/', '_').replace('\\', '_').replace('#', '_').replace('|', '_')
 
                 logging.log(
                     f'[{datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  "[{v_url}] {info.get('title', 'video')}"')
