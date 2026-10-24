@@ -831,9 +831,9 @@ def video():
     r = ''
     for f in os.listdir(h):
         if os.path.isdir(f'{h}/{f}'):
-            r += f'<a href="video/{f}"><b>{f}</b></a><br>'
+            r += f'<a href="video/{f}"><b>{f.replace('#', '%23')}</b></a><br>'
         else:
-            r += f'<a href="video/{f}">{f}</a>    <a href="video/{f}" download>Скачать</a><br>'
+            r += f'<a href="video/{f}">{f.replace('#', '%23')}</a>    <a href="video/{f}" download>Скачать</a><br>'
     return r
 
 
@@ -845,9 +845,9 @@ def videofod(fod):
         r = ''
         for f in os.listdir(f'{h}/{fod}'):
             if os.path.isdir(f'{h}/{fod}/{f}'):
-                r += f'<a href="{fod}/{f}"><b>{f}</b></a><br>'
+                r += f'<a href="{fod}/{f.replace('#', '%23')}"><b>{f}</b></a><br>'
             else:
-                r += f'<a href="{fod}/{f}">{f}</a>    <a href="{fod}/{f}" download>Скачать</a><br>'
+                r += f'<a href="{fod}/{f.replace('#', '%23')}">{f}</a>    <a href="{fod}/{f.replace('#', '%23')}" download>Скачать</a><br>'
         return r
 
 
@@ -864,9 +864,9 @@ def films():
     r = ''
     for f in os.listdir(j):
         if os.path.isdir(f'{j}/{f}'):
-            r += f'<a href="films/{f}"><b>{f}</b></a><br>'
+            r += f'<a href="films/{f.replace('#', '%23')}"><b>{f}</b></a><br>'
         else:
-            r += f'<a href="films/{f}">{f}</a>    <a href="films/{f}" download>Скачать</a><br>'
+            r += f'<a href="films/{f.replace('#', '%23')}">{f}</a>    <a href="films/{f.replace('#', '%23')}" download>Скачать</a><br>'
     return r
 
 
@@ -878,9 +878,9 @@ def filmsfod(fod):
         r = ''
         for f in os.listdir(f'{j}/{fod}'):
             if os.path.isdir(f'{j}/{fod}/{f}'):
-                r += f'<a href="{fod}/{f}"><b>{f}</b></a><br>'
+                r += f'<a href="{fod}/{f.replace('#', '%23')}"><b>{f}</b></a><br>'
             else:
-                r += f'<a href="{fod}/{f}">{f}</a>    <a href="{fod}/{f}" download>Скачать</a><br>'
+                r += f'<a href="{fod}/{f.replace('#', '%23')}">{f}</a>    <a href="{fod}/{f.replace('#', '%23')}" download>Скачать</a><br>'
         return r
 
 
