@@ -831,9 +831,9 @@ def video():
     r = ''
     for f in os.listdir(h):
         if os.path.isdir(f'{h}/{f}'):
-            r += f'<a href="video/{f}"><b>{f.replace('#', '%23')}</b></a><br>'
+            r += f'<a href="video/{f.replace('#', '%23')}"><b>{f}</b></a><br>'
         else:
-            r += f'<a href="video/{f}">{f.replace('#', '%23')}</a>    <a href="video/{f}" download>Скачать</a><br>'
+            r += f'<a href="video/{f.replace('#', '%23')}">{f}</a>    <a href="video/{f}" download>Скачать</a><br>'
     return r
 
 
