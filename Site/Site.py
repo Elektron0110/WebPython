@@ -789,14 +789,35 @@ def test_result(test: str):
     return render_template('log.html', name=app.config['name'], session=session, f=f)
 
 
+BLOG = 'Я'
+
 @app.route('/blog')
 def blog():
-    #TODO blog from file and to RSS | FILE -> BLOG -> RSS
     data: list[tuple[str, str, str]] = [(m.split('\n')[0], datetime.strptime(m.split('\n')[1], '%d.%m.%Y %H:%M'), m.split('\n')[2])
                                    for m in open('blog.helpfile', 'r', encoding='utf-8').read().split('\n\n')]
     # data [Сообщение(Заголовок, Дата, Текст)]
     data.reverse()
-    return render_template('blog.html', blog='Я', data=data)
+    return render_template('blog.html', blog=BLOG, data=data)
+
+
+@app.route('/blog/rss')
+def blog_rss():
+    data: list[tuple[str, str, str]] = [(m.split('\n')[0], datetime.strptime(m.split('\n')[1], '%d.%m.%Y %H:%M'), m.split('\n')[2])
+                                   for m in open('blog.helpfile', 'r', encoding='utf-8').read().split('\n\n')]
+    data.reverse()
+    head = f'''<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+	<channel>
+		<title>Блог({BLOG})</title>
+		<link>https://s762672.cloudpub.ru/blog</link>
+		<description>My blog on RSS format</description>
+		<language>ru-ru</language>\n'''
+    return head + '\n'.join([f'''
+		<item>
+			<title>{title}</title>
+			<description>{description}</description>
+			<pubDate>{pubDate}</pubDate>
+		</item>''' for title, pubDate, description in data])+'\n</channel></rss>'
 
 
 @app.route('/class')
