@@ -27,6 +27,7 @@ app.secret_key = open('secret.helpfile', 'r').read()
 app.register_blueprint(new_broker.app)
 app.register_blueprint(max_client.app)
 
+app.url_map.strict_slashes = False
 
 slicer = r'\|/'
 white = False
