@@ -792,6 +792,11 @@ def test_result(test: str):
 @app.route('/blog')
 def blog():
     #TODO blog from file and to RSS | FILE -> BLOG -> RSS
+    data: list[tuple[str, str, str]] = [(m.split('\n')[0], datetime.strptime(m.split('\n')[1], '%d.%m.%Y %H:%M'), m.split('\n')[2])
+                                   for m in open('blog.helpfile', 'r', encoding='utf-8').read().split('\n\n')]
+    # data [Сообщение(Заголовок, Дата, Текст)]
+    data.reverse()
+    return render_template('blog.html', blog='Я', data=data)
     pass
 
 
