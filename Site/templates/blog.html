@@ -1,0 +1,43 @@
+{% extends "Bases/MainBase.html" %}
+{% block title %}{{blog}}{% endblock title %}
+{% block body %}
+    <style>
+        :root {
+            --radius: 10px;
+            --space: 5px;
+        }
+        div.main {
+            padding-bottom: 80px;
+        }
+        div.message {
+            margin: var(--space);
+            padding: var(--space);
+            border: double;
+            border-width: var(--space);
+            border-radius: var(--radius);
+            border-color: var(--nav-button-pressed-border);
+            overflow-wrap: anywhere;
+            background-color: rgb(220 220 220 / 90%);
+            font-family: "Calibri";
+        }
+        div.title, div.date, div.text {
+            font-family: 'AlexisOne';
+        }
+        div.date, div.text {
+            font-size: 15px;
+        }
+        div.text {
+            font-weight: bold;
+        }
+    </style>
+    <div class="main">
+        {% for message in data %}
+        <div class="message">
+            <div class="title"><h3 style="margin: 0;">{{message[0]}}</h3></div>
+            <div class="date">{{message[1]}}</div>
+            <div class="text">{{message[2]}}</div>
+        </div>
+        <hr>
+        {% endfor %}
+    </div>
+{% endblock body %}
