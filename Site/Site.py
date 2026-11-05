@@ -907,6 +907,7 @@ def Vert_Dider(url=''):
             'PI': 'Как считали число пи [Veritasium].mp4',
             'Imaginary': 'Мнимые числа реальны 1-13 [Welch Labs].mp4',
             '37': 'Почему число 37 встречается повсюду [Veritasium].mp4',
+            'SM': 'Эти механизмы становятся короче, если их растянуть [Veritasium].mp4',
             'AE': 'AE.png',
             'GG': 'GG.png'}
     if '.' in url:
