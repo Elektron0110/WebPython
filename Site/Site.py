@@ -789,6 +789,12 @@ def test_result(test: str):
     return render_template('log.html', name=app.config['name'], session=session, f=f)
 
 
+@app.route('/blog')
+def blog():
+    #TODO blog from file and to RSS | FILE -> BLOG -> RSS
+    pass
+
+
 @app.route('/class')
 def clas():
     return render_template('class.html', name=app.config['name'],
@@ -936,6 +942,76 @@ def E_Code(url=''):
         return send_from_directory(app.static_folder, f'E-Code/{urls[url]}')
     return render_template('VD.html', urls=urls, title='E-Code', years=years, name=app.config['name'],
                            prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
+
+
+@app.route('/Pictures')
+def Pictures():
+    if 'user' in session:
+        prompt = session.get('user')
+    else:
+        prompt = 'Вход/Регистрация'
+    news = json.load(open('news.json', 'rb'))
+    return render_template('main.html', name=app.config['name'], imgs=news["pictures"],
+                           prompt=prompt, session=session)
+
+
+@app.route('/Filin')
+def Filin():
+    if 'user' in session:
+        prompt = session.get('user')
+    else:
+        prompt = 'Вход/Регистрация'
+    return render_template('filin.html', name=app.config['name'],
+                           prompt=prompt, session=session)
+
+
+@app.route('/dvideo')
+def dvideo():
+    r = ''
+    for f in os.listdir('D:\\AVSh-Docs\\Загрузки\\Новая папка\\КлЧ'):
+        r += f'<a href="dvideo/{f}">{f}</a>    <a href="dvideo/{f}" download>Скачать</a><br>'
+    return r
+
+
+@app.route('/dvideo/<fod>')
+def dvideofod(fod):
+    return send_from_directory('D:\\AVSh-Docs\\Загрузки\\Новая папка\\КлЧ', fod)
+
+
+@app.route('/nvideo')
+def nvideo():
+    r = ''
+    for f in os.listdir('D:\\AVSh-Docs\\Загрузки\\archive'):
+        r += f'<a href="nvideo/{f}">{f}</a>    <a href="nvideo/{f}" download>Скачать</a><br>'
+    return r
+
+
+@app.route('/nvideo/<fod>')
+def nvideofod(fod):
+    return send_from_directory('D:\\AVSh-Docs\\Загрузки\\archive', fod)
+
+
+@app.route('/evideo')
+def evideo():
+    r = ''
+    for f in os.listdir('C:\\Users\\Alex\\Desktop\\Новая папка (2)'):
+        r += f'<a href="evideo/{f}">{f}</a>    <a href="evideo/|{f}" download>Скачать</a><br>'
+    return r
+
+
+@app.route('/evideo/<fod>')
+def evideofod(fod):
+    if fod.startswith('|') or not fod.endswith(('.xls', '.xlsx')):
+        fod = fod[1:] if fod.startswith('|') else fod
+        return send_from_directory('C:\\Users\\Alex\\Desktop\\Новая папка (2)', fod)
+    import pandas, io
+    t = pandas.read_excel(f'C:\\Users\\Alex\\Desktop\\Новая папка (2)\\{fod}')
+    h = io.StringIO()
+    t.to_html(h)
+    h.seek(0)
+    t = h.read().replace('NaN', '')
+    return t
+
 
 if os.path.isdir('C:'):
     # """Функция, запускающая работу сервера."""
