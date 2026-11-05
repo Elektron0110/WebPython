@@ -797,7 +797,6 @@ def blog():
     # data [Сообщение(Заголовок, Дата, Текст)]
     data.reverse()
     return render_template('blog.html', blog='Я', data=data)
-    pass
 
 
 @app.route('/class')
