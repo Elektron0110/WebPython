@@ -11,15 +11,7 @@ body {
 .navbar {
 	background-color: var(--nav);
 	color: var(--nav-text);
-    box-sizing: border-box;
-	position: fixed;
 	height: 100px;
-	right: 0;
-	left: 0;
-	top: 0;
-}
-div#main {
-	margin-top: 100;
 }
 .navbar-button {
 	color: var(--nav);
