@@ -793,16 +793,16 @@ BLOG = 'Я'
 
 @app.route('/blog')
 def blog():
-    data: list[tuple[str, str, str]] = [(m.split('\n')[0], datetime.strptime(m.split('\n')[1], '%d.%m.%Y %H:%M'), m.split('\n')[2])
+    data: list[tuple[str, str, str]] = [(m.split('\n')[0], datetime.strptime(m.split('\n')[1], '%d.%m.%Y %H:%M'), ' '.join(m.split('\n')[2:]))
                                    for m in open('blog.helpfile', 'r', encoding='utf-8').read().split('\n\n')]
     # data [Сообщение(Заголовок, Дата, Текст)]
     data.reverse()
-    return render_template('blog.html', blog=BLOG, data=data)
+    return render_template('blog.html', blog=BLOG, data=data, name=app.config['name'], session=session)
 
 
 @app.route('/blog/rss')
 def blog_rss():
-    data: list[tuple[str, str, str]] = [(m.split('\n')[0], datetime.strptime(m.split('\n')[1], '%d.%m.%Y %H:%M'), m.split('\n')[2])
+    data: list[tuple[str, str, str]] = [(m.split('\n')[0], datetime.strptime(m.split('\n')[1], '%d.%m.%Y %H:%M'), ' '.join(m.split('\n')[2:]))
                                    for m in open('blog.helpfile', 'r', encoding='utf-8').read().split('\n\n')]
     data.reverse()
     head = f'''<?xml version="1.0" encoding="UTF-8"?>
