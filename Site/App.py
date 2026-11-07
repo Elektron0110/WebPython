@@ -27,8 +27,6 @@ app.secret_key = open('secret.helpfile', 'r').read()
 app.register_blueprint(new_broker.app)
 app.register_blueprint(max_client.app)
 
-app.url_map.strict_slashes = False
-
 slicer = r'\|/'
 white = False
 
@@ -69,7 +67,7 @@ class WsgiDAVMiddleware:
                 self.forbidden_response(start_response)
             if environ.get("HTTP_X_REAL_IP") in blocked_ips:
                 self.forbidden_response(start_response)
-            wlogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {environ.get("HTTP_X_REAL_IP")}'
+            wlogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {environ.get("HTTP_X_REAL_IP")}  '
                          f'"{environ["REQUEST_METHOD"]} {self.decode(environ["REQUEST_URI"])}"')
             return self.dav_app(environ, start_response)
         # Иначе — в Flask
