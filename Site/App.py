@@ -1,14 +1,15 @@
 from werkzeug.http import HTTP_STATUS_CODES as codes
+from my_lib import Log, file_to_list, list_to_str
 from flask import Flask, Response, session
 from wsgidav.wsgidav_app import WsgiDAVApp
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from decorators import *
-from my_lib import Log
 import urllib.parse
 import max_client
 import new_broker
 import json
+import os
 
 
 app = Flask(__name__)
@@ -35,9 +36,26 @@ llogging = Log('Load.log')
 wlogging = Log('WebDav.log')
 mlogging = Log('MAX.log')
 
+if not os.path.isdir('Site'):
+    os.mkdir('Site')
+if not os.path.isdir('Site/applications'):
+    os.mkdir('Site/applications')
+if not os.path.isfile('static/not_blocked_ips'):
+    open('static/not_blocked_ips', 'w').write('')
+if not os.path.isfile('static/blocked_ips'):
+    open('static/blocked_ips', 'w').write('')
+if not os.path.isfile('ignored.helpfile'):
+    open('ignored.helpfile', 'w').write(list_to_str(['/ping', '/rss.xml', '/blog/rss'], '\n'))
+
+if not os.path.isfile('auth.json'):
+    open('auth.json', 'w').write('')
+if not os.path.isfile('last.json'):
+    open('last.json', 'w').write('')
+
 start = int(open('start.helpfile', 'r').read())
-not_blocked_ips = open('static/not_blocked_ips', 'r').read().split('\n')
-blocked_ips = open('static/blocked_ips', 'r').read().split('\n')
+not_blocked_ips = file_to_list('static/not_blocked_ips')
+blocked_ips = file_to_list('static/blocked_ips')
+ignored = file_to_list('ignored.helpfile')
 authorized = json.load(open('auth.json'))
 last: dict[str, list[str]] = json.load(open('last.json'))
 

@@ -1,12 +1,12 @@
 """Модуль, отвечающий за работу сервера."""
-from pathlib import Path
 from flask import render_template, request, session, redirect, send_from_directory, abort, Response
+from my_lib import file_to_list as ftl, list_to_str as lts
 from wsgidav.wsgidav_app import WsgiDAVApp
 from datetime import datetime, timedelta
-from my_lib import file_to_list as ftl
 from IPs import IP_Seeker as IP
 from requests import post, get
 from cheroot import wsgi
+from pathlib import Path
 import import_threading
 from alf import alf
 import urllib.parse
@@ -16,20 +16,6 @@ import qrcode
 import json
 import os
 
-
-if not os.path.isdir('Site'):
-    os.mkdir('Site')
-if not os.path.isdir('Site/applications'):
-    os.mkdir('Site/applications')
-if not os.path.isfile('static/not_blocked_ips'):
-    open('static/not_blocked_ips', 'w').write('')
-if not os.path.isfile('static/blocked_ips'):
-    open('static/blocked_ips', 'w').write('')
-
-if not os.path.isfile('auth.json'):
-    open('auth.json', 'w').write('')
-if not os.path.isfile('last.json'):
-    open('last.json', 'w').write('')
 
 # @app.errorhandler(404)
 # @app.route('/')
@@ -566,6 +552,7 @@ def after_request(response: Response):
         IP(ip).Seek()
     if f'{ip}.HEAD' not in os.listdir('HEADs') and request.path == '/':
         open(f'HEADs/{ip}.HEAD', 'w').write(str(request.headers))
+    if request.path.startswith(tuple(ignored)): return response
     if request.path.startswith(('/loader', '/video', '/films')):
         llogging.log(f'[{datetime.now().strftime("%d.%m.%Y %H:%M:%S")}]  {ip}  "{
             request.method} {request.full_path}"  {response.status[:3]}  {request.cookies.get('Name')}'
