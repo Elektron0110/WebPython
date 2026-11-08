@@ -8,6 +8,13 @@ def file_to_list(name: str, sep: str = '\n', code='utf-8',
     return f
 
 
+def list_to_str (list: list, sep = ' '):
+	"""Эта функция упращает превращение файла в список значений, разделённых в файле опледелённым разделителем."""
+	f = str(list)
+	f = f.replace("'", '').replace('[', '').replace(']', '').replace(', ', sep)
+	return f
+
+
 class Log:
     def __init__(self, file: str = 'logger.log') -> None:
         self.file, self.comm = file, "open(file, 'a', encoding='utf-8')"
