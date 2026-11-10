@@ -34,7 +34,9 @@
 			{% block menu %}{% endblock menu %}
 		</div>
 	</header>
-	{% block body %}{% endblock body %}
+	<div id="main">
+		{% block body %}{% endblock body %}
+	</div>
 	<script>
 		function func () {
 			var menu = document.getElementById("menu");
