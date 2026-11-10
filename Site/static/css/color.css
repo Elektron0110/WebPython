@@ -5,7 +5,7 @@
 	--nav-button-pressed: rgb(0 156 255);
 	--nav-button-pressed-text: rgb(160 228 52);
 	--nav-button-pressed-border: rgb(255 140 0);
-	--menu: rgb(190 153 100);
+	--menu: rgb(190 153 100 / 90%);
 }
 
 [page="form"] {

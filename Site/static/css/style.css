@@ -7,6 +7,9 @@ body {
 }
 .menu {
 	background-color: var(--menu);
+    position: fixed;
+    left: 0;
+    right: 0;
 }
 .navbar {
 	background-color: var(--nav);
@@ -30,6 +33,8 @@ div#main {
 	display: grid;
 	justify-content: center;
 	align-items: center;
+	position: fixed;
+	right: 0;
 }
 .pressed {
 	background-color: rgb(255 168 0);
