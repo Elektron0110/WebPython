@@ -7,7 +7,7 @@
             --space: 5px;
         }
         div.main {
-            padding-bottom: 80px;
+            border: none;
         }
         div.message {
             margin: var(--space);
@@ -40,5 +40,10 @@
         <hr>
         {% endfor %}
     </div>
-    <a href="/blog/rss">RSS</a>
+    <a href="/blog/rss" style="display: flex; justify-content: space-evenly; align-items: center;">
+        <img src="/static/img/RSS.png" style="display: white; height: 30px;">
+        <span style="color: white; text-decoration: underline;">
+            RSS
+        </span>
+    </a>
 {% endblock body %}
