@@ -773,7 +773,8 @@ def test_result(test: str):
         .replace('), ', '|').replace('(', '').replace(')', '').replace("'", '').replace('attitude', '') \
         .replace('advice', '').replace('mood', '').replace('verb', '').replace('adjective', '') \
         .replace('verdict', '').replace('name', '').replace(', ', '').replace(',', '')
-    return render_template('log.html', name=app.config['name'], session=session, f=f)
+    return render_template('log.html', name=app.config['name'], session=session, f=f,
+                           prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 
 
 BLOG = 'Я'
@@ -784,7 +785,8 @@ def blog():
                                    for m in open('blog.helpfile', 'r', encoding='utf-8').read().split('\n\n')]
     # data [Сообщение(Заголовок, Дата, Текст)]
     data.reverse()
-    return render_template('blog.html', blog=BLOG, data=data, name=app.config['name'], session=session)
+    return render_template('blog.html', blog=BLOG, data=data, name=app.config['name'], session=session,
+                           prompt=session.get('user') if 'user' in session else 'Вход/Регистрация')
 
 
 @app.route('/blog/rss')
