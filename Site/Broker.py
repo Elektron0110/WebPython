@@ -4,10 +4,14 @@ import json
 import os
 
 # Параметры подключения
+'''
 BROKER_HOST = "m6.wqtt.ru"
 BROKER_PORT = 19310
 USERNAME = "Qwerty"
 PASSWORD = "1234567890"
+'''
+BROKER_HOST = "127.0.0.1"
+BROKER_PORT = 1883
 data = {}
 datae = {}
 
@@ -52,7 +56,7 @@ def on_message(client, userdata, msg):
 
 # Создаем клиента
 client = mqtt.Client()
-client.username_pw_set(USERNAME, PASSWORD)
+# client.username_pw_set(USERNAME, PASSWORD)
 client.on_connect = on_connect
 client.on_message = on_message
 

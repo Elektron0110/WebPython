@@ -1,0 +1,6 @@
+listeners:
+  default:
+    type: tcp
+    bind: 0.0.0.0:1883
+auth:
+  allow_anonymous: true
