@@ -1,20 +1,21 @@
 html {
-    font-size: 25px;
+	font-size: 25px;
 }
 body {
-    margin: 0px;
-    background-color: var(--bg);
+	margin: 0px;
+	background-color: var(--bg);
 }
 .menu {
 	background-color: var(--menu);
-    position: fixed;
-    left: 0;
-    right: 0;
+	position: fixed;
+	left: 0;
+	right: 0;
+	
 }
 .navbar {
 	background-color: var(--nav);
 	color: var(--nav-text);
-    box-sizing: border-box;
+	box-sizing: border-box;
 	position: fixed;
 	height: 100px;
 	right: 0;
@@ -51,21 +52,21 @@ div#main {
 	align-items: center;
 }
 .navbar_div {
-   	display: flex;
-   	justify-content: space-between;
+	display: flex;
+	justify-content: space-between;
 }
 img {
 	height: 90px;
 }
 .adm_main {
-    outline: double;
-    border-radius: 5px;
-    outline-color: #2eb33d;
-    outline-offset: 10px;
+	outline: double;
+	border-radius: 5px;
+	outline-color: #2eb33d;
+	outline-offset: 10px;
 }
 @font-face {
-    font-family: "AlexisOne";
-    src: url("/static/font/Alexis-One.ttf") format("truetype");
-    font-style: normal;
-    font-weight: normal;
+	font-family: "AlexisOne";
+	src: url("/static/font/Alexis-One.ttf") format("truetype");
+	font-style: normal;
+	font-weight: normal;
 }
