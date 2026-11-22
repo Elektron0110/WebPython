@@ -24,7 +24,7 @@ body {
 	z-index: 1000;
 }
 div#main {
-	margin-top: 100px;
+	padding-top: 100px;
 }
 .navbar-button {
 	color: var(--nav);
